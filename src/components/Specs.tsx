@@ -39,7 +39,7 @@ const carData: CarData[] = [
   },
   {
     year: 2023,
-    highlight: "空气动力学升�?,
+    highlight: "空气动力学升级",
     image: "/images/cars/car-2023.webp",
     specs: { weight: "265kg", wheelbase: "1560mm", track: "1220/1180mm" },
     performance: { skidpad: "5.08s", skidpadRank: 5, acceleration: "4.57s", accelerationRank: 9, autocross: "73.627s", autocrossRank: 2, endurance: "1735.571s", enduranceRank: 7, enduranceColor: "text-[#a5d6a7]" }
