@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Instagram, Mail } from "lucide-react";
+import { Instagram, ShoppingCart } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -503,22 +503,19 @@ export default function Home() {
           </a>
 
           <div className="relative group">
-            <a
-              href="https://mail.qq.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                navigator.clipboard.writeText("2565945048@qq.com");
-              }}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 transition-all duration-100 shadow-lg border border-white/5"
+            <button
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 focus:scale-110 transition-all duration-100 shadow-lg border border-white/5 outline-none"
             >
-              <Mail size={18} className="md:w-5 md:h-5" />
-            </a>
-            {/* Instant Tooltip */}
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-100 z-50 pointer-events-none">
-              <div className="bg-[#1f1f2e]/90 backdrop-blur-md text-white px-3 py-1.5 rounded-lg border border-white/10 text-xs whitespace-nowrap shadow-xl">
-                2565945048@qq.com
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
+              <ShoppingCart size={18} className="md:w-5 md:h-5" />
+            </button>
+            {/* Store QR Code Tooltip */}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-100 z-50 pointer-events-none">
+              <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
+                <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
+                  <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
+                  <img src="/images/store/qrcode.png" alt="Purchase QR Code" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                </div>
+                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
               </div>
             </div>
           </div>
