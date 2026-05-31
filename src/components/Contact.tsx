@@ -16,7 +16,7 @@ export default function Contact() {
             <div className="flex items-center">
               <AuroraLogo className="hidden md:block w-32 h-auto" />
               <img 
-                src="/images/logos/logo-mobile.png" 
+                src="/images/logos/logo-mobile.webp" 
                 alt="Aurora Logo" 
                 className="md:hidden w-20 h-auto"
                 referrerPolicy="no-referrer"
@@ -24,20 +24,17 @@ export default function Contact() {
             </div>
             <div className="flex flex-col items-center md:items-start gap-0.5 md:gap-1 mt-0.5 md:mt-2 text-center md:text-left">
               <p className="text-aurora-white/40 text-[10px] md:text-xs text-center md:text-left">
-                广东省深圳市坪山区<br className="md:hidden" />
-                兰田路3002号深圳技术大学城市交通与物流学院
+                广东省深圳市坪山�?br className="md:hidden" />
+                兰田�?002号深圳技术大学城市交通与物流学院
               </p>
               <p className="text-aurora-white/40 text-[10px] md:text-xs">
-                微信公众号：SZTU赛车工作室
-              </p>
+                微信公众号：SZTU赛车工作�?              </p>
               <p className="text-aurora-white/40 text-[10px] sm:text-xs mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                 <span>&copy; {new Date().getFullYear()} AURORA Racing. All rights reserved.</span>
                 <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" className="hover:text-aurora-white transition-colors">
-                  粤ICP备2026055616号
-                </a>
+                  粤ICP�?026055616�?                </a>
                 <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002012789" target="_blank" rel="noopener noreferrer" className="hover:text-aurora-white transition-colors">
-                  粤公网安备44030002012789号
-                </a>
+                  粤公网安�?4030002012789�?                </a>
               </p>
             </div>
           </div>

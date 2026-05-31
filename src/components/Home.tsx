@@ -44,14 +44,14 @@ export default function Home() {
       <div className="absolute inset-0 z-0">
         {/* Desktop Image */}
         <img
-          src="/images/hero/hero-desktop.png"
+          src="/images/hero/hero-desktop.webp"
           alt="AURORA Racing Car"
           className="hidden md:block w-full h-full object-cover opacity-100 md:scale-125 lg:scale-100 md:origin-[85%_70%] lg:origin-center"
           referrerPolicy="no-referrer"
         />
         {/* Mobile Image */}
         <img
-          src="/images/hero/hero-mobile.png"
+          src="/images/hero/hero-mobile.webp"
           alt="AURORA Racing Car (Mobile)"
           className="block md:hidden w-full h-full object-cover object-center opacity-100"
           referrerPolicy="no-referrer"

@@ -30,38 +30,38 @@ const carData: CarData[] = [
   {
     year: 2021,
     highlight: "初露锋芒",
-    image: "/images/cars/car-2021.png",
+    image: "/images/cars/car-2021.webp",
   },
   {
     year: 2022,
     highlight: "轮边电机",
-    image: "/images/cars/car-2022.png",
+    image: "/images/cars/car-2022.webp",
   },
   {
     year: 2023,
-    highlight: "空气动力学升级",
-    image: "/images/cars/car-2023.png",
+    highlight: "空气动力学升�?,
+    image: "/images/cars/car-2023.webp",
     specs: { weight: "265kg", wheelbase: "1560mm", track: "1220/1180mm" },
     performance: { skidpad: "5.08s", skidpadRank: 5, acceleration: "4.57s", accelerationRank: 9, autocross: "73.627s", autocrossRank: 2, endurance: "1735.571s", enduranceRank: 7, enduranceColor: "text-[#a5d6a7]" }
   },
   {
     year: 2024,
     highlight: "第二代单体壳",
-    image: "/images/cars/car-2024.png",
+    image: "/images/cars/car-2024.webp",
     specs: { weight: "224kg", wheelbase: "1540mm", track: "1240/1220mm" },
     performance: { skidpad: "5.12s", skidpadRank: 2, acceleration: "3.72s", accelerationRank: 1, autocross: "73.199s", autocrossRank: 15, endurance: "1654.519s", enduranceRank: 2, enduranceColor: "text-[#a5d6a7]" }
   },
   {
     year: 2025,
     highlight: "动力系统重构",
-    image: "/images/cars/car-2025.png",
+    image: "/images/cars/car-2025.webp",
     specs: { weight: "219kg", wheelbase: "1530mm", track: "1270mm" },
     performance: { skidpad: "4.92s", skidpadRank: 1, acceleration: "3.81s", accelerationRank: 2, autocross: "65.111s", autocrossRank: 3, endurance: "DNF", enduranceColor: "text-rose-500" }
   },
   {
     year: 2026,
     highlight: "全面进化",
-    image: "/images/cars/car-2026.png",
+    image: "/images/cars/car-2026.webp",
     specs: { weight: "200kg", wheelbase: "1530mm", track: "1250mm" },
     performance: { skidpad: "-", acceleration: "-", autocross: "-", endurance: "-", enduranceColor: "text-aurora-white" }
   }

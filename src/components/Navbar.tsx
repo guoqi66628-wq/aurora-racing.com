@@ -49,7 +49,7 @@ export default function Navbar() {
         <a href="#home" className="flex items-center group -ml-2 sm:-ml-4" onClick={() => setIsMobileMenuOpen(false)}>
           <AuroraLogo className="hidden md:block w-36 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
           <img 
-            src="/images/logos/logo-mobile.png" 
+            src="/images/logos/logo-mobile.webp" 
             alt="Aurora Logo" 
             className="md:hidden w-28 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
             referrerPolicy="no-referrer"
