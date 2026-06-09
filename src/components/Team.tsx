@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface TeamMember {
   name: string;
@@ -15,74 +15,104 @@ interface TeamGroup {
   members: TeamMember[];
 }
 
+const TEAM_IMAGE_FALLBACK = "/images/team/temp.webp";
+
 export default function Team() {
   const [activeMember, setActiveMember] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mq = window.matchMedia("(max-width: 767px)");
+
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => {
+      // MediaQueryListEvent for change listener, MediaQueryList for initial call
+      // @ts-ignore
+      setIsMobile(e.matches);
+    };
+
+    handler(mq);
+
+    if (mq.addEventListener) mq.addEventListener("change", handler);
+    else mq.addListener(handler);
+
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", handler as any);
+      else mq.removeListener(handler as any);
+    };
+  }, []);
+
+  // When switching to desktop, clear any active (clicked) member so cards don't stay stuck
+  useEffect(() => {
+    if (!isMobile) setActiveMember(null);
+  }, [isMobile]);
 
   const teamGroups: TeamGroup[] = [
     {
       name: "管理层",
       enName: "Management",
       members: [
-        { name: "许德淋", roleTitle: "队长", image: "/images/team/temp.webp" },
-        { name: "马晓阳", roleTitle: "底盘总监", image: "/images/team/temp.webp" },
-        { name: "陈君灏", roleTitle: "车身总监", image: "/images/team/temp.webp" },
-        { name: "冯俞霖", roleTitle: "电气总监", image: "/images/team/temp.webp" },
-        { name: "郭祺", roleTitle: "运营总监", image: "/images/team/temp.webp" },
-        { name: "霍文祺", roleTitle: "车队经理", image: "/images/team/temp.webp" },
-        { name: "李浩然", roleTitle: "运动部长", image: "/images/team/temp.webp" },
+        { name: "许德淋", roleTitle: "队长", image: "/images/team/xu-delin.webp" },
+        { name: "马晓阳", roleTitle: "底盘总监", image: "/images/team/ma-xiaoyang.webp" },
+        { name: "陈君灏", roleTitle: "车身总监", image: "/images/team/chen-junhao.webp" },
+        { name: "冯俞霖", roleTitle: "电气总监", image: "/images/team/feng-yulin.webp" },
+        { name: "郭祺", roleTitle: "运营总监", image: "/images/team/guo-qi.webp" },
+        { name: "霍文祺", roleTitle: "车队经理", image: "/images/team/huo-wenqi.webp" },
+        { name: "李浩然", roleTitle: "运动部长", image: "/images/team/li-haoran.webp" },
       ]
     },
     {
       name: "运营部",
       enName: "Operations",
       members: [
-        { name: "张城铭", roleTitle: "商业组组长", image: "/images/team/temp.webp" },
-        { name: "陶劲安", roleTitle: "运营组组员", image: "/images/team/temp.webp" },
+        { name: "张城铭", roleTitle: "商业组组长", image: "/images/team/zhang-chengming.webp" },
+        { name: "陶劲安", roleTitle: "运营组组员", image: "/images/team/tao-jinan.webp" },
       ]
     },
     {
       name: "底盘部",
-      enName: "Mechanic",
+      enName: "Mechanical",
       members: [
-        { name: "姜鸿元", subgroup: "悬架转向组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "郭家旭", subgroup: "悬架转向组", image: "/images/team/temp.webp" },
-        { name: "陈冰", subgroup: "悬架转向组", image: "/images/team/temp.webp" },
-        { name: "邹梓泓", subgroup: "悬架转向组", image: "/images/team/temp.webp" },
-        { name: "邱国烨", subgroup: "悬架转向组", image: "/images/team/temp.webp" },
-        { name: "杨杰文", subgroup: "传动组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "肖维", subgroup: "传动组", image: "/images/team/temp.webp" },
-        { name: "何博宇", subgroup: "传动组", image: "/images/team/temp.webp" },
-        { name: "彭绍阳", subgroup: "制动组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "邓济佳", subgroup: "制动组", image: "/images/team/temp.webp" },
-        { name: "胡铭彦", subgroup: "动力学算法组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "江泽伟", subgroup: "动力学算法组", image: "/images/team/temp.webp" },
+        { name: "姜鸿元", subgroup: "悬架转向组", isLeader: true, image: "/images/team/jiang-hongyuan.webp" },
+        { name: "郭家旭", subgroup: "悬架转向组", image: "/images/team/guo-jiaxu.webp" },
+        { name: "陈冰", subgroup: "悬架转向组", image: "/images/team/chen-bing.webp" },
+        { name: "邹梓泓", subgroup: "悬架转向组", image: "/images/team/zou-zihong.webp" },
+        { name: "邱国烨", subgroup: "悬架转向组", image: "/images/team/qiu-guoye.webp" },
+        { name: "杨杰文", subgroup: "传动组", isLeader: true, image: "/images/team/yang-jiewen.webp" },
+        { name: "肖维", subgroup: "传动组", image: "/images/team/xiao-wei.webp" },
+        { name: "何博宇", subgroup: "传动组", image: "/images/team/he-boyu.webp" },
+        { name: "彭绍阳", subgroup: "制动组", isLeader: true, image: "/images/team/peng-shaoyang.webp" },
+        
+        { name: "胡铭彦", subgroup: "动力学算法组", isLeader: true, image: "/images/team/hu-mingyan.webp" },
+        { name: "江泽伟", subgroup: "动力学算法组", image: "/images/team/jiang-zewei.webp" },
       ]
     },
     {
       name: "车身部",
-      enName: "Aerodynamics & Body",
+      enName: "Aerodynamics & Bodywork",
       members: [
-        { name: "王振宇", subgroup: "单体壳组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "刘沂轩", subgroup: "单体壳组", image: "/images/team/temp.webp" },
-        { name: "彭成君", subgroup: "空套组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "杨贯弘", subgroup: "空套组", image: "/images/team/temp.webp" },
-        { name: "徐瀚文", subgroup: "空套组", image: "/images/team/temp.webp" },
-        { name: "黎梓浩", subgroup: "空套组", image: "/images/team/temp.webp" },
-        { name: "汤帅", subgroup: "冷却组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "劳乔煜", subgroup: "冷却组", image: "/images/team/temp.webp" },
+        { name: "王振宇", subgroup: "单体壳组", isLeader: true, image: "/images/team/wang-zhenyu.webp" },
+        { name: "刘沂轩", subgroup: "单体壳组", image: "/images/team/liu-yixuan.webp" },
+        { name: "彭成君", subgroup: "空套组", isLeader: true, image: "/images/team/peng-chengjun.webp" },
+        { name: "杨贯弘", subgroup: "空套组", image: "/images/team/yang-guanhong.webp" },
+        { name: "徐瀚文", subgroup: "空套组", image: "/images/team/xu-hanwen.webp" },
+        { name: "黎梓浩", subgroup: "空套组", image: "/images/team/li-zihao.webp" },
+        { name: "汤帅", subgroup: "冷却组", isLeader: true, image: "/images/team/tang-shuai.webp" },
+        { name: "劳乔煜", subgroup: "冷却组", image: "/images/team/lao-qiaoyu.webp" },
       ]
     },
     {
       name: "电气部",
-      enName: "Electronics",
+      enName: "Electrical",
       members: [
-        { name: "黄熙文", subgroup: "电池组", isLeader: true, image: "/images/team/temp.webp" },
-        { name: "曾潮锋", subgroup: "电池组", image: "/images/team/temp.webp" },
-        { name: "陈天柚", subgroup: "电池组", image: "/images/team/temp.webp" },
-        { name: "杨辉利", subgroup: "电池组", image: "/images/team/temp.webp" },
-        { name: "李魏朝阳", subgroup: "电子系统组", image: "/images/team/temp.webp" },
-        { name: "连梓键", subgroup: "电子系统组", image: "/images/team/temp.webp" },
-        { name: "邱贤辉", subgroup: "电机组", isLeader: true, image: "/images/team/temp.webp" },
+        { name: "黄熙文", subgroup: "电池组", isLeader: true, image: "/images/team/huang-xiwen.webp" },
+        { name: "曾潮锋", subgroup: "电池组", image: "/images/team/zeng-chaofeng.webp" },
+        { name: "陈天柚", subgroup: "电池组", image: "/images/team/chen-tianyou.webp" },
+        { name: "杨辉利", subgroup: "电池组", image: "/images/team/yang-huili.webp" },
+        { name: "李魏朝阳", subgroup: "电子系统组", image: "/images/team/li-weizhaoyang.webp" },
+        { name: "连梓键", subgroup: "电子系统组", image: "/images/team/lian-zijian.webp" },
+        { name: "邱贤辉", subgroup: "电机组", isLeader: true, image: "/images/team/qiu-xianhui.webp" },
       ]
     }
   ];
@@ -94,7 +124,7 @@ export default function Team() {
       <div className="relative z-10 max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="text-center mb-10 md:mb-32">
-          <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter">
+          <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter break-words">
             MEET THE <span className="text-[#7928CA]">TEAM-2026</span>
           </h2>
           <div className="w-24 h-1 bg-[#7928CA] mx-auto mt-4"></div>
@@ -109,7 +139,7 @@ export default function Team() {
                 <h3 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-2 tracking-wide">
                   {group.name}
                 </h3>
-                <span className="font-mono text-sm text-[#7928CA] uppercase tracking-widest font-bold">
+                <span className="font-mono text-sm text-[#7928CA] tracking-widest font-bold normal-case">
                   {group.enName}
                 </span>
               </div>
@@ -128,7 +158,10 @@ export default function Team() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-50px" }}
                       transition={{ delay: (idx % 10) * 0.05, duration: 0.5 }}
-                      onClick={() => setActiveMember(isActive ? null : memberId)}
+                      onClick={() => {
+                        if (!isMobile) return;
+                        setActiveMember(isActive ? null : memberId);
+                      }}
                     >
                       {/* The Back Card */}
                       <div
@@ -177,6 +210,13 @@ export default function Team() {
                             isActive ? "scale-105" : "group-hover:scale-105"
                           }`}
                           referrerPolicy="no-referrer"
+                          onError={(event) => {
+                            const img = event.currentTarget;
+
+                            if (!img.src.endsWith(TEAM_IMAGE_FALLBACK)) {
+                              img.src = TEAM_IMAGE_FALLBACK;
+                            }
+                          }}
                         />
 
                         {/* Name Overlay always visible */}

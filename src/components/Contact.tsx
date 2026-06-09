@@ -27,9 +27,6 @@ export default function Contact() {
                 广东省深圳市坪山区<br className="md:hidden" />
                 兰田路3002号深圳技术大学城市交通与物流学院
               </p>
-              <p className="text-aurora-white/40 text-[10px] md:text-xs">
-                微信公众号：SZTU赛车工作室
-              </p>
               <p className="text-aurora-white/40 text-[10px] sm:text-xs mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                 <span>&copy; {new Date().getFullYear()} AURORA Racing. All rights reserved.</span>
                 <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" className="hover:text-aurora-white transition-colors">
