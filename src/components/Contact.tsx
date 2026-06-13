@@ -57,7 +57,7 @@ export default function Contact() {
           <div className="flex flex-row items-center gap-3 md:gap-8 self-center md:self-end">
             <span className="text-aurora-white font-display font-bold text-lg mr-2 hidden sm:block">Connect via</span>
             <a
-              href="https://www.instagram.com/szturacingcarstudio?igsh=YW5pNW9ham85bDho"
+              href="https://www.instagram.com/_auroraracing?igsh=YW5pNW9ham85bDho&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 transition-all duration-300 shadow-lg"

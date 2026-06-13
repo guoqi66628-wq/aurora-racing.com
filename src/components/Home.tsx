@@ -470,7 +470,7 @@ export default function Home() {
         {/* Social Links */}
         <div className="hidden md:flex items-center gap-3 md:gap-4 ml-4 pointer-events-auto">
           <a
-            href="https://www.instagram.com/szturacingcarstudio?igsh=YW5pNW9ham85bDho"
+            href="https://www.instagram.com/_auroraracing?igsh=YW5pNW9ham85bDho&utm_source=qr"
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 transition-all duration-100 shadow-lg border border-white/5"
