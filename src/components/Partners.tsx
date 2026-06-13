@@ -15,13 +15,13 @@ export default function Partners() {
     {
       name: "紧密合作伙伴",
       color: "text-slate-700",
-      sponsors: Array.from({ length: 10 }, (_, i) => `/images/partners/tier1-${i + 1}.webp`),
+      sponsors: Array.from({ length: 12 }, (_, i) => `/images/partners/tier1-${i + 1}.webp`),
       gridClass: "grid-cols-3 sm:grid-cols-3 md:grid-cols-5 px-4 md:px-0",
     },
     {
       name: "合作伙伴",
       color: "text-slate-600",
-      sponsors: Array.from({ length: 13 }, (_, i) => `/images/partners/tier2-${i + 1}.webp`),
+      sponsors: Array.from({ length: 14 }, (_, i) => `/images/partners/tier2-${i + 1}.webp`),
       gridClass: "grid-cols-3 sm:grid-cols-3 md:grid-cols-5 px-4 md:px-0",
     }
   ];

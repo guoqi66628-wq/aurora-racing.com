@@ -1,9 +1,23 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
 
 export default function Contact() {
+  const [showStoreQR, setShowStoreQR] = useState(false);
+  const qrRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function handleDoc(e: MouseEvent) {
+      if (!qrRef.current) return;
+      if (showStoreQR && !qrRef.current.contains(e.target as Node)) {
+        setShowStoreQR(false);
+      }
+    }
+    document.addEventListener("click", handleDoc);
+    return () => document.removeEventListener("click", handleDoc);
+  }, [showStoreQR]);
+
   return (
     <footer
       id="contact"
@@ -91,14 +105,15 @@ export default function Contact() {
               </svg>
             </a>
 
-            <div className="relative group">
+            <div className="relative group" ref={qrRef}>
               <button
+                onClick={() => setShowStoreQR((s) => !s)}
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 focus:scale-110 transition-all duration-300 shadow-lg outline-none"
               >
                 <ShoppingCart size={18} className="md:w-5 md:h-5" />
               </button>
-              {/* Store QR Code Tooltip */}
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-100 z-50 pointer-events-none">
+              {/* Store QR Code Tooltip - supports click on mobile and hover on desktop */}
+              <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-4 transition-all duration-100 z-50 ${showStoreQR ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'} md:group-hover:opacity-100 md:group-hover:visible md:group-hover:pointer-events-auto`}>
                 <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
                     <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
