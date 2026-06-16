@@ -7,7 +7,7 @@ export default function Loader() {
     <motion.div 
       className="fixed inset-0 z-[9999] bg-aurora-black flex items-center justify-center"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
+      exit={{ opacity: 0, scale: 0.95, transition: { duration: 1, ease: "easeInOut" } }}
     >
       <div className="loader">
         {[...Array(9)].map((_, i) => (

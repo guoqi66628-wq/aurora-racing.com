@@ -60,6 +60,8 @@ export default function Home() {
         <img
           src="/images/hero/hero-desktop.webp"
           alt="AURORA Racing Car"
+          width="1920"
+          height="1080"
           className="hidden md:block w-full h-full object-cover opacity-100 md:scale-125 lg:scale-100 md:origin-[85%_70%] lg:origin-center"
           referrerPolicy="no-referrer"
         />
@@ -67,6 +69,8 @@ export default function Home() {
         <img
           src="/images/hero/hero-mobile.webp"
           alt="AURORA Racing Car (Mobile)"
+          width="1080"
+          height="1920"
           className="block md:hidden w-full h-full object-cover object-center opacity-100"
           referrerPolicy="no-referrer"
         />

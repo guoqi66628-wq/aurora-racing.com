@@ -245,7 +245,7 @@ export default function Specs() {
           >
             {/* Image */}
             <div className="w-full aspect-[4/3] bg-slate-50 relative flex items-center justify-center overflow-hidden">
-              <img src={activeCar.image} alt={`Aurora Racing Car ${activeCar.year}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              <img src={activeCar.image} alt={`Aurora Racing Car ${activeCar.year}`} width="800" height="600" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
 
             {/* Content */}

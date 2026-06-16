@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+/* Google Fonts Face Definitions with CLS Optimization */
+@font-face {
+  font-family: "Inter";
+  src: url("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHAPMtMZiEpAfusQgVW58yO3hVP_8w.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHAPMtMZhBo_jCEjYBJ4fCh9pn4CK4.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHAPMtMZjT4BBq3dFXHn5FH6h-s1Zw.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHAPMtMZhBo_jCEjYBJ4fCh9pn4CK4.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("https://fonts.gstatic.com/s/outfit/v11/ga6iaw1J5X0T9RW6j9bNVlZ2dG5-tfDwp4agh6NsMMI.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("https://fonts.gstatic.com/s/outfit/v11/ga6iaw1J5X0T9RW6j9bNVlZ2dG5-tfDwp4agh6NsMMI.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
 @theme {
   --color-aurora-black: #000000;
   --color-aurora-white: #FCFCFC;
@@ -35,7 +78,8 @@ body {
 }
 
 html {
-  overflow-y: overlay;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar {
@@ -422,4 +466,20 @@ html.is-scrolling {
 .iso-pro:hover .iso-dot,
 .iso-pro.active .iso-dot {
   transform: translate(8px, -8px);
+}
+
+/* CLS Optimization Classes */
+/* Prevent layout shift from animations */
+nav {
+  contain: layout;
+}
+
+/* GPU-accelerated animation optimization */
+[data-animate] {
+  will-change: transform;
+}
+
+/* Stable hero section */
+.hero-section {
+  contain: layout;
 }

@@ -74,6 +74,8 @@ function StackedImageGallery({ images, stackDirection = "right" }: { images: str
             <img
               src={card.src}
               alt=""
+              width="1200"
+              height="900"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />

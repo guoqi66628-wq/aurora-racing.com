@@ -107,6 +107,7 @@ export default function Team() {
       enName: "Electrical",
       members: [
         { name: "黄熙文", subgroup: "电池组", isLeader: true, image: "/images/team/huang-xiwen.webp" },
+        { name: "赵耀豪", subgroup: "电池组", image: "/images/team/zhao-yaohao.webp" },
         { name: "曾潮锋", subgroup: "电池组", image: "/images/team/zeng-chaofeng.webp" },
         { name: "陈天柚", subgroup: "电池组", image: "/images/team/chen-tianyou.webp" },
         { name: "杨辉利", subgroup: "电池组", image: "/images/team/yang-huili.webp" },
@@ -206,6 +207,8 @@ export default function Team() {
                         <img
                           src={member.image}
                           alt={member.name}
+                          width="300"
+                          height="400"
                           className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
                             isActive ? "scale-105" : "group-hover:scale-105"
                           }`}

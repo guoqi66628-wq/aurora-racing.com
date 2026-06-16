@@ -51,6 +51,8 @@ export default function Navbar() {
           <img 
             src="/images/logos/logo-mobile.webp" 
             alt="Aurora Logo" 
+            width="220"
+            height="60"
             className="md:hidden w-28 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
             referrerPolicy="no-referrer"
           />

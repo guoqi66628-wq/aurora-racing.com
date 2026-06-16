@@ -53,6 +53,8 @@ export default function Partners() {
               transition={{ delay: idx * 0.1 }}
               src={src}
               alt={`Special Strategic Sponsor ${idx + 1}`}
+              width="200"
+              height="80"
               className="w-auto max-w-[140px] sm:max-w-[200px] h-12 sm:h-20 md:h-24 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
@@ -73,6 +75,8 @@ export default function Partners() {
               transition={{ delay: idx * 0.1 + 0.2 }}
               src={src}
               alt={`Top Sponsor ${idx + 1}`}
+              width="160"
+              height="64"
               className="w-auto max-w-[80px] sm:max-w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
