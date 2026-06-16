@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Partners from "./components/Partners";
@@ -56,6 +57,7 @@ export default function App() {
         <Team />
       </main>
       <Contact />
+      <SpeedInsights />
     </div>
   );
 }
