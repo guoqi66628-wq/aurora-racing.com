@@ -304,6 +304,8 @@ export default function Specs() {
               <img
                 src={activeCar.image}
                 alt={`Aurora Racing Car ${activeCar.year}`}
+                width="1672"
+                height="941"
                 className="w-full h-full md:object-cover md:object-center md:opacity-100"
                 referrerPolicy="no-referrer"
               />

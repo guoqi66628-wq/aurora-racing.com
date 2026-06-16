@@ -55,7 +55,7 @@ export default function Partners() {
               alt={`Special Strategic Sponsor ${idx + 1}`}
               width="200"
               height="80"
-              className="w-auto max-w-[140px] sm:max-w-[200px] h-12 sm:h-20 md:h-24 object-contain hover:scale-110 transition-all duration-300"
+              className="w-[140px] sm:w-[200px] h-12 sm:h-20 md:h-24 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
           ))}
@@ -77,7 +77,7 @@ export default function Partners() {
               alt={`Top Sponsor ${idx + 1}`}
               width="160"
               height="64"
-              className="w-auto max-w-[80px] sm:max-w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
+              className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
           ))}
@@ -87,10 +87,9 @@ export default function Partners() {
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0, height: 0, scale: 0.95, y: -20 }}
+              initial={{ opacity: 0, scale: 0.98, y: -12 }}
               animate={{ 
                 opacity: 1, 
-                height: "auto", 
                 scale: 1, 
                 y: 0,
                 transition: { 
@@ -103,9 +102,8 @@ export default function Partners() {
               }}
               exit={{ 
                 opacity: 0, 
-                height: 0, 
-                scale: 0.95, 
-                y: -20,
+                scale: 0.98, 
+                y: -12,
                 transition: { duration: 0.3, ease: "easeInOut" }
               }}
               className="overflow-hidden"
@@ -123,7 +121,9 @@ export default function Partners() {
                           transition={{ delay: 0.05 + (idx * 0.05), duration: 0.4, ease: "easeOut" }}
                           src={src}
                           alt={`Top Sponsor ${idx + 4}`}
-                          className="w-auto max-w-[80px] sm:max-w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
+                          width="160"
+                          height="64"
+                          className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
                           referrerPolicy="no-referrer"
                         />
                       ))}
@@ -144,7 +144,9 @@ export default function Partners() {
                             transition={{ delay: 0.1 + (idx * 0.05), duration: 0.4, ease: "easeOut" }}
                             src={src}
                             alt={`${tier.name} Sponsor ${idx + 1}`}
-                            className="w-auto max-w-[60px] sm:max-w-[120px] h-5 sm:h-12 md:h-14 object-contain hover:scale-110 transition-all duration-300"
+                            width="120"
+                            height="56"
+                            className="w-[60px] sm:w-[120px] h-5 sm:h-12 md:h-14 object-contain hover:scale-110 transition-all duration-300"
                             referrerPolicy="no-referrer"
                           />
                         ))}

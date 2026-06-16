@@ -51,8 +51,8 @@ export default function Navbar() {
           <img 
             src="/images/logos/logo-mobile.webp" 
             alt="Aurora Logo" 
-            width="220"
-            height="60"
+            width="1620"
+            height="587"
             className="md:hidden w-28 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
             referrerPolicy="no-referrer"
           />
@@ -158,9 +158,10 @@ export default function Navbar() {
                   <AnimatePresence>
                     {isMobileCarsOpen && (
                       <motion.div 
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
+                        initial={{ maxHeight: 0, opacity: 0 }}
+                        animate={{ maxHeight: 240, opacity: 1 }}
+                        exit={{ maxHeight: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
                         className="overflow-hidden flex flex-col pl-4 pb-2"
                       >
                         {[2026, 2025, 2024, 2023, 2022, 2021].map(year => (

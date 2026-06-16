@@ -472,6 +472,7 @@ html.is-scrolling {
 /* Prevent layout shift from animations */
 nav {
   contain: layout;
+  min-height: 5rem;
 }
 
 /* GPU-accelerated animation optimization */
