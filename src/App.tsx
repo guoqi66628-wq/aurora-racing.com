@@ -40,28 +40,34 @@ export default function App() {
     const MAX_WAIT = 2000;
     const start = Date.now();
 
-    const dismiss = () => {
-      if (Date.now() - start >= MIN_SHOW) {
-        setIsLoading(false);
-      }
-    };
-
     // Preload the correct hero image for the current viewport
     const heroImg = new Image();
     heroImg.src =
       window.innerWidth < 768
         ? '/images/hero/hero-mobile.webp'
         : '/images/hero/hero-desktop.webp';
-    heroImg.onload = dismiss;
-    heroImg.onerror = dismiss;
 
-    const maxTimer = setTimeout(dismiss, MAX_WAIT);
+    let heroEarlyTimer: ReturnType<typeof setTimeout>;
+
+    heroImg.onload = () => {
+      const elapsed = Date.now() - start;
+      const remaining = MIN_SHOW - elapsed;
+      // If hero loaded before min show time, wait until MIN_SHOW to dismiss
+      // If hero loaded after min show time, dismiss immediately
+      heroEarlyTimer = setTimeout(() => setIsLoading(false), Math.max(0, remaining));
+    };
+    heroImg.onerror = () => {
+      // On error, fall through to maxTimer
+    };
+
+    const maxTimer = setTimeout(() => setIsLoading(false), MAX_WAIT);
     // ------------------------------------------------
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
       clearTimeout(maxTimer);
+      clearTimeout(heroEarlyTimer);
       heroImg.onload = null;
       heroImg.onerror = null;
     };
