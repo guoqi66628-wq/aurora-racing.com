@@ -11,9 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet" />
     
-    <!-- Hero Image Preload for LCP -->
-    <link rel="preload" as="image" href="/images/hero/hero-desktop.webp" imagesrcset="/images/hero/hero-desktop.webp" />
-    <link rel="preload" as="image" href="/images/hero/hero-mobile.webp" imagesrcset="/images/hero/hero-mobile.webp" />
+    <!-- Hero Image Preload for LCP (media-conditional to avoid double-load) -->
+    <link rel="preload" as="image" href="/images/hero/hero-desktop.webp" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="/images/hero/hero-mobile.webp" media="(max-width: 767px)" />
   </head>
   <body>
     <div id="root"></div>

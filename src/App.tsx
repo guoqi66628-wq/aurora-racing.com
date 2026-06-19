@@ -31,15 +31,39 @@ export default function App() {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+
+    // -------- Loader conditional dismissal ----------
+    // Show loader for at least 800ms (brand visibility).
+    // Dismiss as soon as the hero image finishes loading,
+    // with a hard cap of 2000ms to avoid blocking FCP/LCP.
+    const MIN_SHOW = 800;
+    const MAX_WAIT = 2000;
+    const start = Date.now();
+
+    const dismiss = () => {
+      if (Date.now() - start >= MIN_SHOW) {
+        setIsLoading(false);
+      }
+    };
+
+    // Preload the correct hero image for the current viewport
+    const heroImg = new Image();
+    heroImg.src =
+      window.innerWidth < 768
+        ? '/images/hero/hero-mobile.webp'
+        : '/images/hero/hero-desktop.webp';
+    heroImg.onload = dismiss;
+    heroImg.onerror = dismiss;
+
+    const maxTimer = setTimeout(dismiss, MAX_WAIT);
+    // ------------------------------------------------
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
-      clearTimeout(timer);
+      clearTimeout(maxTimer);
+      heroImg.onload = null;
+      heroImg.onerror = null;
     };
   }, []);
 
