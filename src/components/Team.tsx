@@ -98,8 +98,7 @@ export default function Team() {
         { name: "杨贯弘", subgroup: "空套组", image: "/images/team/yang-guanhong.webp" },
         { name: "徐瀚文", subgroup: "空套组", image: "/images/team/xu-hanwen.webp" },
         { name: "黎梓浩", subgroup: "空套组", image: "/images/team/li-zihao.webp" },
-        { name: "汤帅", subgroup: "冷却组", isLeader: true, image: "/images/team/tang-shuai.webp" },
-        { name: "劳乔煜", subgroup: "冷却组", image: "/images/team/lao-qiaoyu.webp" },
+
       ]
     },
     {

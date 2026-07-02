@@ -8,6 +8,11 @@ export default function Partners() {
   // Individual naming for sponsor logos to facilitate easy replacement
   const specialStrategicSponsors = Array.from({ length: 2 }, (_, i) => `/images/partners/strategic-${i + 1}.webp`);
   const topSponsors = Array.from({ length: 3 }, (_, i) => `/images/partners/top-${i + 1}.webp`);
+  const mobileSecondRowSponsors = [
+    "/images/partners/top-4.webp",
+    "/images/partners/top-rem-1.webp",
+    "/images/partners/top-rem-2.webp",
+  ];
   
   const remainingTopSponsors = Array.from({ length: 4 }, (_, i) => `/images/partners/top-rem-${i + 1}.webp`);
 
@@ -66,21 +71,52 @@ export default function Partners() {
         </h3>
 
         {/* Initial Top Sponsors Display */}
-        <div className="grid grid-cols-3 sm:flex sm:flex-row justify-center justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 mb-8 w-full max-w-5xl mx-auto px-4 sm:px-0">
-          {topSponsors.map((src, idx) => (
+        <div className="flex flex-col items-center w-full max-w-5xl mx-auto px-4 sm:px-0 mb-8">
+          <div className="grid grid-cols-3 sm:flex sm:flex-row justify-center justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full">
+            {topSponsors.map((src, idx) => (
+              <motion.img
+                key={`top-sponsor-${idx}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 + 0.2 }}
+                src={src}
+                alt={`Top Sponsor ${idx + 1}`}
+                width="160"
+                height="64"
+                className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
+                referrerPolicy="no-referrer"
+              />
+            ))}
             <motion.img
-              key={`top-sponsor-${idx}`}
+              key="top-sponsor-3"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 + 0.2 }}
-              src={src}
-              alt={`Top Sponsor ${idx + 1}`}
+              transition={{ delay: 0.3 + 0.2 }}
+              src="/images/partners/top-4.webp"
+              alt="Top Sponsor 4"
               width="160"
               height="64"
-              className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
+              className="hidden sm:block w-[160px] h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
-          ))}
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 sm:hidden justify-items-center items-center gap-6 w-full">
+            {mobileSecondRowSponsors.map((src, idx) => (
+              <motion.img
+                key={`mobile-second-row-${idx}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 + idx * 0.1 }}
+                src={src}
+                alt={`Mobile Second Row Sponsor ${idx + 1}`}
+                width="160"
+                height="64"
+                className="w-[80px] h-8 object-contain hover:scale-110 transition-all duration-300"
+                referrerPolicy="no-referrer"
+              />
+            ))}
+          </div>
         </div>
 
         {/* Expanded Sponsors Panel with Jelly Effect */}
@@ -110,9 +146,9 @@ export default function Partners() {
             >
               <div className="pb-12">
                 <div className="flex flex-col gap-16 md:gap-24">
-                  {/* Remaining 4 Top Sponsors */}
+                  {/* Remaining Top Sponsors */}
                   <div className="flex flex-col items-center">
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 justify-items-center justify-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full max-w-5xl mx-auto px-4 sm:px-0">
+                    <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 justify-items-center justify-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full max-w-5xl mx-auto px-4 sm:px-0">
                       {remainingTopSponsors.map((src, idx) => (
                         <motion.img
                           key={`rem-sponsor-${idx}`}
