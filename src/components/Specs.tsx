@@ -123,6 +123,8 @@ export default function Specs() {
                   setActiveYear(car.year);
                 }
               }} 
+              aria-label={`Show ${yearNameMap[car.year]} specs`}
+              aria-pressed={activeYear === car.year}
               className="relative z-10 flex flex-col items-center gap-1 group flex-1"
             >
               <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-all duration-300 border-[3px] ${activeYear === car.year ? 'bg-purple-600 border-purple-200 shadow-sm scale-125' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}></div>
@@ -146,6 +148,8 @@ export default function Specs() {
                   setActiveYear(car.year);
                 }
               }} 
+              aria-label={`Show AURORA-${car.year.toString().slice(-2)} specs`}
+              aria-pressed={activeYear === car.year}
               className={`relative z-10 flex items-center justify-center w-full h-full iso-pro group/btn ${activeYear === car.year ? 'active' : ''}`}
             >
               <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10">
@@ -245,7 +249,7 @@ export default function Specs() {
           >
             {/* Image */}
             <div className="w-full aspect-[4/3] bg-slate-50 relative flex items-center justify-center overflow-hidden">
-              <img src={activeCar.image} alt={`Aurora Racing Car ${activeCar.year}`} width="800" height="600" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              <img src={activeCar.image} alt={`Aurora Racing Car ${activeCar.year}`} width="800" height="600" loading="lazy" decoding="async" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
 
             {/* Content */}
@@ -306,6 +310,8 @@ export default function Specs() {
                 alt={`Aurora Racing Car ${activeCar.year}`}
                 width="1672"
                 height="941"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full md:object-cover md:object-center md:opacity-100"
                 referrerPolicy="no-referrer"
               />

@@ -27,19 +27,19 @@ export default function Team() {
     const mq = window.matchMedia("(max-width: 767px)");
 
     const handler = (e: MediaQueryListEvent | MediaQueryList) => {
-      // MediaQueryListEvent for change listener, MediaQueryList for initial call
-      // @ts-ignore
       setIsMobile(e.matches);
     };
 
     handler(mq);
 
-    if (mq.addEventListener) mq.addEventListener("change", handler);
-    else mq.addListener(handler);
+    const changeHandler = (event: MediaQueryListEvent) => handler(event);
+
+    if (mq.addEventListener) mq.addEventListener("change", changeHandler);
+    else mq.addListener(changeHandler);
 
     return () => {
-      if (mq.removeEventListener) mq.removeEventListener("change", handler as any);
-      else mq.removeListener(handler as any);
+      if (mq.removeEventListener) mq.removeEventListener("change", changeHandler);
+      else mq.removeListener(changeHandler);
     };
   }, []);
 
@@ -208,6 +208,8 @@ export default function Team() {
                           alt={member.name}
                           width="300"
                           height="400"
+                          loading="lazy"
+                          decoding="async"
                           className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
                             isActive ? "scale-105" : "group-hover:scale-105"
                           }`}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
@@ -54,6 +54,7 @@ export default function Navbar() {
             width="1620"
             height="587"
             className="md:hidden w-28 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+            decoding="async"
             referrerPolicy="no-referrer"
           />
         </a>
@@ -125,6 +126,8 @@ export default function Navbar() {
           <button 
             className="text-aurora-white p-2 hover:text-aurora-purple transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -151,6 +154,8 @@ export default function Navbar() {
                     <button 
                       onClick={(e) => { e.preventDefault(); setIsMobileCarsOpen(!isMobileCarsOpen); }}
                       className="p-2 text-aurora-white/60 hover:text-aurora-purple outline-none"
+                      aria-label={isMobileCarsOpen ? "Collapse car years" : "Expand car years"}
+                      aria-expanded={isMobileCarsOpen}
                     >
                       <ChevronDown size={20} className={`transition-transform duration-300 ${isMobileCarsOpen ? "rotate-180" : ""}`} />
                     </button>

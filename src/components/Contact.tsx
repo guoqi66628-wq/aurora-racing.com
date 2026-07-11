@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { motion } from "motion/react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
 
@@ -35,6 +34,8 @@ export default function Contact() {
                 width="1620"
                 height="587"
                 className="md:hidden w-20 h-auto"
+                loading="lazy"
+                decoding="async"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -62,6 +63,7 @@ export default function Contact() {
               href="https://www.instagram.com/_auroraracing?igsh=YW5pNW9ham85bDho&utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit Aurora Racing on Instagram"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 transition-all duration-300 shadow-lg"
             >
               <Instagram size={18} className="md:w-5 md:h-5" />
@@ -71,6 +73,7 @@ export default function Contact() {
               href="https://v.douyin.com/oEkcT_36nZI/"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Visit Aurora Racing on Douyin"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 transition-all duration-300 shadow-lg"
             >
               <svg
@@ -93,6 +96,7 @@ export default function Contact() {
               href="https://mp.weixin.qq.com/s/1R4bB9u1_6IFkO6a6LQT0w"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Read Aurora Racing on WeChat"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 transition-all duration-300 shadow-lg outline-none"
             >
               <svg
@@ -110,6 +114,8 @@ export default function Contact() {
             <div className="relative group" ref={qrRef}>
               <button
                 onClick={() => setShowStoreQR((s) => !s)}
+                aria-label="Toggle purchase QR code"
+                aria-expanded={showStoreQR}
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e] flex items-center justify-center text-aurora-white hover:bg-aurora-purple hover:scale-110 focus:scale-110 transition-all duration-300 shadow-lg outline-none"
               >
                 <ShoppingCart size={18} className="md:w-5 md:h-5" />
@@ -119,7 +125,7 @@ export default function Contact() {
                 <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
                     <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
-                    <img src="/images/store/qrcode.png" alt="Purchase QR Code" width="331" height="331" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    <img src="/images/store/qrcode.png" alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                   </div>
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
                 </div>

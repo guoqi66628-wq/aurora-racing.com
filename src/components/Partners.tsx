@@ -8,13 +8,12 @@ export default function Partners() {
   // Individual naming for sponsor logos to facilitate easy replacement
   const specialStrategicSponsors = Array.from({ length: 2 }, (_, i) => `/images/partners/strategic-${i + 1}.webp`);
   const topSponsors = Array.from({ length: 3 }, (_, i) => `/images/partners/top-${i + 1}.webp`);
-  const mobileSecondRowSponsors = [
-    "/images/partners/top-4.webp",
-    "/images/partners/top-rem-1.webp",
-    "/images/partners/top-rem-2.webp",
-  ];
-  
-  const remainingTopSponsors = Array.from({ length: 4 }, (_, i) => `/images/partners/top-rem-${i + 1}.webp`);
+  const secondRowSponsors = Array.from({ length: 4 }, (_, i) => `/images/partners/top-rem-${i + 1}.webp`);
+  const topStrategicSponsors = [...topSponsors, "/images/partners/top-4.webp"];
+  const expandedStrategicSponsors = [...secondRowSponsors, "/images/partners/top-rem-5.webp"];
+  const visibleMobileStrategicSponsors = isExpanded
+    ? [...topStrategicSponsors, ...expandedStrategicSponsors]
+    : topStrategicSponsors;
 
   const sponsorTiers = [
     {
@@ -60,6 +59,8 @@ export default function Partners() {
               alt={`Special Strategic Sponsor ${idx + 1}`}
               width="200"
               height="80"
+              loading="lazy"
+              decoding="async"
               className="w-[140px] sm:w-[200px] h-12 sm:h-20 md:h-24 object-contain hover:scale-110 transition-all duration-300"
               referrerPolicy="no-referrer"
             />
@@ -72,8 +73,28 @@ export default function Partners() {
 
         {/* Initial Top Sponsors Display */}
         <div className="flex flex-col items-center w-full max-w-5xl mx-auto px-4 sm:px-0 mb-8">
-          <div className="grid grid-cols-3 sm:flex sm:flex-row justify-center justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full">
-            {topSponsors.map((src, idx) => (
+          <div className="grid grid-cols-3 justify-items-center items-center gap-x-4 gap-y-8 w-full max-w-sm mx-auto sm:hidden">
+            {visibleMobileStrategicSponsors.map((src, idx) => (
+              <motion.img
+                key={`mobile-strategic-sponsor-${idx}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.06 + 0.2 }}
+                src={src}
+                alt={`Strategic Sponsor ${idx + 1}`}
+                width="160"
+                height="64"
+                loading="lazy"
+                decoding="async"
+                className={`${idx === 4 || idx === 8 ? "w-[96px] h-10" : "w-[80px] h-8"} object-contain hover:scale-110 transition-all duration-300`}
+                referrerPolicy="no-referrer"
+              />
+            ))}
+          </div>
+
+          {/* Row 1: top-1 ~ top-4 */}
+          <div className="hidden sm:flex sm:flex-row justify-center justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full">
+            {topStrategicSponsors.map((src, idx) => (
               <motion.img
                 key={`top-sponsor-${idx}`}
                 initial={{ opacity: 0, y: 20 }}
@@ -83,36 +104,9 @@ export default function Partners() {
                 alt={`Top Sponsor ${idx + 1}`}
                 width="160"
                 height="64"
+                loading="lazy"
+                decoding="async"
                 className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
-                referrerPolicy="no-referrer"
-              />
-            ))}
-            <motion.img
-              key="top-sponsor-3"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + 0.2 }}
-              src="/images/partners/top-4.webp"
-              alt="Top Sponsor 4"
-              width="160"
-              height="64"
-              className="hidden sm:block w-[160px] h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-
-          <div className="mt-4 grid grid-cols-3 sm:hidden justify-items-center items-center gap-6 w-full">
-            {mobileSecondRowSponsors.map((src, idx) => (
-              <motion.img
-                key={`mobile-second-row-${idx}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 + idx * 0.1 }}
-                src={src}
-                alt={`Mobile Second Row Sponsor ${idx + 1}`}
-                width="160"
-                height="64"
-                className="w-[80px] h-8 object-contain hover:scale-110 transition-all duration-300"
                 referrerPolicy="no-referrer"
               />
             ))}
@@ -146,23 +140,44 @@ export default function Partners() {
             >
               <div className="pb-12">
                 <div className="flex flex-col gap-16 md:gap-24">
-                  {/* Remaining Top Sponsors */}
-                  <div className="flex flex-col items-center">
-                    <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 justify-items-center justify-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full max-w-5xl mx-auto px-4 sm:px-0">
-                      {remainingTopSponsors.map((src, idx) => (
+                  {/* Row 2 & Row 3: top-rem-1 ~ top-rem-5 grouped together */}
+                  <div className="hidden sm:flex flex-col items-center gap-2 sm:gap-4">
+                    {/* Row 2: top-rem-1 ~ top-rem-4 */}
+                    <div className="grid grid-cols-2 sm:flex sm:flex-row justify-center justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full max-w-5xl mx-auto px-4 sm:px-0">
+                      {secondRowSponsors.map((src, idx) => (
                         <motion.img
-                          key={`rem-sponsor-${idx}`}
+                          key={`expanded-second-row-${idx}`}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.05 + (idx * 0.05), duration: 0.4, ease: "easeOut" }}
                           src={src}
-                          alt={`Top Sponsor ${idx + 4}`}
+                          alt={`Second Row Sponsor ${idx + 1}`}
                           width="160"
                           height="64"
+                          loading="lazy"
+                          decoding="async"
                           className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300"
                           referrerPolicy="no-referrer"
                         />
                       ))}
+                    </div>
+
+                    {/* Row 3: top-rem-5 */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 justify-items-center items-center gap-6 sm:gap-8 md:gap-16 lg:gap-24 w-full max-w-5xl mx-auto px-4 sm:px-0">
+                      <motion.img
+                        key="expanded-top-rem-5"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.25, duration: 0.4, ease: "easeOut" }}
+                        src="/images/partners/top-rem-5.webp"
+                        alt="Top Sponsor 5"
+                        width="160"
+                        height="64"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-[80px] sm:w-[160px] h-8 sm:h-16 md:h-20 object-contain hover:scale-110 transition-all duration-300 sm:translate-x-8"
+                        referrerPolicy="no-referrer"
+                      />
                     </div>
                   </div>
 
@@ -182,6 +197,8 @@ export default function Partners() {
                             alt={`${tier.name} Sponsor ${idx + 1}`}
                             width="120"
                             height="56"
+                            loading="lazy"
+                            decoding="async"
                             className="w-[60px] sm:w-[120px] h-5 sm:h-12 md:h-14 object-contain hover:scale-110 transition-all duration-300"
                             referrerPolicy="no-referrer"
                           />
@@ -200,6 +217,8 @@ export default function Partners() {
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex flex-col items-center gap-2 text-aurora-black/50 hover:text-aurora-purple transition-colors group"
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Hide all sponsors" : "View all sponsors"}
           >
             <span className="text-sm font-bold tracking-widest uppercase">
               {isExpanded ? "Hide All Sponsors" : "View All Sponsors"}
