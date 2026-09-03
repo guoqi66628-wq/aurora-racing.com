@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { getAssetUrl } from "../utils/cdn";
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState({
@@ -11,8 +12,8 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Target date: Aug 1st, 2026, 00:00:00 CEST (Spanish time)
-    const targetDate = new Date("2026-08-01T00:00:00+02:00");
+    // Target date: Nov 15th, 2026, 00:00:00 Beijing time
+    const targetDate = new Date("2026-11-15T00:00:00+08:00");
 
     const interval = setInterval(() => {
       const currentTime = new Date();
@@ -52,13 +53,13 @@ export default function Home() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen flex md:items-center items-start pt-28 md:pt-24 pb-24 md:py-24 overflow-hidden bg-aurora-black"
+      className="relative w-full min-h-screen flex md:items-center items-start pt-20 md:pt-24 pb-24 md:py-24 overflow-hidden bg-aurora-black"
     >
       {/* Background Image with Lightened Overlay */}
       <div className="absolute inset-0 z-0">
         {/* Desktop Image */}
         <img
-          src="/images/hero/hero-desktop.webp"
+          src={getAssetUrl("/images/hero/hero-desktop.webp")}
           alt="AURORA Racing Car"
           width="1920"
           height="1080"
@@ -69,7 +70,7 @@ export default function Home() {
         />
         {/* Mobile Image */}
         <img
-          src="/images/hero/hero-mobile.webp"
+          src={getAssetUrl("/images/hero/hero-mobile.webp")}
           alt="AURORA Racing Car (Mobile)"
           width="1080"
           height="1920"
@@ -177,7 +178,7 @@ export default function Home() {
               <span className="w-16 h-4 bg-[#1E096A] skew-x-[-20deg]"></span>
               <span className="w-5 h-4 bg-[#6722C1] skew-x-[-20deg]"></span>
               <span className="w-5 h-4 bg-[#177A45] skew-x-[-20deg]"></span>
-              <span className="w-10 h-4 bg-[#00E5FF] skew-x-[-20deg]"></span>
+              <span className="w-10 h-4 bg-[#2CF06D] skew-x-[-20deg]"></span>
             </span>
           </div>
           <span className="hidden md:block text-[#151515]">RACING</span>
@@ -194,7 +195,7 @@ export default function Home() {
               <span className="w-10 h-2 bg-[#1E096A] skew-x-[-20deg]"></span>
               <span className="w-4 h-2 bg-[#6722C1] skew-x-[-20deg]"></span>
               <span className="w-4 h-2 bg-[#177A45] skew-x-[-20deg]"></span>
-              <span className="w-8 h-2 bg-[#00E5FF] skew-x-[-20deg]"></span>
+              <span className="w-8 h-2 bg-[#2CF06D] skew-x-[-20deg]"></span>
             </span>
           </div>
         </motion.h1>
@@ -218,16 +219,16 @@ export default function Home() {
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="md:hidden text-[14px] font-medium text-[#4a4a4a] tracking-[0.12em] uppercase mb-4 italic leading-relaxed px-1"
+          className="md:hidden text-[10px] font-medium text-[#4a4a4a] tracking-[0.08em] uppercase mb-4 italic leading-snug whitespace-nowrap px-1"
         >
-          Pushing the limits of<br />electric performance
+          Pushing the limits of electric performance
         </motion.p>
 
         <motion.div
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="relative"
+          className="relative -mt-0.5"
         >
           <div className="relative z-10 w-fit -ml-8 -mt-2 hidden md:block">
             {/* Cyberpunk Style Countdown Panels */}
@@ -236,27 +237,27 @@ export default function Home() {
               {/* Top Banner (Dark) */}
               <div className="relative flex h-14 md:h-[60px] w-fit">
                 {/* Background Shadow */}
-                <div className="absolute inset-0 bg-red-600/10 blur-[20px] rounded-full"></div>
+                <div className="absolute inset-0 bg-green-400/10 blur-[20px] rounded-full"></div>
                 
                 {/* Skewed Container */}
                 <div className="relative flex bg-[#111116] skew-x-[-20deg] border border-white/5 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
                   
                   {/* Left Red & Purple Accents */}
-                  <div className="absolute left-[-2px] inset-y-0 w-[4px] bg-[#FF003C] shadow-[0_0_12px_#FF003C]"></div>
-                  <div className="absolute left-[-2px] bottom-[-2px] w-8 h-[3px] bg-[#FF003C] shadow-[0_0_8px_#FF003C]"></div>
+                  <div className="absolute left-[-2px] inset-y-0 w-[4px] bg-[#2CF06D] shadow-[0_0_12px_#2CF06D]"></div>
+                  <div className="absolute left-[-2px] bottom-[-2px] w-8 h-[3px] bg-[#2CF06D] shadow-[0_0_8px_#2CF06D]"></div>
                   <div className="absolute left-6 bottom-[-2px] w-1/3 h-[2px] bg-[#9922EE] shadow-[0_0_10px_#9922EE]"></div>
                   
                   {/* Left Top subtle accent */}
                   <div className="absolute top-2 left-6 flex gap-1 opacity-80 skew-x-[20deg]">
-                    <div className="w-2 h-[2px] bg-[#FF003C] skew-x-[-20deg]"></div>
-                    <div className="w-2 h-[2px] bg-[#FF003C] skew-x-[-20deg]"></div>
+                    <div className="w-2 h-[2px] bg-[#2CF06D] skew-x-[-20deg]"></div>
+                    <div className="w-2 h-[2px] bg-[#2CF06D] skew-x-[-20deg]"></div>
                   </div>
 
                   {/* Left Content */}
                   <div className="px-5 md:px-8 flex items-center justify-center relative">
                     <div className="skew-x-[20deg] flex items-center gap-3">
-                      <div className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border-[2px] border-[#FF003C] bg-transparent flex items-center justify-center relative shadow-[0_0_8px_#FF003C]">
-                         <div className="w-1.5 h-1.5 rounded-full bg-[#FF003C]"></div>
+                      <div className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border-[2px] border-[#2CF06D] bg-transparent flex items-center justify-center relative shadow-[0_0_8px_#2CF06D]">
+                         <div className="w-1.5 h-1.5 rounded-full bg-[#2CF06D]"></div>
                       </div>
                       <span className="text-gray-100 font-display font-medium tracking-[0.2em] text-[10px] md:text-[13px] uppercase italic drop-shadow-md">
                         NEXT RACE START IN
@@ -270,22 +271,25 @@ export default function Home() {
                   {/* Right Content */}
                   <div className="px-6 md:px-12 pr-12 md:pr-16 flex items-center justify-center relative">
                     {/* Top right red accent line & tick marks */}
-                    <div className="absolute top-[-2px] right-0 w-2/3 h-[3px] bg-[#FF003C] shadow-[0_0_10px_#FF003C]"></div>
-                    <div className="absolute top-[-2px] right-[-2px] w-[3px] h-6 bg-[#FF003C] shadow-[0_0_10px_#FF003C]"></div>
+                    <div className="absolute top-[-2px] right-0 w-2/3 h-[3px] bg-[#2CF06D] shadow-[0_0_10px_#2CF06D]"></div>
+                    <div className="absolute top-[-2px] right-[-2px] w-[3px] h-6 bg-[#2CF06D] shadow-[0_0_10px_#2CF06D]"></div>
                     <div className="absolute top-[8px] right-5 flex gap-1 skew-x-[20deg]">
-                      <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
-                      <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
-                      <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
                     </div>
                     {/* Bottom right purple edge */}
                     <div className="absolute bottom-[-2px] right-4 w-1/3 h-[2px] bg-[#9922EE] shadow-[0_0_10px_#9922EE]"></div>
 
                     <div className="skew-x-[20deg] flex flex-col items-start pt-1 ml-4">
-                      <span className="text-white font-display font-black tracking-widest text-lg md:text-[22px] italic leading-none drop-shadow-[0_0_5px_rgba(255,255,255,0.4)]">
-                        BARCELONA
-                      </span>
-                      <span className="text-[#FF003C] font-sans font-bold tracking-[0.25em] text-[10px] md:text-sm uppercase italic drop-shadow-[0_0_5px_rgba(255,0,60,0.6)] mt-0.5">
-                        FSS
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-display font-black tracking-widest text-lg md:text-[22px] italic leading-none drop-shadow-[0_0_5px_rgba(255,255,255,0.4)]">
+                          合肥
+                        </span>
+                        <span className="text-base md:text-lg" role="img" aria-label="China Flag">🇨🇳</span>
+                      </div>
+                      <span className="text-[#2CF06D] font-sans font-bold tracking-[0.25em] text-[10px] md:text-sm uppercase italic drop-shadow-[0_0_5px_rgba(44,240,109,0.6)] mt-0.5">
+                        FSC
                       </span>
                     </div>
                   </div>
@@ -299,17 +303,17 @@ export default function Home() {
                 <div className="relative flex bg-[#f5f6f8] skew-x-[-20deg] border border-gray-200">
                   
                   {/* Top left red corner block */}
-                  <div className="absolute top-[-2px] left-8 w-16 h-[3px] bg-[#FF003C] shadow-[0_0_10px_#FF003C]"></div>
-                  <div className="absolute top-[-2px] left-[-2px] w-[3px] h-12 bg-[#FF003C] shadow-[0_0_10px_#FF003C]"></div>
+                  <div className="absolute top-[-2px] left-8 w-16 h-[3px] bg-[#2CF06D] shadow-[0_0_10px_#2CF06D]"></div>
+                  <div className="absolute top-[-2px] left-[-2px] w-[3px] h-12 bg-[#2CF06D] shadow-[0_0_10px_#2CF06D]"></div>
                   
                   {/* Left bottom purple edge */}
                   <div className="absolute left-[-2px] bottom-2 w-[2px] h-1/2 bg-[#9922EE] shadow-[0_0_8px_#9922EE]"></div>
 
                   {/* Decorative faint slots/lines top */}
                   <div className="absolute top-2 left-6 flex gap-1 skew-x-[20deg] opacity-70">
-                      <div className="w-2 h-1 bg-[#FF003C] skew-x-[-20deg]"></div>
-                      <div className="w-2 h-1 bg-[#FF003C] skew-x-[-20deg]"></div>
-                      <div className="w-2 h-1 bg-[#FF003C] skew-x-[-20deg]"></div>
+                      <div className="w-2 h-1 bg-[#2CF06D] skew-x-[-20deg]"></div>
+                      <div className="w-2 h-1 bg-[#2CF06D] skew-x-[-20deg]"></div>
+                      <div className="w-2 h-1 bg-[#2CF06D] skew-x-[-20deg]"></div>
                   </div>
 
                   {/* Decorative faint lines middle top/bottom */}
@@ -325,12 +329,12 @@ export default function Home() {
                   </div>
                   
                   {/* Bottom right red corner block */}
-                  <div className="absolute bottom-[-2px] right-2 w-32 h-[3px] bg-[#FF003C] shadow-[0_0_12px_rgba(255,0,60,0.8)]"></div>
-                  <div className="absolute bottom-[-2px] right-[-2px] w-[3px] h-10 bg-[#FF003C] shadow-[0_0_12px_rgba(255,0,60,0.8)]"></div>
+                  <div className="absolute bottom-[-2px] right-2 w-32 h-[3px] bg-[#2CF06D] shadow-[0_0_12px_rgba(44,240,109,0.8)]"></div>
+                  <div className="absolute bottom-[-2px] right-[-2px] w-[3px] h-10 bg-[#2CF06D] shadow-[0_0_12px_rgba(44,240,109,0.8)]"></div>
                   <div className="absolute top-[10px] right-10 flex gap-1 skew-x-[20deg] opacity-80">
-                      <div className="w-2 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
-                      <div className="w-2 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
-                      <div className="w-2 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-2 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-2 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
+                      <div className="w-2 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px]"></div>
                   </div>
 
                   {/* Content (Timers) */}
@@ -349,8 +353,8 @@ export default function Home() {
 
                       {/* Colon Divider 1 */}
                       <div className="flex flex-col gap-2 items-center justify-center -mt-6">
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
                       </div>
 
                       {/* Hours */}
@@ -365,8 +369,8 @@ export default function Home() {
 
                       {/* Colon Divider 2 */}
                       <div className="flex flex-col gap-2 items-center justify-center -mt-6">
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
                       </div>
 
                       {/* Minutes */}
@@ -381,8 +385,8 @@ export default function Home() {
 
                       {/* Colon Divider 3 */}
                       <div className="flex flex-col gap-2 items-center justify-center -mt-6">
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
-                        <div className="w-1.5 h-1.5 bg-[#FF003C] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(255,0,60,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
+                        <div className="w-1.5 h-1.5 bg-[#2CF06D] skew-x-[-20deg] rounded-[1px] shadow-[0_0_5px_rgba(44,240,109,0.4)]"></div>
                       </div>
 
                       {/* Seconds */}
@@ -403,16 +407,15 @@ export default function Home() {
           </div>
 
           {/* Fallback for Mobile context (Keep a smaller version for phone screens) */}
-          <div className="md:hidden relative z-10 w-fit -mt-2 scale-90 origin-top-left">
+          <div className="md:hidden relative z-10 w-fit -mt-2 cd-mob origin-top-left">
             <div className="bg-white/95 backdrop-blur-xl text-aurora-black px-4 py-3 shadow-[0_10px_30px_rgba(30,9,106,0.15)] rounded-xl border-t border-r border-b border-white/40 overflow-hidden relative skew-x-[-10deg] max-w-fit mt-2">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#FF003C] to-[#9922EE]"></div>
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#2CF06D] to-[#9922EE]"></div>
 
               <div className="flex items-center gap-2 mb-2 mt-0.5 px-1 skew-x-[10deg]">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF003C] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#FF003C]"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#9922EE]"></span>
                 </span>
-                <span className="text-[10px] font-display font-bold tracking-widest text-[#FF003C] uppercase italic">BARCELONA FSS</span>
+                <span className="text-[10px] font-display font-bold tracking-widest text-[#9922EE] uppercase italic">合肥 🇨🇳 FSC</span>
               </div>
 
               <div className="flex items-center gap-3 font-display skew-x-[10deg] px-1">
@@ -425,8 +428,8 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col gap-1 items-center justify-center -mt-2">
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
                 </div>
 
                 {/* Hours */}
@@ -438,8 +441,8 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col gap-1 items-center justify-center -mt-2">
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
                 </div>
 
                 {/* Minutes */}
@@ -451,8 +454,8 @@ export default function Home() {
                 </div>
 
                 <div className="flex flex-col gap-1 items-center justify-center -mt-2">
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
-                  <div className="w-1 h-1 bg-[#FF003C] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
+                  <div className="w-1 h-1 bg-[#9922EE] skew-x-[-10deg]"></div>
                 </div>
 
                 {/* Seconds */}
@@ -541,7 +544,7 @@ export default function Home() {
               <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
                   <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
-                  <img src="/images/store/qrcode.png" alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  <img src={getAssetUrl("/images/store/qrcode.png")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
               </div>

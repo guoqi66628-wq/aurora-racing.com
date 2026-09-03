@@ -1,3 +1,4 @@
+import { getAssetUrl } from "../utils/cdn";
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 
@@ -15,7 +16,7 @@ interface TeamGroup {
   members: TeamMember[];
 }
 
-const TEAM_IMAGE_FALLBACK = "/images/team/temp.webp";
+const TEAM_IMAGE_FALLBACK = getAssetUrl("/images/team/temp.webp");
 
 export default function Team() {
   const [activeMember, setActiveMember] = useState<string | null>(null);
@@ -53,51 +54,51 @@ export default function Team() {
       name: "管理层",
       enName: "Management",
       members: [
-        { name: "许德淋", roleTitle: "队长", image: "/images/team/xu-delin.webp" },
-        { name: "马晓阳", roleTitle: "底盘总监", image: "/images/team/ma-xiaoyang.webp" },
-        { name: "陈君灏", roleTitle: "车身总监", image: "/images/team/chen-junhao.webp" },
-        { name: "冯俞霖", roleTitle: "电气总监", image: "/images/team/feng-yulin.webp" },
-        { name: "郭祺", roleTitle: "运营总监", image: "/images/team/guo-qi.webp" },
-        { name: "霍文祺", roleTitle: "车队经理", image: "/images/team/huo-wenqi.webp" },
-        { name: "李浩然", roleTitle: "运动部长", image: "/images/team/li-haoran.webp" },
+        { name: "许德淋", roleTitle: "队长", image: getAssetUrl("/images/team/xu-delin.webp") },
+        { name: "马晓阳", roleTitle: "底盘总监", image: getAssetUrl("/images/team/ma-xiaoyang.webp") },
+        { name: "陈君灏", roleTitle: "车身总监", image: getAssetUrl("/images/team/chen-junhao.webp") },
+        { name: "冯俞霖", roleTitle: "电气总监", image: getAssetUrl("/images/team/feng-yulin.webp") },
+        { name: "郭祺", roleTitle: "运营总监", image: getAssetUrl("/images/team/guo-qi.webp") },
+        { name: "霍文祺", roleTitle: "车队经理", image: getAssetUrl("/images/team/huo-wenqi.webp") },
+        { name: "李浩然", roleTitle: "运动部长", image: getAssetUrl("/images/team/li-haoran.webp") },
       ]
     },
     {
       name: "运营部",
       enName: "Operations",
       members: [
-        { name: "张城铭", roleTitle: "商业组组长", image: "/images/team/zhang-chengming.webp" },
-        { name: "陶劲安", roleTitle: "运营组组员", image: "/images/team/tao-jinan.webp" },
+        { name: "张城铭", roleTitle: "商业组组长", image: getAssetUrl("/images/team/zhang-chengming.webp") },
+        { name: "陶劲安", roleTitle: "运营组组员", image: getAssetUrl("/images/team/tao-jinan.webp") },
       ]
     },
     {
       name: "底盘部",
       enName: "Mechanical",
       members: [
-        { name: "姜鸿元", subgroup: "悬架转向组", isLeader: true, image: "/images/team/jiang-hongyuan.webp" },
-        { name: "郭家旭", subgroup: "悬架转向组", image: "/images/team/guo-jiaxu.webp" },
-        { name: "陈冰", subgroup: "悬架转向组", image: "/images/team/chen-bing.webp" },
-        { name: "邹梓泓", subgroup: "悬架转向组", image: "/images/team/zou-zihong.webp" },
-        { name: "邱国烨", subgroup: "悬架转向组", image: "/images/team/qiu-guoye.webp" },
-        { name: "杨杰文", subgroup: "传动组", isLeader: true, image: "/images/team/yang-jiewen.webp" },
-        { name: "肖维", subgroup: "传动组", image: "/images/team/xiao-wei.webp" },
-        { name: "何博宇", subgroup: "传动组", image: "/images/team/he-boyu.webp" },
-        { name: "彭绍阳", subgroup: "制动组", isLeader: true, image: "/images/team/peng-shaoyang.webp" },
+        { name: "姜鸿元", subgroup: "悬架转向组", isLeader: true, image: getAssetUrl("/images/team/jiang-hongyuan.webp") },
+        { name: "郭家旭", subgroup: "悬架转向组", image: getAssetUrl("/images/team/guo-jiaxu.webp") },
+        { name: "陈冰", subgroup: "悬架转向组", image: getAssetUrl("/images/team/chen-bing.webp") },
+        { name: "邹梓泓", subgroup: "悬架转向组", image: getAssetUrl("/images/team/zou-zihong.webp") },
+        { name: "邱国烨", subgroup: "悬架转向组", image: getAssetUrl("/images/team/qiu-guoye.webp") },
+        { name: "杨杰文", subgroup: "传动组", isLeader: true, image: getAssetUrl("/images/team/yang-jiewen.webp") },
+        { name: "肖维", subgroup: "传动组", image: getAssetUrl("/images/team/xiao-wei.webp") },
+        { name: "何博宇", subgroup: "传动组", image: getAssetUrl("/images/team/he-boyu.webp") },
+        { name: "彭绍阳", subgroup: "制动组", isLeader: true, image: getAssetUrl("/images/team/peng-shaoyang.webp") },
         
-        { name: "胡铭彦", subgroup: "动力学算法组", isLeader: true, image: "/images/team/hu-mingyan.webp" },
-        { name: "江泽伟", subgroup: "动力学算法组", image: "/images/team/jiang-zewei.webp" },
+        { name: "胡铭彦", subgroup: "动力学算法组", isLeader: true, image: getAssetUrl("/images/team/hu-mingyan.webp") },
+        { name: "江泽伟", subgroup: "动力学算法组", image: getAssetUrl("/images/team/jiang-zewei.webp") },
       ]
     },
     {
       name: "车身部",
       enName: "Aerodynamics & Bodywork",
       members: [
-        { name: "王振宇", subgroup: "单体壳组", isLeader: true, image: "/images/team/wang-zhenyu.webp" },
-        { name: "刘沂轩", subgroup: "单体壳组", image: "/images/team/liu-yixuan.webp" },
-        { name: "彭成君", subgroup: "空套组", isLeader: true, image: "/images/team/peng-chengjun.webp" },
-        { name: "杨贯弘", subgroup: "空套组", image: "/images/team/yang-guanhong.webp" },
-        { name: "徐瀚文", subgroup: "空套组", image: "/images/team/xu-hanwen.webp" },
-        { name: "黎梓浩", subgroup: "空套组", image: "/images/team/li-zihao.webp" },
+        { name: "王振宇", subgroup: "单体壳组", isLeader: true, image: getAssetUrl("/images/team/wang-zhenyu.webp") },
+        { name: "刘沂轩", subgroup: "单体壳组", image: getAssetUrl("/images/team/liu-yixuan.webp") },
+        { name: "彭成君", subgroup: "空套组", isLeader: true, image: getAssetUrl("/images/team/peng-chengjun.webp") },
+        { name: "杨贯弘", subgroup: "空套组", image: getAssetUrl("/images/team/yang-guanhong.webp") },
+        { name: "徐瀚文", subgroup: "空套组", image: getAssetUrl("/images/team/xu-hanwen.webp") },
+        { name: "黎梓浩", subgroup: "空套组", image: getAssetUrl("/images/team/li-zihao.webp") },
 
       ]
     },
@@ -105,14 +106,14 @@ export default function Team() {
       name: "电气部",
       enName: "Electrical",
       members: [
-        { name: "黄熙文", subgroup: "电池组", isLeader: true, image: "/images/team/huang-xiwen.webp" },
-        { name: "赵耀豪", subgroup: "电池组", image: "/images/team/zhao-yaohao.webp" },
-        { name: "曾潮锋", subgroup: "电池组", image: "/images/team/zeng-chaofeng.webp" },
-        { name: "陈天柚", subgroup: "电池组", image: "/images/team/chen-tianyou.webp" },
-        { name: "杨辉利", subgroup: "电池组", image: "/images/team/yang-huili.webp" },
-        { name: "李魏朝阳", subgroup: "电子系统组", image: "/images/team/li-weizhaoyang.webp" },
-        { name: "连梓键", subgroup: "电子系统组", image: "/images/team/lian-zijian.webp" },
-        { name: "邱贤辉", subgroup: "电机组", isLeader: true, image: "/images/team/qiu-xianhui.webp" },
+        { name: "黄熙文", subgroup: "电池组", isLeader: true, image: getAssetUrl("/images/team/huang-xiwen.webp") },
+        { name: "赵耀豪", subgroup: "电池组", image: getAssetUrl("/images/team/zhao-yaohao.webp") },
+        { name: "曾潮锋", subgroup: "电池组", image: getAssetUrl("/images/team/zeng-chaofeng.webp") },
+        { name: "陈天柚", subgroup: "电池组", image: getAssetUrl("/images/team/chen-tianyou.webp") },
+        { name: "杨辉利", subgroup: "电池组", image: getAssetUrl("/images/team/yang-huili.webp") },
+        { name: "李魏朝阳", subgroup: "电子系统组", image: getAssetUrl("/images/team/li-weizhaoyang.webp") },
+        { name: "连梓键", subgroup: "电子系统组", image: getAssetUrl("/images/team/lian-zijian.webp") },
+        { name: "邱贤辉", subgroup: "电机组", isLeader: true, image: getAssetUrl("/images/team/qiu-xianhui.webp") },
       ]
     }
   ];

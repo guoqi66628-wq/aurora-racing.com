@@ -1,3 +1,4 @@
+import { getAssetUrl } from "../utils/cdn";
 import { useState, useRef, useEffect } from "react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
@@ -29,7 +30,7 @@ export default function Contact() {
             <div className="flex items-center">
               <AuroraLogo className="hidden md:block w-32 h-auto" />
               <img 
-                src="/images/logos/logo-mobile.webp" 
+                src={getAssetUrl("/images/logos/logo-mobile.webp")} 
                 alt="Aurora Logo" 
                 width="1620"
                 height="587"
@@ -125,7 +126,7 @@ export default function Contact() {
                 <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
                     <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
-                    <img src="/images/store/qrcode.png" alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    <img src={getAssetUrl("/images/store/qrcode.png")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                   </div>
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
                 </div>

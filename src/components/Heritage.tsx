@@ -1,3 +1,4 @@
+import { getAssetUrl } from "../utils/cdn";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { MousePointerClick } from "lucide-react";
@@ -116,9 +117,9 @@ export default function Heritage() {
       description:
         "一切始于一个炽热的梦想。当我们的第一辆方程式赛车在工作室发出第一声轰鸣，名为“AURORA”的追风故事就此开篇。我们用汗水与热爱，在从零到一的土地上埋下了第一颗种子。",
       images: [
-        "/images/heritage/2021-1.webp",
-        "/images/heritage/2021-2.webp",
-        "/images/heritage/2021-3.webp",
+        getAssetUrl("/images/heritage/2021-1.webp"),
+        getAssetUrl("/images/heritage/2021-2.webp"),
+        getAssetUrl("/images/heritage/2021-3.webp"),
       ],
     },
     {
@@ -127,9 +128,9 @@ export default function Heritage() {
       description:
         "毅然选择了最具挑战的四电机技术路径。零经验、疫情、设计失误如同淬火的熔炉。经历了通宵排障的焦灼，虽然止步于高压检测门前，但正是这次“失败”，淬炼了我们不屈的筋骨。",
       images: [
-        "/images/heritage/2022-1.webp",
-        "/images/heritage/2022-2.webp",
-        "/images/heritage/2022-3.webp",
+        getAssetUrl("/images/heritage/2022-1.webp"),
+        getAssetUrl("/images/heritage/2022-2.webp"),
+        getAssetUrl("/images/heritage/2022-3.webp"),
       ],
     },
     {
@@ -138,9 +139,9 @@ export default function Heritage() {
       description:
         "坚守，终将迎来破晓。带着全新的E07，我们再次站上赛场，并历史性地通过了车检！耐久赛冲过终点线的那一刻只剩泪水与欢呼——我们不仅完赛，更一举斩获全国季军，首度登上了全国赛的领奖台！",
       images: [
-        "/images/heritage/2023-1.webp",
-        "/images/heritage/2023-2.webp",
-        "/images/heritage/2023-3.webp",
+        getAssetUrl("/images/heritage/2023-1.webp"),
+        getAssetUrl("/images/heritage/2023-2.webp"),
+        getAssetUrl("/images/heritage/2023-3.webp"),
       ],
     },
     {
@@ -149,9 +150,9 @@ export default function Heritage() {
       description:
         "荣耀是对深耕最好的加冕。团队在技术与管理上持续沉淀，最终在全国最高舞台上，一举斩获中国大学生电动方程式大赛全国亚军，攀上了队史的新高峰。",
       images: [
-        "/images/heritage/2024-1.webp",
-        "/images/heritage/2024-2.webp",
-        "/images/heritage/2024-3.webp",
+        getAssetUrl("/images/heritage/2024-1.webp"),
+        getAssetUrl("/images/heritage/2024-2.webp"),
+        getAssetUrl("/images/heritage/2024-3.webp"),
       ],
     },
     {
@@ -160,9 +161,9 @@ export default function Heritage() {
       description:
         "打造首台单体壳赛车，踏上“一车二赛”征程。我们不仅将“最佳涂装奖”从海外带回，更在国内车检、设计答辩与商业报告中实现重大突破。然而距最高荣誉仅一步之遥时，由于一根线束的隐患，我们遗憾止步于耐久赛，未能实现最终的目标。这份落差让我们更加清醒：要成为真正的强队，技术、协作与细节仍需千锤百炼。",
       images: [
-        "/images/heritage/2025-1.webp",
-        "/images/heritage/2025-2.webp",
-        "/images/heritage/2025-3.webp",
+        getAssetUrl("/images/heritage/2025-1.webp"),
+        getAssetUrl("/images/heritage/2025-2.webp"),
+        getAssetUrl("/images/heritage/2025-3.webp"),
       ],
     },
     {
@@ -171,9 +172,9 @@ export default function Heritage() {
       description:
         "带着去年积累的宝贵经验与刻骨遗憾，重整旗鼓的极光车队将再次出征西班牙并迎战中国赛。我们在单体壳轻量化、电控稳定性与底盘调校等方面进行了系统性提升。这一次，我们拥有了更足的底气与更加坚定的信念，将以更完备的准备与成熟的姿态，直面国内外赛场的严苛考验，全力奔赴我们心中的星海！",
       images: [
-        "/images/heritage/2026-1.webp",
-        "/images/heritage/2026-2.webp",
-        "/images/heritage/2026-3.webp",
+        getAssetUrl("/images/heritage/2026-1.webp"),
+        getAssetUrl("/images/heritage/2026-2.webp"),
+        getAssetUrl("/images/heritage/2026-3.webp"),
       ],
     },
   ];

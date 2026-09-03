@@ -441,3 +441,10 @@ nav {
 .hero-section {
   contain: layout;
 }
+
+/* Mobile countdown widget: auto-scale with viewport width.
+   Baseline = 360px (scale 1). Grows with width, clamped to avoid overflow.
+   zoom scales both rendering and layout, so the widget keeps its footprint. */
+.cd-mob {
+  zoom: clamp(0.9, calc(100vw / 360), 1.28);
+}

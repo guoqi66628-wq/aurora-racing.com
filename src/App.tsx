@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { getAssetUrl } from "./utils/cdn";
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -44,8 +45,8 @@ export default function App() {
     const heroImg = new Image();
     heroImg.src =
       window.innerWidth < 768
-        ? '/images/hero/hero-mobile.webp'
-        : '/images/hero/hero-desktop.webp';
+        ? getAssetUrl("/images/hero/hero-mobile.webp")
+        : getAssetUrl("/images/hero/hero-desktop.webp");
 
     let heroEarlyTimer: ReturnType<typeof setTimeout>;
 

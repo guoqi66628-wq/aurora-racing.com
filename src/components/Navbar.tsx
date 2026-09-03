@@ -1,3 +1,4 @@
+import { getAssetUrl } from "../utils/cdn";
 import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -49,7 +50,7 @@ export default function Navbar() {
         <a href="#home" className="flex items-center group -ml-2 sm:-ml-4" onClick={() => setIsMobileMenuOpen(false)}>
           <AuroraLogo className="hidden md:block w-36 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
           <img 
-            src="/images/logos/logo-mobile.webp" 
+            src={getAssetUrl("/images/logos/logo-mobile.webp")} 
             alt="Aurora Logo" 
             width="1620"
             height="587"

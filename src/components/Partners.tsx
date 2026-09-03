@@ -1,3 +1,4 @@
+import { getAssetUrl } from "../utils/cdn";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -9,8 +10,8 @@ export default function Partners() {
   const specialStrategicSponsors = Array.from({ length: 2 }, (_, i) => `/images/partners/strategic-${i + 1}.webp`);
   const topSponsors = Array.from({ length: 3 }, (_, i) => `/images/partners/top-${i + 1}.webp`);
   const secondRowSponsors = Array.from({ length: 4 }, (_, i) => `/images/partners/top-rem-${i + 1}.webp`);
-  const topStrategicSponsors = [...topSponsors, "/images/partners/top-4.webp"];
-  const expandedStrategicSponsors = [...secondRowSponsors, "/images/partners/top-rem-5.webp"];
+  const topStrategicSponsors = [...topSponsors, getAssetUrl("/images/partners/top-4.webp")];
+  const expandedStrategicSponsors = [...secondRowSponsors, getAssetUrl("/images/partners/top-rem-5.webp")];
   const visibleMobileStrategicSponsors = isExpanded
     ? [...topStrategicSponsors, ...expandedStrategicSponsors]
     : topStrategicSponsors;
@@ -169,7 +170,7 @@ export default function Partners() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.25, duration: 0.4, ease: "easeOut" }}
-                        src="/images/partners/top-rem-5.webp"
+                        src={getAssetUrl("/images/partners/top-rem-5.webp")}
                         alt="Top Sponsor 5"
                         width="160"
                         height="64"
