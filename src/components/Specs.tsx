@@ -1,7 +1,9 @@
 import { getAssetUrl } from "../utils/cdn";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useMousePositionVar } from "../hooks/useMousePosition";
+import { useLiquidGlass } from "../hooks/useLiquidGlass";
 
 interface CarData {
   year: number;
@@ -64,7 +66,7 @@ const carData: CarData[] = [
     highlight: "全面进化",
     image: getAssetUrl("/images/cars/car-2026.webp"),
     specs: { weight: "200kg", wheelbase: "1530mm", track: "1250mm" },
-    performance: { skidpad: "-", acceleration: "-", autocross: "-", endurance: "-", enduranceColor: "text-aurora-white" }
+    performance: { skidpad: "4.986", acceleration: "3.489", autocross: "1m", endurance: "DQ", enduranceColor: "text-aurora-white" }
   }
 ];
 
@@ -129,7 +131,7 @@ export default function Specs() {
               className="relative z-10 flex flex-col items-center gap-1 group flex-1"
             >
               <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-all duration-300 border-[3px] ${activeYear === car.year ? 'bg-purple-600 border-purple-200 shadow-sm scale-125' : 'bg-white border-slate-300 group-hover:border-slate-400'}`}></div>
-              <span className={`font-mono text-[10px] sm:text-xs font-bold transition-all duration-300 whitespace-nowrap mt-1 ${activeYear === car.year ? 'text-purple-600' : 'text-slate-400'}`}>
+              <span className={`font-display text-[10px] sm:text-xs font-bold transition-all duration-300 whitespace-nowrap mt-1 ${activeYear === car.year ? 'text-purple-600' : 'text-slate-400'}`}>
                 {yearNameMap[car.year]}
               </span>
             </button>
@@ -159,7 +161,7 @@ export default function Specs() {
                 <span className="iso-layer absolute left-0 top-0"></span>
                 <div className={`iso-dot w-4 h-4 rounded-full transition-all duration-300 border-2 relative z-10 ${activeYear === car.year ? 'bg-[#7928CA] border-[#7928CA] shadow-[0_0_15px_#7928CA] scale-125' : 'bg-[#0a0a0a] border-white/40 group-hover/btn:border-[#7928CA]/80 group-hover/btn:scale-110'}`}></div>
               </div>
-              <span className={`iso-text absolute left-[60%] font-mono font-bold drop-shadow-md whitespace-nowrap ${activeYear === car.year ? 'text-[#7928CA] text-xl' : 'text-white/70 text-lg group-hover/btn:text-[#7928CA]/80'}`}>
+              <span className={`iso-text absolute left-[60%] font-display font-bold drop-shadow-md whitespace-nowrap ${activeYear === car.year ? 'text-[#7928CA] text-xl' : 'text-white/70 text-lg group-hover/btn:text-[#7928CA]/80'}`}>
                 AURORA-{car.year.toString().slice(-2)}
               </span>
             </button>
@@ -256,7 +258,7 @@ export default function Specs() {
             {/* Content */}
             <div className="p-6 flex flex-col w-full">
               <div className="flex justify-between items-end mb-4">
-                <h3 className="font-mono text-2xl font-black text-black tracking-tight drop-shadow-sm">AURORA-{activeCar.year.toString().slice(-2)}</h3>
+                <h3 className="font-display text-2xl font-black text-black tracking-tight drop-shadow-sm">AURORA-{activeCar.year.toString().slice(-2)}</h3>
               </div>
               
               {activeCar.specs && (
@@ -303,7 +305,7 @@ export default function Specs() {
               initial={{ opacity: 0, scale: 1.02, filter: "blur(0px)" }}
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, scale: 0.98, filter: "blur(0px)" }}
-              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
               className="absolute inset-0 md:flex md:items-center md:justify-center pointer-events-none"
             >
               <img
@@ -328,12 +330,12 @@ export default function Specs() {
           <div className="flex flex-col gap-4 justify-center items-center md:items-end w-full md:gap-4 md:mt-auto md:pointer-events-auto">
             {/* Top Specs */}
             <AnimatePresence mode="wait">
-              <motion.div 
+              <motion.div
                 key={`specs-${activeYear}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.15 }}
                 className="grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col gap-3 md:gap-4 w-full md:w-auto md:absolute md:top-24 md:right-16 md:grid-cols-none md:items-end"
               >
                 {activeCar.specs && (
@@ -355,24 +357,7 @@ export default function Specs() {
             <div className="hidden md:flex w-full justify-center md:pb-10">
               <AnimatePresence mode="wait">
                   {activeCar.performance ? (
-                    <motion.div 
-                      key={`perf-${activeYear}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                      className="liquid-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0"
-                    >
-                      <>
-                        <BottomSpecItem label="Skidpad" value={activeCar.performance.skidpad} rank={activeCar.performance.skidpadRank} green />
-                        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-                        <BottomSpecItem label="Acceleration" value={activeCar.performance.acceleration} rank={activeCar.performance.accelerationRank} green />
-                        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-                        <BottomSpecItem label="Autocross" value={activeCar.performance.autocross} rank={activeCar.performance.autocrossRank} green />
-                        <div className="hidden md:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-                        <BottomSpecItem label="Endurance" value={activeCar.performance.endurance} rank={activeCar.performance.enduranceRank} enduranceColor={activeCar.performance.enduranceColor} />
-                      </>
-                    </motion.div>
+                    <PerformanceBar key={`perf-${activeYear}`} performance={activeCar.performance} />
                   ) : <div key={`perf-empty-${activeYear}`} />}
               </AnimatePresence>
             </div>
@@ -383,13 +368,58 @@ export default function Specs() {
   );
 }
 
+function PerformanceBar({ performance }: { performance: CarData['performance'] }) {
+  const perfRef = useRef<HTMLDivElement>(null);
+  useMousePositionVar(perfRef);
+  // 宽度随内容变，单独一张贴图（不与固定宽的 LiquidSpec 共享）
+  useLiquidGlass(perfRef, "pill");
+
+  if (!performance) return null;
+
+  return (
+    <motion.div
+      ref={perfRef}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.15, delay: 0.05 }}
+      className="liquid-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0"
+    >
+      <>
+        <BottomSpecItem label="Skidpad" value={performance.skidpad} rank={performance.skidpadRank} green />
+        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
+        <BottomSpecItem label="Acceleration" value={performance.acceleration} rank={performance.accelerationRank} green />
+        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
+        <BottomSpecItem label="Autocross" value={performance.autocross} rank={performance.autocrossRank} green />
+        <div className="hidden md:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
+        <BottomSpecItem label="Endurance" value={performance.endurance} rank={performance.enduranceRank} enduranceColor={performance.enduranceColor} />
+      </>
+    </motion.div>
+  );
+}
+
 function BottomSpecItem({ label, value, rank, green, defaultColor, enduranceColor }: { label: string, value: string, rank?: number, green?: boolean, defaultColor?: boolean, enduranceColor?: string }) {
   let vColor = "";
+  let rankColor = "";
+
   if (enduranceColor) {
     if (enduranceColor === "text-aurora-white") vColor = "text-slate-800 md:text-white";
     else vColor = "text-emerald-600 md:text-[#a5d6a7]";
   } else if (green) {
-    vColor = "text-emerald-600 md:text-[#a5d6a7]";
+    // 根据排名设置颜色
+    if (rank === 1) {
+      vColor = "text-yellow-600 md:text-yellow-400"; // P1 金色
+      rankColor = "text-yellow-600 md:text-yellow-400";
+    } else if (rank === 2) {
+      vColor = "text-slate-400 md:text-slate-300"; // P2 银色
+      rankColor = "text-slate-400 md:text-slate-300";
+    } else if (rank === 3) {
+      vColor = "text-orange-600 md:text-orange-400"; // P3 统一颜色（铜色）
+      rankColor = "text-orange-600 md:text-orange-400";
+    } else {
+      vColor = "text-slate-800 md:text-white"; // 其他 白色
+      rankColor = "text-slate-400 md:text-slate-400/90";
+    }
   } else if (defaultColor) {
     vColor = "text-slate-800 md:text-white";
   }
@@ -399,15 +429,23 @@ function BottomSpecItem({ label, value, rank, green, defaultColor, enduranceColo
       <span className="text-slate-500 md:text-white/90 text-[10px] sm:text-sm md:text-base font-medium">{label}:</span>
       <span className={`text-xs sm:text-base md:text-lg font-bold flex items-center gap-1 ${vColor}`}>
         {value}
-        {rank && <span className="text-xs sm:text-sm md:text-base font-bold text-slate-400 md:text-slate-400/90 ml-0.5">(P{rank})</span>}
+        {rank && <span className={`text-xs sm:text-sm md:text-base font-bold ${rankColor} ml-0.5`}>(P{rank})</span>}
       </span>
     </div>
   );
 }
 
 function LiquidSpec({ label, value, purple }: { label: string, value: string, purple?: boolean }) {
+  const specRef = useRef<HTMLDivElement>(null);
+  useMousePositionVar(specRef);
+  // 桌面端固定 md:w-[320px] 且圆角一致 -> 命中尺寸分桶，四个胶囊共享同一张贴图
+  useLiquidGlass(specRef, "pill");
+
   return (
-    <div className="liquid-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full cursor-pointer">
+    <div
+      ref={specRef}
+      className="liquid-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full cursor-pointer"
+    >
       <span className="text-slate-500 md:text-white/90 text-[10px] sm:text-xs md:text-xl font-medium uppercase md:normal-case tracking-wider md:tracking-normal md:text-right md:pr-1">{label}</span>
       <span className="hidden md:inline text-white/90 text-xl font-medium">:</span>
       <span className={`text-sm sm:text-lg md:text-2xl font-bold md:col-start-3 md:text-left md:pl-2 ${purple ? "text-purple-600 md:text-[#ce93d8]" : "text-emerald-600 md:text-[#a5d6a7]"}`}>{value}</span>

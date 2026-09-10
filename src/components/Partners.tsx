@@ -14,7 +14,7 @@ export default function Partners() {
   const expandedStrategicSponsors = [...secondRowSponsors, getAssetUrl("/images/partners/top-rem-5.webp")];
   const visibleMobileStrategicSponsors = isExpanded
     ? [...topStrategicSponsors, ...expandedStrategicSponsors]
-    : topStrategicSponsors;
+    : topStrategicSponsors.slice(0, 3);
 
   const sponsorTiers = [
     {
@@ -53,9 +53,9 @@ export default function Partners() {
           {specialStrategicSponsors.map((src, idx) => (
             <motion.img
               key={`special-sponsor-${idx}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
+              initial={{ y: 20 }}
+              whileInView={{ y: 0 }}
+              transition={{ delay: idx * 0.06 }}
               src={src}
               alt={`Special Strategic Sponsor ${idx + 1}`}
               width="200"
@@ -78,8 +78,8 @@ export default function Partners() {
             {visibleMobileStrategicSponsors.map((src, idx) => (
               <motion.img
                 key={`mobile-strategic-sponsor-${idx}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 20 }}
+                whileInView={{ y: 0 }}
                 transition={{ delay: idx * 0.06 + 0.2 }}
                 src={src}
                 alt={`Strategic Sponsor ${idx + 1}`}
@@ -98,8 +98,8 @@ export default function Partners() {
             {topStrategicSponsors.map((src, idx) => (
               <motion.img
                 key={`top-sponsor-${idx}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 20 }}
+                whileInView={{ y: 0 }}
                 transition={{ delay: idx * 0.1 + 0.2 }}
                 src={src}
                 alt={`Top Sponsor ${idx + 1}`}

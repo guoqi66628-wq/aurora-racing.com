@@ -36,19 +36,25 @@ function StackedImageGallery({ images, stackDirection = "right" }: { images: str
 
   return (
     <>
-    <div 
-      className="relative w-4/5 md:w-3/4 mx-auto aspect-[4/3] md:aspect-video cursor-pointer select-none mb-4 md:mb-0 group" 
+    <div
+      className="relative w-[85%] md:w-3/4 mx-auto aspect-[4/3] md:aspect-video cursor-pointer select-none mb-4 md:mb-0 group"
       onClick={handleNext}
     >
       {cards.map((card, index) => {
         const out = card.isAnimatingOut;
-        
+
         return (
           <motion.div
-            key={card.id}
-            layout
+            key={card.src}
             className="absolute inset-0 rounded-[1.5rem] overflow-hidden shadow-2xl"
-            initial={false}
+            initial={{
+              x: stackDirection === "left" ? -index * 8 : index * 8,
+              y: 0,
+              rotate: stackDirection === "left" ? -index * 2.5 : index * 2.5,
+              scale: 1 - index * 0.03,
+              zIndex: cards.length - index,
+              opacity: 1,
+            }}
             drag={index === 0 ? "x" : false}
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={(_, info) => {
@@ -59,10 +65,10 @@ function StackedImageGallery({ images, stackDirection = "right" }: { images: str
               }
             }}
             animate={{
-              x: out ? (stackDirection === "left" ? '-100%' : '100%') : (stackDirection === "left" ? -index * 18 : index * 18),
+              x: out ? (stackDirection === "left" ? '-100%' : '100%') : (stackDirection === "left" ? -index * 8 : index * 8),
               y: out ? '-20%' : 0,
-              rotate: out ? (stackDirection === "left" ? -20 : 20) : (stackDirection === "left" ? -index * 6 : index * 6),
-              scale: out ? 1 : 1 - index * 0.05,
+              rotate: out ? (stackDirection === "left" ? -20 : 20) : (stackDirection === "left" ? -index * 2.5 : index * 2.5),
+              scale: out ? 1 : 1 - index * 0.03,
               zIndex: out ? cards.length + 1 : cards.length - index,
               opacity: out ? 0 : 1,
             }}
@@ -201,10 +207,10 @@ export default function Heritage() {
             return (
               <motion.div
                 key={item.year}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 50 }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
                 className={`flex flex-col-reverse ${
                   isEven ? "md:flex-row" : "md:flex-row-reverse"
                 } items-center gap-8 md:gap-16 mt-8 md:mt-0`}

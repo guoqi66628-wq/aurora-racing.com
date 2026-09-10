@@ -1,5 +1,4 @@
 import { getAssetUrl } from "../utils/cdn";
-import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 
 interface TeamMember {
@@ -119,7 +118,10 @@ export default function Team() {
   ];
 
   return (
-    <section id="team" className="w-full relative bg-white overflow-hidden pt-12 pb-28 md:py-24 pl-4 pr-4 md:pl-20 md:pr-20">
+    <section
+      id="team"
+      className="w-full relative bg-white pt-12 pb-28 md:py-24 pl-4 pr-4 md:pl-20 md:pr-20"
+    >
       {/* Removed background grid and glow for a cleaner white background */}
 
       <div className="relative z-10 max-w-[1400px] mx-auto">
@@ -152,13 +154,9 @@ export default function Team() {
                   const isActive = activeMember === memberId;
 
                   return (
-                    <motion.div
+                    <div
                       key={memberId}
                       className="relative group w-full aspect-[3/4] cursor-pointer"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{ delay: (idx % 10) * 0.05, duration: 0.5 }}
                       onClick={() => {
                         if (!isMobile) return;
                         setActiveMember(isActive ? null : memberId);
@@ -166,7 +164,7 @@ export default function Team() {
                     >
                       {/* The Back Card */}
                       <div
-                        className={`absolute inset-0 translate-x-3 translate-y-3 md:translate-x-4 md:translate-y-4 bg-gray-300 rounded-2xl z-0 transition-all duration-300 ease-in-[cubic-bezier(0.175,0.885,0.32,1.275)]
+                        className={`absolute inset-0 translate-x-3 translate-y-3 md:translate-x-4 md:translate-y-4 bg-gray-300 rounded-2xl z-0 transition-all duration-200 ease-in-[cubic-bezier(0.175,0.885,0.32,1.275)]
                                       group-hover:translate-x-0 group-hover:translate-y-0 group-hover:-bottom-16 group-hover:-left-2 group-hover:-right-2 group-hover:-top-2
                                       group-hover:bg-white group-hover:shadow-2xl
                                       flex flex-col justify-end p-4 shadow-xl border border-black/5
@@ -175,6 +173,7 @@ export default function Team() {
                                           ? "translate-x-0 translate-y-0 -bottom-16 -left-2 -right-2 -top-2 bg-white shadow-2xl"
                                           : ""
                                       }`}
+                        style={{ willChange: "transform", backfaceVisibility: "hidden" }}
                       >
                         <div
                           className={`transition-opacity duration-300 delay-100 transform
@@ -200,7 +199,7 @@ export default function Team() {
 
                       {/* The Front Card */}
                       <div
-                        className={`absolute inset-0 z-10 rounded-2xl overflow-hidden transition-all duration-300 ease-in-[cubic-bezier(0.175,0.885,0.32,1.275)]
+                        className={`absolute inset-0 z-10 rounded-2xl overflow-hidden transition-all duration-200 ease-in-[cubic-bezier(0.175,0.885,0.32,1.275)]
                                       group-hover:-translate-y-4 group-hover:-translate-x-2 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] bg-gray-100 border border-black/5
                                       ${isActive ? "-translate-y-4 -translate-x-2 shadow-[0_20px_40px_rgba(0,0,0,0.3)]" : ""}`}
                       >
@@ -209,7 +208,6 @@ export default function Team() {
                           alt={member.name}
                           width="300"
                           height="400"
-                          loading="lazy"
                           decoding="async"
                           className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
                             isActive ? "scale-105" : "group-hover:scale-105"
@@ -217,10 +215,10 @@ export default function Team() {
                           referrerPolicy="no-referrer"
                           onError={(event) => {
                             const img = event.currentTarget;
-
-                            if (!img.src.endsWith(TEAM_IMAGE_FALLBACK)) {
-                              img.src = TEAM_IMAGE_FALLBACK;
-                            }
+                            // Prevent infinite loop: only fallback once
+                            if (img.dataset.fallback) return;
+                            img.dataset.fallback = "1";
+                            img.src = TEAM_IMAGE_FALLBACK;
                           }}
                         />
 
@@ -231,7 +229,7 @@ export default function Team() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>

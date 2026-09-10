@@ -228,6 +228,27 @@ npm run deploy:assets      # 增量同步 public/ 到七牛
 - 对隐藏内容、折叠赞助商、队员图片等使用懒加载。
 - 保持 Lighthouse 报告作为优化参考，但不要为了分数牺牲真实内容和品牌表达。
 
+### 10.1 液态玻璃（真实折射）守则
+
+玻璃分两态：**折射态**由 `src/vendor/hyalite.js`（v0.3.0，MIT）接管 `backdrop-filter`；
+**磨砂态**是 CSS 里 `var(--hyalite, blur(…))` 的 fallback，也是升级前的观感与回滚路径。
+
+- 桌面同屏折射面 **≤ 6**。超了先把 `dispersion` 归零（从 3 遍降回 1 遍），再砍面。
+  注意 `dispersion` 只要 > 0 就是每通道一遍，0.07 与 0.5 的开销相同 —— 要省就只能归零。
+- 色散强度取决于**背景明暗结构**，不是参数：深色纯背景上即使 `dispersion: 0.5` 也几乎看不见，
+  高对比边缘（绿色光带、白色车身、条纹）才拆得出青/洋红。调不出效果先看背景，别一路加参数。
+- 参数只写在 `src/lib/liquidGlass.ts` 的 `GLASS_PRESETS`（`pill` / `panel` / `control`），
+  不要把数值散进组件。`Hyalite.setOpts` 是**全局**的，不能用来做单元素 hover 调参。
+- 尺寸相近的同类元素保持**同宽同圆角**，好命中贴图分桶共享（4 个 `LiquidSpec` 共用一张）。
+- 新增玻璃类必须自带 `--hyalite: initial` 与完整 fallback。`--hyalite` 可继承，
+  漏了会让未 attach 的后代套上为父元素计算的贴图。
+- 折射面不做逐帧属性动画（宽高、blur、backdrop-filter）；`transform` / `opacity` 安全。
+  也不要用 `transition: all`，它会把 `backdrop-filter` 拖进过渡。
+- 直角元素拿不到折射效果：bevel 会被 clamp 到最大圆角，通栏直角只剩 1px 折射带。
+- 移动端（`<768px`）保持关闭，除非有真机数据支撑。
+- 线上排障：`?glass=off` / `?glass=force`，或 `document.documentElement.dataset.hyalite`，不必发版。
+- 若将来加 CSP：位移贴图是 `data:` URL，**必须**允许 `img-src data:`。
+
 ## 11. SEO 与分享规范
 
 `index.html` 中的基础 SEO 信息必须保持准确：

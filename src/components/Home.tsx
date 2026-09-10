@@ -157,7 +157,7 @@ export default function Home() {
         <motion.p
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.05 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
           className="md:hidden text-[13px] text-[#4a4a4a] tracking-[0.15em] font-sans font-medium uppercase mb-2 italic px-1"
         >
           Shenzhen Technology University
@@ -166,7 +166,7 @@ export default function Home() {
         <motion.h1
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.08 }}
           className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[100px] leading-[0.9] font-black uppercase mb-3 md:mb-4 flex flex-col italic md:px-0 px-1"
         >
           {/* Desktop Title Structure */}
@@ -204,7 +204,7 @@ export default function Home() {
         <motion.p
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
           className="hidden md:block text-xl font-medium text-gray-700 tracking-[0.15em] uppercase max-w-lg mb-8 italic leading-tight"
         >
           Pushing the limits of electric performance
@@ -218,7 +218,7 @@ export default function Home() {
         <motion.p
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
           className="md:hidden text-[10px] font-medium text-[#4a4a4a] tracking-[0.08em] uppercase mb-4 italic leading-snug whitespace-nowrap px-1"
         >
           Pushing the limits of electric performance
@@ -227,7 +227,7 @@ export default function Home() {
         <motion.div
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+          transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
           className="relative -mt-0.5"
         >
           <div className="relative z-10 w-fit -ml-8 -mt-2 hidden md:block">
@@ -475,7 +475,7 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
+        transition={{ duration: 0.4, delay: 0.35 }}
         className="absolute bottom-0 left-0 w-full px-6 md:px-12 lg:px-24 pb-6 md:pb-8 flex items-end justify-end z-30 pointer-events-none"
       >
         {/* Social Links */}

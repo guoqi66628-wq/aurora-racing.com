@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
 
-export default function Contact() {
+export default function Footer() {
   const [showStoreQR, setShowStoreQR] = useState(false);
   const qrRef = useRef<HTMLDivElement | null>(null);
 
