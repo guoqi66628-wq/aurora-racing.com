@@ -27,11 +27,22 @@ export function useLiquidGlass(
 
     void ensureHyalite().then((api) => {
       // 引擎加载期间组件可能已卸载
-    if (cancelled || !api) return;
+      if (cancelled || !api) {
+        if (!api) console.log('[useLiquidGlass] Engine not available, using CSS fallback');
+        return;
+      }
       const el = ref.current;
       if (!el) return;
 
+      console.log('[useLiquidGlass] Attaching to element with preset:', preset, GLASS_PRESETS[preset]);
       api.attach(el, GLASS_PRESETS[preset]);
+
+      // 验证是否成功 attach
+      setTimeout(() => {
+        const hyaliteVar = getComputedStyle(el).getPropertyValue('--hyalite');
+        console.log('[useLiquidGlass] --hyalite value:', hyaliteVar || '(not set)');
+      }, 100);
+
       // detach 会移除 --hyalite 内联值并释放贴图缓存引用
       cleanup = () => api.detach(el);
     });

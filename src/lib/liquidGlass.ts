@@ -100,17 +100,20 @@ export function ensureHyalite(): Promise<HyaliteAPI | null> {
       return resolve(null);
     }
 
-    whenIdle(() => {
-      void import("../vendor/hyalite.js")
-        .then(() => {
-          const api = window.Hyalite;
-   if (!api || !isRefractionAllowed(api)) return resolve(null);
-          // 皮肤据此降低高光与底色不透明度，让折射透出来
-      document.documentElement.dataset.glass = "on";
-          resolve(api);
- })
-        .catch(() => resolve(null));
-    });
+    // 🔧 修复：立即加载而不是等待 idle，确保 Specs 挂载时引擎已就绪
+    void import("../vendor/hyalite.js")
+      .then(() => {
+        const api = window.Hyalite;
+        if (!api || !isRefractionAllowed(api)) return resolve(null);
+        // 皮肤据此降低高光与底色不透明度，让折射透出来
+        document.documentElement.dataset.glass = "on";
+        console.log('[Hyalite] Engine loaded, supported:', api.supported());
+        resolve(api);
+      })
+      .catch((err) => {
+        console.error('[Hyalite] Failed to load:', err);
+        resolve(null);
+      });
   });
 
   return enginePromise;
