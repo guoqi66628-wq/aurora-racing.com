@@ -37,10 +37,18 @@ export function useLiquidGlass(
       console.log('[useLiquidGlass] Attaching to element with preset:', preset, GLASS_PRESETS[preset]);
       api.attach(el, GLASS_PRESETS[preset]);
 
-      // 验证是否成功 attach
+      // 🔧 修复：Tailwind v4 会重置 backdrop-filter，CSS 变量无法正常展开
+      // 需要直接设置 backdrop-filter 属性而不是依赖 var(--hyalite)
       setTimeout(() => {
-        const hyaliteVar = getComputedStyle(el).getPropertyValue('--hyalite');
+        const hyaliteVar = el.style.getPropertyValue('--hyalite');
         console.log('[useLiquidGlass] --hyalite value:', hyaliteVar || '(not set)');
+
+        if (hyaliteVar && hyaliteVar.startsWith('url(')) {
+          // 直接将 filter URL 应用到 backdrop-filter
+          el.style.setProperty('backdrop-filter', hyaliteVar, 'important');
+          el.style.setProperty('-webkit-backdrop-filter', hyaliteVar, 'important');
+          console.log('[useLiquidGlass] Applied backdrop-filter directly:', hyaliteVar);
+        }
       }, 100);
 
       // detach 会移除 --hyalite 内联值并释放贴图缓存引用
