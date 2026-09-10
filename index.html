@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/webp" href="/images/logos/web-logo.webp?v=3" />
+    <link rel="icon" type="image/webp" href="%VITE_CDN_URL%/images/logos/web-logo.webp?v=3" />
     <title>AURORA Racing</title>
     <meta
       name="description"
@@ -16,17 +16,20 @@
       property="og:description"
       content="Formula Student electric racing team from Shenzhen Technology University."
     />
-    <meta property="og:image" content="/images/hero/hero-desktop.webp" />
+    <meta property="og:image" content="%VITE_CDN_URL%/images/hero/hero-desktop.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     
-    <!-- Google Fonts Optimization for CLS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet" />
+    <!-- 自托管字体（CDN 分发，不依赖 Google Fonts） -->
+    <link rel="preconnect" href="https://cdn.aurora-racing.com" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.aurora-racing.com/fonts/inter-latin.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="https://cdn.aurora-racing.com/fonts/outfit-latin.woff2" />
+    <link rel="stylesheet" href="https://cdn.aurora-racing.com/fonts/fonts.css" />
     
     <!-- Hero Image Preload for LCP (media-conditional to avoid double-load) -->
-    <link rel="preload" as="image" href="/images/hero/hero-desktop.webp" media="(min-width: 768px)" />
-    <link rel="preload" as="image" href="/images/hero/hero-mobile.webp" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="%VITE_CDN_URL%/images/hero/hero-desktop.webp" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="%VITE_CDN_URL%/images/hero/hero-mobile.webp" media="(max-width: 767px)" />
   </head>
   <body>
     <div id="root"></div>

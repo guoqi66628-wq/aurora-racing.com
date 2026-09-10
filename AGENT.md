@@ -36,15 +36,21 @@ npm run dev
 npm run lint
 npm run build
 npm run preview
+npm run deploy:assets
+npm run verify:assets
+npm run deploy
 ```
 
 脚本含义：
 
 - `npm run dev`：本地开发，默认监听 `3000` 端口并允许局域网访问。
 - `npm run lint`：执行 TypeScript 静态检查，当前实际命令为 `tsc --noEmit`。
-- `npm run build`：构建生产产物到 `dist/`。
+- `npm run build`：清理并构建生产产物到 `dist/`。
 - `npm run preview`：本地预览生产构建。
 - `npm run clean`：清理 `dist/`。
+- `npm run deploy:assets`：把 `public/` 增量同步到七牛 OSS（加 `--dry-run` 预演，`--refresh` 刷新 CDN 缓存，`--prune` 删除线上多余文件）。
+- `npm run verify:assets`：校验构建产物引用的资源在 CDN 上均可达，防止漏传导致线上 404。
+- `npm run deploy`：同步资源 → 构建 → 校验，正式上线前用这一条。
 
 ## 3. 目录约定
 
@@ -173,6 +179,17 @@ dist/            生产构建产物，不手写修改
 ## 9. 静态资源规范
 
 - 图片优先使用 WebP。
+- 所有图片统一放在 `public/images/`，代码中通过 `getAssetUrl()`（`src/utils/cdn.ts`）引用，不要写死路径或域名。
+  - 开发环境自动使用本地路径，生产环境自动切换到 CDN。
+  - `index.html` 中的资源用 `%VITE_CDN_URL%` 占位符，构建时注入。
+- **新增或替换图片后，必须同步到 OSS，否则线上 404**：
+
+```bash
+npm run deploy:assets      # 增量同步 public/ 到七牛
+```
+
+  本地开发不走 CDN，漏传在本地完全看不出来。`npm run verify:assets` 会在部署前拦截这类问题，详见 14.1。
+
 - 首页首屏图必须同时考虑桌面和移动端，当前约定：
   - `/images/hero/hero-desktop.webp`
   - `/images/hero/hero-mobile.webp`
@@ -226,8 +243,12 @@ dist/            生产构建产物，不手写修改
 ## 12. 安全与隐私
 
 - 不要提交真实 `.env`、密钥、服务器密码、宝塔面板账号、数据库密码或云厂商凭据。
-- `.env.example` 只放示例变量，不放真实值。
-- 当前项目里存在 `GEMINI_API_KEY` 示例配置，但纯前端官网不应在浏览器端暴露任何真正的私钥。
+- 项目中的 `.env` 文件分工如下：
+  - `.env.deploy`：七牛 AK/SK 等真实凭证，**已被 git 忽略，绝不可提交**。
+  - `.env.deploy.example`：凭证模板，只放占位符，会进版本库。
+  - `.env.production` / `.env.development`：只含公开的 CDN 地址，需要入库；
+    删除会导致 `index.html` 中的 `%VITE_CDN_URL%` 占位符不被替换。
+- 纯前端官网不应在浏览器端暴露任何真正的私钥。凡是 `VITE_` 前缀的变量都会打进前端包，只能放公开信息。
 - 如果未来需要调用 AI、邮件、数据库或支付接口，必须通过后端代理或服务端函数处理，不要把密钥放进前端包。
 - 表单、报名、赞助咨询等用户输入功能上线前，必须考虑：
   - 验证与限流
@@ -262,6 +283,39 @@ npm run build
 
 ## 14. 上线流程
 
+### 14.0 静态资源与 CDN
+
+图片等静态资源托管在七牛 OSS，通过 `cdn.aurora-racing.com` 加速分发；
+`dist/` 中的 HTML/JS/CSS 仍上传到宝塔面板。两者是独立的两条链路。
+
+**首次配置**：复制凭证模板并填入七牛密钥（`.env.deploy` 已被 git 忽略，切勿提交）。
+
+```bash
+cp .env.deploy.example .env.deploy
+```
+
+**日常命令**：
+
+```bash
+npm run deploy:assets:dry   # 预演：只打印将要上传的文件，不做任何修改
+npm run deploy:assets       # 增量同步 public/ 到 OSS（按 etag 比对，只传新增和变更）
+npm run verify:assets       # 校验构建产物引用的每个资源在 CDN 上可达
+npm run deploy              # 同步 → 构建 → 校验，一条命令走完
+```
+
+补充说明：
+
+- 同步默认**不删除**线上多余文件，需要清理时显式加 `--prune`。
+- `--prune` 请谨慎使用：七牛控制台上传会自动生成 `images/`、`images/cars/` 这类目录占位对象，
+  同步脚本也会主动跳过 `.gitkeep`，它们都会被识别为「本地不存在」。日常同步不要加此参数。
+- 替换同名图片后，CDN 仍有旧缓存，需加 `--refresh` 刷新（刷新生效需数分钟）：
+
+```bash
+npm run deploy:assets -- --refresh
+```
+
+- `npm run verify:assets` 失败会中止流程并列出不可达的资源，最常见原因是新增图片忘记同步。
+
 ### 14.1 阿里云轻量服务器 / 宝塔面板
 
 当前正式站常用流程：
@@ -271,10 +325,10 @@ npm run build
 
 ```bash
 npm run lint
-npm run build
+npm run deploy      # 同步资源 → 构建 → 校验 CDN 可达性
 ```
 
-3. 确认 `dist/` 已生成。
+3. 确认 `dist/` 已生成，且 `verify:assets` 通过。
 4. 本地可选预览：
 
 ```bash

@@ -5,6 +5,10 @@ dist/
 coverage/
 .DS_Store
 *.log
+# 默认忽略所有 .env 文件，仅放行不含密钥的模板与公开配置
 .env*
-!.env.example
+!.env.deploy.example
+# 仅含公开的 CDN 地址，需要入库：缺失会导致 %VITE_CDN_URL% 占位符不被替换
+!.env.production
+!.env.development
 dist.zip
