@@ -11,6 +11,10 @@
     "lint": "tsc --noEmit",
     "deploy:assets": "node --env-file-if-exists=.env.deploy scripts/sync-assets.cjs",
     "deploy:assets:dry": "node --env-file-if-exists=.env.deploy scripts/sync-assets.cjs --dry-run",
+    "deploy:dist": "node --env-file-if-exists=.env.deploy scripts/sync-dist.cjs",
+    "deploy:dist:dry": "node --env-file-if-exists=.env.deploy scripts/sync-dist.cjs --dry-run",
+    "deploy:refresh": "node --env-file-if-exists=.env.deploy scripts/refresh-cdn.cjs",
+    "deploy:all": "npm run build && npm run deploy:assets && npm run deploy:dist && npm run deploy:refresh",
     "verify:assets": "node scripts/verify-assets.cjs",
     "deploy": "npm run deploy:assets && npm run build && npm run verify:assets",
     "verify:glass": "node scripts/verify-glass.cjs"

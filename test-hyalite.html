@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyalite Test - Direct Load</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .glass-card {
+      padding: 40px;
+      margin: 20px 0;
+      border-radius: 32px;
+      color: white;
+      font-size: 18px;
+
+      /* 关键：必须先有基础样式 */
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
+      backdrop-filter: var(--hyalite, blur(12px));
+      -webkit-backdrop-filter: var(--hyalite, blur(12px));
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .info {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 16px;
+      margin: 20px 0;
+      color: white;
+      font-family: monospace;
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+
+    .pass { background: #10b981; color: white; }
+    .fail { background: #ef4444; color: white; }
+
+    button {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔬 Hyalite Engine Test</h1>
+
+    <div class="info">
+      <div><strong>Browser:</strong> <span id="browser"></span></div>
+      <div><strong>Viewport:</strong> <span id="viewport"></span></div>
+      <div><strong>Backdrop Filter Support:</strong> <span id="backdrop-support"></span></div>
+      <div><strong>HTML data-glass:</strong> <span id="data-glass"></span></div>
+      <div><strong>Hyalite Engine:</strong> <span id="hyalite-status"></span></div>
+    </div>
+
+    <div class="glass-card" id="card1">
+      <h2 style="margin: 0 0 10px 0;">Test Card #1</h2>
+      <p style="margin: 0;">This card should show real refraction with color dispersion if Hyalite is working.</p>
+      <p style="margin: 10px 0 0 0; font-family: monospace; font-size: 14px;">--hyalite value: <span id="hyalite-var">checking...</span></p>
+    </div>
+
+    <div>
+      <button onclick="testAttach()">🔧 Manually Attach Hyalite</button>
+      <button onclick="forceReload()">🔄 Force Reload Engine</button>
+      <button onclick="checkStatus()">📊 Check Status</button>
+    </div>
+  </div>
+
+  <script type="module">
+    // Check environment
+    const ua = navigator.userAgent;
+    const isChrome = /Chrome\/\d+/.test(ua) && /Google Inc/.test(navigator.vendor || '');
+    const chromiumBrand = navigator.userAgentData?.brands?.find(b => /Chromium/i.test(b.brand));
+    const isChromium = isChrome || !!chromiumBrand;
+
+    document.getElementById('browser').innerHTML = isChromium
+      ? `<span class="status pass">Chromium ✓</span>`
+      : `<span class="status fail">Not Chromium ✗</span>`;
+
+    document.getElementById('viewport').textContent = `${window.innerWidth}x${window.innerHeight}`;
+
+    const supportsBackdrop = CSS.supports('backdrop-filter', 'blur(1px)');
+    document.getElementById('backdrop-support').innerHTML = supportsBackdrop
+      ? `<span class="status pass">Yes ✓</span>`
+      : `<span class="status fail">No ✗</span>`;
+
+    // Load and test Hyalite
+    let HyaliteAPI = null;
+
+    async function loadHyalite() {
+      try {
+        // Load from dist
+        const module = await import('./dist/assets/hyalite-B19RTjPn.js');
+        HyaliteAPI = window.Hyalite;
+
+        if (!HyaliteAPI) {
+          throw new Error('Hyalite not found in window after import');
+        }
+
+        const supported = HyaliteAPI.supported();
+        document.getElementById('hyalite-status').innerHTML = supported
+          ? `<span class="status pass">Loaded & Supported ✓</span> v${HyaliteAPI.version}`
+          : `<span class="status fail">Loaded but Not Supported ✗</span>`;
+
+        return HyaliteAPI;
+      } catch (err) {
+        document.getElementById('hyalite-status').innerHTML =
+          `<span class="status fail">Failed to Load ✗</span><br>${err.message}`;
+        console.error('Hyalite load error:', err);
+        return null;
+      }
+    }
+
+    window.testAttach = async function() {
+      if (!HyaliteAPI) {
+        HyaliteAPI = await loadHyalite();
+      }
+
+      if (!HyaliteAPI || !HyaliteAPI.supported()) {
+        alert('Hyalite engine not available or not supported');
+        return;
+      }
+
+      const card = document.getElementById('card1');
+
+      // Attach with strong refraction settings
+      HyaliteAPI.attach(card, {
+        bevel: 28,
+        thickness: 28,
+        blur: 1,
+        dispersion: 0.5,  // Maximum color dispersion
+        rim: 0.8,
+        light: -40,
+        smooth: 1
+      });
+
+      // Mark as active
+      document.documentElement.dataset.glass = 'on';
+
+      setTimeout(() => {
+        checkStatus();
+      }, 500);
+    };
+
+    window.forceReload = async function() {
+      HyaliteAPI = null;
+      await loadHyalite();
+      testAttach();
+    };
+
+    window.checkStatus = function() {
+      const card = document.getElementById('card1');
+      const computedStyle = getComputedStyle(card);
+      const hyaliteValue = computedStyle.getPropertyValue('--hyalite').trim();
+
+      document.getElementById('hyalite-var').textContent = hyaliteValue || '(not set)';
+      document.getElementById('data-glass').textContent =
+        document.documentElement.dataset.glass || '(not set)';
+
+      if (hyaliteValue && hyaliteValue.includes('url(#')) {
+        alert('✅ Success! Hyalite is active with refraction filter');
+      } else if (hyaliteValue) {
+        alert('⚠️ --hyalite is set but not to a filter URL: ' + hyaliteValue);
+      } else {
+        alert('❌ --hyalite is not set. Falling back to blur()');
+      }
+    };
+
+    // Auto-load on page load
+    loadHyalite().then(api => {
+      if (api && api.supported()) {
+        console.log('Auto-attaching Hyalite...');
+        testAttach();
+      }
+    });
+
+    // Update data-glass display
+    setInterval(() => {
+      document.getElementById('data-glass').textContent =
+        document.documentElement.dataset.glass || '(not set)';
+    }, 1000);
+  </script>
+</body>
+</html>

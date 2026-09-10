@@ -17,6 +17,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const qiniu = require('qiniu');
+const sharp = require('sharp');
+const os = require('os');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC_DIR = path.join(ROOT, 'public');
@@ -85,6 +87,53 @@ function humanSize(bytes) {
   if (bytes < 1024) return `${bytes}B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
   return `${(bytes / 1024 / 1024).toFixed(2)}MB`;
+}
+
+// ---------- 图片优化 ----------
+
+/**
+ * 判断文件是否需要优化
+ * @param {string} filePath - 文件路径
+ * @returns {boolean}
+ */
+function shouldOptimize(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  const imageExts = ['.jpg', '.jpeg', '.png'];
+
+  // 只优化 images/ 目录下的 jpg/jpeg/png
+  if (!filePath.startsWith('images/')) return false;
+  if (!imageExts.includes(ext)) return false;
+
+  // 跳过已经是 webp 的文件
+  if (ext === '.webp') return false;
+
+  return true;
+}
+
+/**
+ * 优化图片：转换为 webp 格式并压缩，保存在本地 public 目录
+ * @param {string} inputPath - 输入文件路径（绝对路径）
+ * @param {string} outputPath - 输出文件路径（绝对路径，在 public 目录下）
+ * @returns {Promise<{size: number, width: number, height: number}>}
+ */
+async function optimizeImage(inputPath, outputPath) {
+  const QUALITY = 85;
+
+  const info = await sharp(inputPath)
+    .webp({ quality: QUALITY })
+    .toFile(outputPath);
+
+  return info;
+}
+
+/**
+ * 获取优化后的文件路径（将扩展名改为 .webp）
+ * @param {string} key - 原始文件 key
+ * @returns {string}
+ */
+function getOptimizedKey(key) {
+  const ext = path.extname(key);
+  return key.slice(0, -ext.length) + '.webp';
 }
 
 // ---------- 七牛封装 ----------
@@ -196,29 +245,78 @@ async function main() {
   }
   console.log(dim(`${remote.size} 个对象`));
 
-  // 3. 比对：本地 etag vs 线上 etag
+  // 3. 本地优化图片：将 png/jpg 转换为 webp 并保存在 public 目录
+  console.log('');
+  console.log(cyan('步骤 1: 本地优化图片'));
+
+  const optimized = [];
+  for (const key of localKeys) {
+    if (shouldOptimize(key)) {
+      const localPath = path.join(SRC_DIR, key);
+      const optimizedKey = getOptimizedKey(key);
+      const optimizedPath = path.join(SRC_DIR, optimizedKey);
+      const originalSize = fs.statSync(localPath).size;
+
+      // 如果 webp 文件已存在且较新，跳过
+      if (fs.existsSync(optimizedPath)) {
+        const originalMtime = fs.statSync(localPath).mtimeMs;
+        const optimizedMtime = fs.statSync(optimizedPath).mtimeMs;
+        if (optimizedMtime >= originalMtime) {
+          console.log(dim(`  跳过 ${key} (webp 已存在且是最新)`));
+          continue;
+        }
+      }
+
+      try {
+        process.stdout.write(dim(`  优化: ${key} ... `));
+        const info = await optimizeImage(localPath, optimizedPath);
+        const ratio = ((1 - info.size / originalSize) * 100).toFixed(1);
+        console.log(green(`${humanSize(originalSize)} -> ${humanSize(info.size)} (减少 ${ratio}%)`));
+        optimized.push({ original: key, optimized: optimizedKey });
+      } catch (err) {
+        console.log(red(`失败: ${err.message}`));
+      }
+    }
+  }
+
+  if (optimized.length > 0) {
+    console.log(green(`\n  ✓ 已优化 ${optimized.length} 个图片文件到本地`));
+  }
+
+  // 4. 重新扫描本地文件（包含新生成的 webp）
+  const allLocalKeys = collectLocalFiles(SRC_DIR);
+
+  // 5. 比对并准备上传
+  console.log('');
+  console.log(cyan('步骤 2: 准备上传到 CDN'));
+
   const toUpload = [];
   let skipped = 0;
-  for (const key of localKeys) {
+
+  for (const key of allLocalKeys) {
     const localPath = path.join(SRC_DIR, key);
-    const remoteHash = remote.get(key);
     const localHash = qiniuEtag(localPath);
+    const remoteHash = remote.get(key);
+    const fileSize = fs.statSync(localPath).size;
+
     if (!flags.force && remoteHash === localHash) {
       skipped++;
       continue;
     }
+
     toUpload.push({
       key,
       localPath,
-      size: fs.statSync(localPath).size,
+      size: fileSize,
       reason: remoteHash ? '变更' : '新增',
     });
   }
 
-  // 线上有、本地没有的
-  const orphans = [...remote.keys()].filter((k) => !localKeys.includes(k));
+  // 线上有、本地没有的（不包括原始图片，因为我们保留原始文件）
+  const allLocalKeysSet = new Set(allLocalKeys);
+  const orphans = [...remote.keys()].filter((k) => !allLocalKeysSet.has(k));
 
-  // 4. 打印计划
+  // 6. 打印计划
   console.log('');
   if (toUpload.length === 0) {
     console.log(`  ${green('✓')} 所有资源已是最新（${skipped} 个文件一致）`);
@@ -231,6 +329,7 @@ async function main() {
     }
   }
 
+  // 检查线上多余的文件
   if (orphans.length > 0) {
     console.log('');
     if (flags.prune) {
@@ -285,7 +384,7 @@ async function main() {
     for (const f of failures) console.log(`    ${f.key}\n      ${dim(f.error)}`);
   }
 
-  // 6. 可选删除
+  // 7. 可选删除线上多余文件
   if (flags.prune && orphans.length > 0) {
     // 七牛 batch 单次上限 1000
     for (let i = 0; i < orphans.length; i += 1000) {
@@ -294,7 +393,7 @@ async function main() {
     console.log(`  ${green('✓')} 已删除 ${orphans.length} 个多余对象`);
   }
 
-  // 7. 可选刷新 CDN 缓存（只刷新本次变更的文件）
+  // 8. 可选刷新 CDN 缓存（只刷新本次变更的文件）
   const changed = toUpload.filter((f) => f.reason === '变更').map((f) => f.key);
   if (flags.refresh && changed.length > 0) {
     if (!CDN_DOMAIN) {

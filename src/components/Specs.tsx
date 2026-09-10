@@ -4,6 +4,23 @@ import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useMousePositionVar } from "../hooks/useMousePosition";
 import { useLiquidGlass } from "../hooks/useLiquidGlass";
+import { useIsMobile } from "../hooks/useIsMobile";
+
+interface EventResult {
+  /** 赛事名称，显示在胶囊内部左侧 */
+  event: string;
+  skidpad?: string;
+  skidpadRank?: number;
+  sprintDuel?: string;
+  sprintDuelRank?: number;
+  acceleration?: string;
+  accelerationRank?: number;
+  autocross?: string;
+  autocrossRank?: number;
+  endurance?: string;
+  enduranceRank?: number;
+  enduranceColor?: string;
+}
 
 interface CarData {
   year: number;
@@ -16,18 +33,18 @@ interface CarData {
     monocoque?: string;
     chassis?: string;
   };
-  performance?: {
-    skidpad: string;
-    skidpadRank?: number;
-    acceleration: string;
-    accelerationRank?: number;
-    autocross: string;
-    autocrossRank?: number;
-    endurance: string;
-    enduranceRank?: number;
-    enduranceColor: string;
-  };
+  /** 一辆车可能参加多项赛事，按顺序堆叠展示 */
+  results?: EventResult[];
 }
+
+/** 胶囊内成绩项的渲染顺序，缺失的项目自动跳过 */
+const METRIC_ORDER = [
+  { key: "skidpad", rankKey: "skidpadRank", label: "Skidpad" },
+  { key: "sprintDuel", rankKey: "sprintDuelRank", label: "Sprint Duel" },
+  { key: "acceleration", rankKey: "accelerationRank", label: "Acceleration" },
+  { key: "autocross", rankKey: "autocrossRank", label: "Autocross" },
+  { key: "endurance", rankKey: "enduranceRank", label: "Endurance" },
+] as const;
 
 const carData: CarData[] = [
   {
@@ -45,30 +62,44 @@ const carData: CarData[] = [
     highlight: "空气动力学升级",
     image: getAssetUrl("/images/cars/car-2023.webp"),
     specs: { weight: "265kg", wheelbase: "1560mm", track: "1220/1180mm" },
-    performance: { skidpad: "5.08s", skidpadRank: 5, acceleration: "4.57s", accelerationRank: 9, autocross: "73.627s", autocrossRank: 2, endurance: "1735.571s", enduranceRank: 7, enduranceColor: "text-[#a5d6a7]" }
+    results: [
+      { event: "FSC", skidpad: "5.08s", skidpadRank: 5, acceleration: "4.57s", accelerationRank: 9, autocross: "73.627s", autocrossRank: 2, endurance: "1735.571s", enduranceRank: 7, enduranceColor: "text-[#a5d6a7]" }
+    ]
   },
   {
     year: 2024,
     highlight: "第二代单体壳",
     image: getAssetUrl("/images/cars/car-2024.webp"),
     specs: { weight: "224kg", wheelbase: "1540mm", track: "1240/1220mm" },
-    performance: { skidpad: "5.12s", skidpadRank: 2, acceleration: "3.72s", accelerationRank: 1, autocross: "73.199s", autocrossRank: 15, endurance: "1654.519s", enduranceRank: 2, enduranceColor: "text-[#a5d6a7]" }
+    results: [
+      { event: "FSC", skidpad: "5.12s", skidpadRank: 2, acceleration: "3.72s", accelerationRank: 1, autocross: "73.199s", autocrossRank: 15, endurance: "1654.519s", enduranceRank: 2, enduranceColor: "text-[#a5d6a7]" }
+    ]
   },
   {
     year: 2025,
     highlight: "动力系统重构",
     image: getAssetUrl("/images/cars/car-2025.webp"),
     specs: { weight: "219kg", wheelbase: "1530mm", track: "1270mm" },
-    performance: { skidpad: "4.92s", skidpadRank: 1, acceleration: "3.81s", accelerationRank: 2, autocross: "65.111s", autocrossRank: 3, endurance: "DNF", enduranceColor: "text-rose-500" }
+    results: [
+      { event: "FSC", skidpad: "4.92s", skidpadRank: 1, acceleration: "3.81s", accelerationRank: 2, autocross: "65.111s", autocrossRank: 3, endurance: "DNF", enduranceColor: "text-rose-500" },
+      { event: "FSTC", sprintDuel: "-", acceleration: "3.72s", accelerationRank: 1, autocross: "54.279s", autocrossRank: 1, endurance: "1422.993s", enduranceRank: 5, enduranceColor: "text-[#a5d6a7]" }
+    ]
   },
   {
     year: 2026,
     highlight: "全面进化",
     image: getAssetUrl("/images/cars/car-2026.webp"),
-    specs: { weight: "200kg", wheelbase: "1530mm", track: "1250mm" },
-    performance: { skidpad: "4.986", acceleration: "3.489", autocross: "1m", endurance: "DQ", enduranceColor: "text-aurora-white" }
+    specs: { weight: "199kg", wheelbase: "1530mm", track: "1250mm" },
+    results: [
+      { event: "FSS", skidpad: "4.979s", skidpadRank: 9, acceleration: "3.489s", accelerationRank: 6, autocross: "86.175s", autocrossRank: 9, endurance: "DQ", enduranceColor: "text-aurora-white" },
+      // FSC 尚未开赛，占位
+      { event: "FSC", skidpad: "-", acceleration: "-", autocross: "-", endurance: "-", enduranceColor: "text-aurora-white" }
+    ]
   }
 ];
+
+/** 已发起预取的图片 URL，避免重复 new Image() */
+const preloadedImages = new Set<string>();
 
 const yearNameMap: Record<number, string> = {
   2021: "E23",
@@ -80,9 +111,18 @@ const yearNameMap: Record<number, string> = {
 };
 
 export default function Specs() {
-  const [activeYear, setActiveYear] = useState(2026);
+  const [activeYear, setActiveYear] = useState(() => {
+    const stored = sessionStorage.getItem('selectedCarYear');
+    if (stored) {
+      sessionStorage.removeItem('selectedCarYear');
+      return Number(stored);
+    }
+    return 2026;
+  });
   const [direction, setDirection] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  // 移动端整段常驻挂载，桌面 hero 图层是 hidden md:flex —— 不能让它在移动端 eager 拉六张图
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleYearChange = (e: CustomEvent<number>) => {
@@ -95,6 +135,23 @@ export default function Specs() {
 
   const activeIndex = carData.findIndex(c => c.year === activeYear);
   const activeCar = carData[activeIndex] || carData[carData.length - 1];
+
+  // 提前把相邻年份的图片放进 HTTP 缓存。桌面端所有图层常驻已经顺带完成预取，
+  // 这里主要是给移动端卡片用：卡片每次滑动都重新挂载 <img>，没预热就会先空一拍。
+  useEffect(() => {
+    if (activeIndex < 0) return;
+    const neighbors = [
+      carData[(activeIndex + 1) % carData.length],
+      carData[(activeIndex - 1 + carData.length) % carData.length],
+    ];
+    for (const car of neighbors) {
+      if (preloadedImages.has(car.image)) continue;
+      preloadedImages.add(car.image);
+      const img = new Image();
+      img.decoding = "async";
+      img.src = car.image;
+    }
+  }, [activeIndex]);
 
   const handleNext = () => {
     setDirection(1);
@@ -299,29 +356,50 @@ export default function Specs() {
           }}
           className="md:absolute md:inset-0 md:z-0 md:overflow-hidden md:flex md:items-center md:justify-center md:pt-20 md:pb-40 w-full md:aspect-auto md:w-auto rounded-none overflow-hidden border-none relative bg-transparent flex-shrink-0 cursor-grab active:cursor-grabbing touch-none"
         >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeYear}
-              initial={{ opacity: 0, scale: 1.02, filter: "blur(0px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.98, filter: "blur(0px)" }}
-              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-              className="absolute inset-0 md:flex md:items-center md:justify-center pointer-events-none"
-            >
-              <img
-                src={activeCar.image}
-                alt={`Aurora Racing Car ${activeCar.year}`}
-                width="1672"
-                height="941"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full md:object-cover md:object-center md:opacity-100"
-                referrerPolicy="no-referrer"
-              />
-              <div className="hidden md:block absolute inset-0 bg-gradient-to-t md:from-[#0a0a0a]/80 md:via-transparent md:to-[#0a0a0a]/30"></div>
-              <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/40 via-transparent to-[#0a0a0a]/40"></div>
-            </motion.div>
-          </AnimatePresence>
+          {/*
+            所有年份的图层常驻挂载，只切 opacity 做交叉淡入。
+            之前用 AnimatePresence mode="wait" 会先卸载旧图、等新图挂载并解码，
+            中间那几帧没有任何图片，深色底直接透出来 —— 就是切换时的黑屏。
+          */}
+          {(isMobile ? carData.filter((c) => c.year === activeYear) : carData).map((car) => {
+            const isActive = car.year === activeYear;
+            return (
+              <motion.div
+                key={car.year}
+                aria-hidden={!isActive}
+                initial={false}
+                // 两层同向缩放：进入的从 1.02 收到 1，退出的停在 1.02，
+                // 避免一层放大一层缩小在交叉淡入中段互相抵消成抖动
+                animate={{
+                  opacity: isActive ? 1 : 0,
+                  scale: shouldReduceMotion ? 1 : isActive ? 1 : 1.02,
+                }}
+                transition={{
+                  opacity: { duration: 0.32, ease: "easeInOut" },
+                  scale: { duration: 0.45, ease: [0.23, 1, 0.32, 1] },
+                }}
+                style={{ zIndex: isActive ? 1 : 0 }}
+                className="absolute inset-0 md:flex md:items-center md:justify-center pointer-events-none"
+              >
+                <img
+                  src={car.image}
+                  alt={`Aurora Racing Car ${car.year}`}
+                  width="1672"
+                  height="941"
+                  // 常驻图层必须 eager：lazy 图在 opacity:0 时可能被推迟到切换那一刻才取，
+                  // 那就等于没预热。六张 webp 合计约 600KB，且这一段整体是懒挂载的。
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority={isActive ? "high" : "low"}
+                  className="w-full h-full md:object-cover md:object-center md:opacity-100"
+                  referrerPolicy="no-referrer"
+                />
+              </motion.div>
+            );
+          })}
+          {/* 渐变遮罩独立于图层，不随图片一起淡入淡出 */}
+          <div className="hidden md:block absolute inset-0 z-[2] pointer-events-none bg-gradient-to-t md:from-[#0a0a0a]/80 md:via-transparent md:to-[#0a0a0a]/30"></div>
+          <div className="hidden md:block absolute inset-0 z-[2] pointer-events-none bg-gradient-to-r from-[#0a0a0a]/40 via-transparent to-[#0a0a0a]/40"></div>
         </motion.div>
 
         {/* Specs Cards */}
@@ -356,8 +434,8 @@ export default function Specs() {
             {/* Bottom Specs */}
             <div className="hidden md:flex w-full justify-center md:pb-10">
               <AnimatePresence mode="wait">
-                  {activeCar.performance ? (
-                    <PerformanceBar key={`perf-${activeYear}`} performance={activeCar.performance} />
+                  {activeCar.results?.length ? (
+                    <PerformanceStack key={`perf-${activeYear}`} results={activeCar.results} />
                   ) : <div key={`perf-empty-${activeYear}`} />}
               </AnimatePresence>
             </div>
@@ -368,60 +446,129 @@ export default function Specs() {
   );
 }
 
-function PerformanceBar({ performance }: { performance: CarData['performance'] }) {
+/**
+ * 赛事成绩胶囊堆叠。多场赛事时后面的胶囊向下偏移、缩小并降低透明度露出边缘，
+ * 点击最前面那张即轮换到下一场赛事。单场赛事时退化成一张普通胶囊。
+ */
+function PerformanceStack({ results }: { results: EventResult[] }) {
+  const [front, setFront] = useState(0);
+  const total = results.length;
+
+  // 切换年份时组件重挂载，front 自然回到 0；此处仅防御 results 长度变化
+  useEffect(() => setFront(0), [total]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.15, delay: 0.05 }}
+      className="relative w-full md:w-auto flex justify-center items-start"
+      // 给后面露出的边缘留出高度，容器本身高度由最前面那张（relative）决定
+      style={{ paddingBottom: total > 1 ? (total - 1) * 14 : 0 }}
+    >
+      {results.map((result, i) => {
+        // 相对最前面那张的层级：0 在最前，往后递增
+        const depth = (i - front + total) % total;
+        return (
+          <PerformanceBar
+            key={result.event}
+            result={result}
+            depth={depth}
+            // 只让第一张参与文档流撑开容器尺寸，其余绝对定位叠上去。
+            // 锚点固定为 i===0（而不是当前最前那张），切换时才不会发生定位模式跳变。
+            stacked={total > 1}
+            anchor={i === 0}
+            // 只有最前面那张可点，点一下轮换到下一场；后面的不接收指针事件
+            onSelect={total > 1 && depth === 0 ? () => setFront((f) => (f + 1) % total) : undefined}
+          />
+        );
+      })}
+    </motion.div>
+  );
+}
+
+function PerformanceBar({
+  result,
+  depth,
+  stacked,
+  anchor,
+  onSelect,
+}: {
+  result: EventResult;
+  depth: number;
+  stacked: boolean;
+  anchor: boolean;
+  onSelect?: () => void;
+}) {
   const perfRef = useRef<HTMLDivElement>(null);
   useMousePositionVar(perfRef);
   // 宽度随内容变，单独一张贴图（不与固定宽的 LiquidSpec 共享）
   useLiquidGlass(perfRef, "pill");
 
-  if (!performance) return null;
+  const metrics = METRIC_ORDER.filter((m) => result[m.key] !== undefined);
 
   return (
     <motion.div
       ref={perfRef}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      transition={{ duration: 0.15, delay: 0.05 }}
-      className="liquid-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0"
+      onClick={onSelect}
+      animate={{
+        y: depth * 14,
+        scale: 1 - depth * 0.04,
+        opacity: depth === 0 ? 1 : 0.55,
+        // 绝对定位那几张要自己抵消 left:50%
+        x: stacked && !anchor ? "-50%" : 0,
+      }}
+      transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+      style={
+        stacked && !anchor
+          ? // 非锚点胶囊绝对定位居中，不撑开容器高度
+            { zIndex: 10 - depth, position: "absolute", top: 0, left: "50%" }
+          : { zIndex: 10 - depth, position: "relative" }
+      }
+      className={`liquid-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0 ${
+        onSelect ? "cursor-pointer" : ""
+      } ${stacked && depth !== 0 ? "pointer-events-none" : ""}`}
     >
-      <>
-        <BottomSpecItem label="Skidpad" value={performance.skidpad} rank={performance.skidpadRank} green />
-        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-        <BottomSpecItem label="Acceleration" value={performance.acceleration} rank={performance.accelerationRank} green />
-        <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-        <BottomSpecItem label="Autocross" value={performance.autocross} rank={performance.autocrossRank} green />
-        <div className="hidden md:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
-        <BottomSpecItem label="Endurance" value={performance.endurance} rank={performance.enduranceRank} enduranceColor={performance.enduranceColor} />
-      </>
+      {/* 赛事名称：车身 AURORA 字标的同款处理 */}
+      <span className="event-wordmark text-base sm:text-xl md:text-2xl uppercase whitespace-nowrap leading-none" data-event={result.event}>
+        {result.event}
+      </span>
+      <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>
+
+      {metrics.map((m, idx) => (
+        <div key={m.key} className="flex items-center gap-3 sm:gap-6">
+          {idx > 0 && <div className="hidden sm:block w-px h-6 bg-slate-300 md:bg-white/20"></div>}
+          <BottomSpecItem
+            label={m.label}
+            value={result[m.key] as string}
+            rank={result[m.rankKey] as number | undefined}
+            green={m.key !== "endurance"}
+            enduranceColor={m.key === "endurance" ? result.enduranceColor : undefined}
+          />
+        </div>
+      ))}
     </motion.div>
   );
 }
 
-function BottomSpecItem({ label, value, rank, green, defaultColor, enduranceColor }: { label: string, value: string, rank?: number, green?: boolean, defaultColor?: boolean, enduranceColor?: string }) {
+function BottomSpecItem({ label, value, rank }: { label: string, value: string, rank?: number }) {
   let vColor = "";
   let rankColor = "";
 
-  if (enduranceColor) {
-    if (enduranceColor === "text-aurora-white") vColor = "text-slate-800 md:text-white";
-    else vColor = "text-emerald-600 md:text-[#a5d6a7]";
-  } else if (green) {
-    // 根据排名设置颜色
-    if (rank === 1) {
-      vColor = "text-yellow-600 md:text-yellow-400"; // P1 金色
-      rankColor = "text-yellow-600 md:text-yellow-400";
-    } else if (rank === 2) {
-      vColor = "text-slate-400 md:text-slate-300"; // P2 银色
-      rankColor = "text-slate-400 md:text-slate-300";
-    } else if (rank === 3) {
-      vColor = "text-orange-600 md:text-orange-400"; // P3 统一颜色（铜色）
-      rankColor = "text-orange-600 md:text-orange-400";
-    } else {
-      vColor = "text-slate-800 md:text-white"; // 其他 白色
-      rankColor = "text-slate-400 md:text-slate-400/90";
-    }
-  } else if (defaultColor) {
+  // P1/P2/P3 保留奖牌色，其余一律白色（桌面）/ 深色（移动端浅底）
+  if (rank === 1) {
+    vColor = "text-yellow-600 md:text-yellow-400";
+    rankColor = "text-yellow-600 md:text-yellow-400";
+  } else if (rank === 2) {
+    vColor = "text-slate-400 md:text-slate-300";
+    rankColor = "text-slate-400 md:text-slate-300";
+  } else if (rank === 3) {
+    vColor = "text-orange-600 md:text-orange-400";
+    rankColor = "text-orange-600 md:text-orange-400";
+  } else {
     vColor = "text-slate-800 md:text-white";
+    rankColor = "text-slate-500 md:text-white/60";
   }
 
   return (
@@ -444,7 +591,7 @@ function LiquidSpec({ label, value, purple }: { label: string, value: string, pu
   return (
     <div
       ref={specRef}
-      className="liquid-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full cursor-pointer"
+      className="liquid-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full"
     >
       <span className="text-slate-500 md:text-white/90 text-[10px] sm:text-xs md:text-xl font-medium uppercase md:normal-case tracking-wider md:tracking-normal md:text-right md:pr-1">{label}</span>
       <span className="hidden md:inline text-white/90 text-xl font-medium">:</span>

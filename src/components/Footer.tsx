@@ -125,8 +125,8 @@ export default function Footer() {
               <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-4 transition-all duration-100 z-50 ${showStoreQR ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'} md:group-hover:opacity-100 md:group-hover:visible md:group-hover:pointer-events-auto`}>
                 <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                   <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
-                    <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
-                    <img src={getAssetUrl("/images/store/qrcode.png")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.webp</span>
+                    <img src={getAssetUrl("/images/store/qrcode.webp")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                   </div>
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
                 </div>

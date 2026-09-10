@@ -1,5 +1,6 @@
 import { getAssetUrl } from "../utils/cdn";
 import { useState, useEffect } from "react";
+import Alumni from "./Alumni";
 
 interface TeamMember {
   name: string;
@@ -20,6 +21,14 @@ const TEAM_IMAGE_FALLBACK = getAssetUrl("/images/team/temp.webp");
 export default function Team() {
   const [activeMember, setActiveMember] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [showAlumni, setShowAlumni] = useState<boolean>(() => {
+    const stored = sessionStorage.getItem('selectedTeamView');
+    if (stored) {
+      sessionStorage.removeItem('selectedTeamView');
+      return stored === 'alumni';
+    }
+    return false;
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -41,6 +50,17 @@ export default function Team() {
       if (mq.removeEventListener) mq.removeEventListener("change", changeHandler);
       else mq.removeListener(changeHandler);
     };
+  }, []);
+
+  // Listen for team view change events from navbar
+  useEffect(() => {
+    const handleTeamViewChange = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      setShowAlumni(customEvent.detail === 'alumni');
+    };
+
+    window.addEventListener('changeTeamView', handleTeamViewChange);
+    return () => window.removeEventListener('changeTeamView', handleTeamViewChange);
   }, []);
 
   // When switching to desktop, clear any active (clicked) member so cards don't stay stuck
@@ -117,6 +137,11 @@ export default function Team() {
     }
   ];
 
+  // If showing Alumni, render the Alumni component instead
+  if (showAlumni) {
+    return <Alumni onBack={() => setShowAlumni(false)} />;
+  }
+
   return (
     <section
       id="team"
@@ -142,8 +167,11 @@ export default function Team() {
                 <h3 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-2 tracking-wide">
                   {group.name}
                 </h3>
-                <span className="font-mono text-sm text-[#7928CA] tracking-widest font-bold normal-case">
-                  {group.enName}
+                <span className="flex items-center gap-2.5">
+                  <span className="h-[2px] w-5 md:w-7 rounded-full bg-gradient-to-r from-[#7928CA] to-[#7928CA]/0" />
+                  <span className="font-display text-[13px] md:text-sm font-semibold italic uppercase tracking-[0.22em] bg-clip-text text-transparent bg-gradient-to-r from-[#1E096A] via-[#3C1088] to-[#6722C1]">
+                    {group.enName}
+                  </span>
                 </span>
               </div>
 

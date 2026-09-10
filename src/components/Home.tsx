@@ -10,12 +10,14 @@ export default function Home() {
     minutes: 0,
     seconds: 0,
   });
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Target date: Nov 15th, 2026, 00:00:00 Beijing time
-    const targetDate = new Date("2026-11-15T00:00:00+08:00");
+    // Target date: Nov 16th, 2026, 00:00:00 Beijing time
+    const targetDate = new Date("2026-11-16T00:00:00+08:00");
 
-    const interval = setInterval(() => {
+    // Calculate immediately to avoid showing 0s
+    const calculateTimeLeft = () => {
       const currentTime = new Date();
       const difference = targetDate.getTime() - currentTime.getTime();
 
@@ -26,10 +28,15 @@ export default function Home() {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         });
-      } else {
-        clearInterval(interval);
+        setIsInitialized(true);
       }
-    }, 1000);
+    };
+
+    // Calculate immediately
+    calculateTimeLeft();
+
+    // Then update every second
+    const interval = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -339,8 +346,8 @@ export default function Home() {
 
                   {/* Content (Timers) */}
                   <div className="skew-x-[20deg] flex items-center justify-center px-10 md:px-14">
-                    <div className="flex items-center justify-center gap-6 md:gap-10 font-display">
-                      
+                    <div className={`flex items-center justify-center gap-6 md:gap-10 font-display transition-opacity duration-300 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
+
                       {/* Days */}
                       <div className="flex flex-col items-center w-[50px] md:w-[70px]">
                         <span className="text-[38px] md:text-[58px] font-black leading-none text-[#151522] italic -tracking-wider drop-shadow-sm">
@@ -398,7 +405,7 @@ export default function Home() {
                           SS
                         </span>
                       </div>
-                      
+
                     </div>
                   </div>
                 </div>
@@ -408,14 +415,14 @@ export default function Home() {
 
           {/* Fallback for Mobile context (Keep a smaller version for phone screens) */}
           <div className="md:hidden relative z-10 w-fit -mt-2 cd-mob origin-top-left">
-            <div className="bg-white/95 backdrop-blur-xl text-aurora-black px-4 py-3 shadow-[0_10px_30px_rgba(30,9,106,0.15)] rounded-xl border-t border-r border-b border-white/40 overflow-hidden relative skew-x-[-10deg] max-w-fit mt-2">
+            <div className={`bg-white/95 backdrop-blur-xl text-aurora-black px-4 py-3 shadow-[0_10px_30px_rgba(30,9,106,0.15)] rounded-xl border-t border-r border-b border-white/40 overflow-hidden relative skew-x-[-10deg] max-w-fit mt-2 transition-opacity duration-300 ${isInitialized ? 'opacity-100' : 'opacity-0'}`}>
               <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#2CF06D] to-[#9922EE]"></div>
 
               <div className="flex items-center gap-2 mb-2 mt-0.5 px-1 skew-x-[10deg]">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#9922EE]"></span>
                 </span>
-                <span className="text-[10px] font-display font-bold tracking-widest text-[#9922EE] uppercase italic">合肥 🇨🇳 FSC</span>
+                <span className="text-sm font-sans font-black tracking-wider text-[#9922EE] uppercase">合肥FSC</span>
               </div>
 
               <div className="flex items-center gap-3 font-display skew-x-[10deg] px-1">
@@ -543,8 +550,8 @@ export default function Home() {
             <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-4 transition-all duration-100 z-50 ${showStoreQR ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'} md:group-hover:opacity-100 md:group-hover:visible md:group-hover:pointer-events-auto`}>
               <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
                 <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
-                  <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.png</span>
-                  <img src={getAssetUrl("/images/store/qrcode.png")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                  <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.webp</span>
+                  <img src={getAssetUrl("/images/store/qrcode.webp")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 </div>
                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
               </div>

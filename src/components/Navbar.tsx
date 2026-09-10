@@ -5,16 +5,20 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-const NAV_ITEMS: { name: string; target: string; dropdown?: boolean }[] = [
+const NAV_ITEMS: { name: string; target: string; dropdown?: boolean; dropdownType?: 'cars' | 'team' }[] = [
   { name: "HOME", target: "home" },
   { name: "SPONSORS", target: "partners" },
-  { name: "CARS", target: "specs", dropdown: true },
+  { name: "CARS", target: "specs", dropdown: true, dropdownType: 'cars' },
   { name: "STORY", target: "heritage" },
-  { name: "TEAM", target: "team" },
+  { name: "TEAM", target: "team", dropdown: true, dropdownType: 'team' },
   { name: "CONTACT", target: "contact" },
 ];
 
 const carYears = [2026, 2025, 2024, 2023, 2022, 2021];
+const teamOptions = [
+  { name: "Team 2026", value: "team" },
+  { name: "Alumni", value: "alumni" },
+];
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -22,7 +26,9 @@ export default function Navbar() {
   const [isTop, setIsTop] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCarsHovered, setIsCarsHovered] = useState(false);
+  const [isTeamHovered, setIsTeamHovered] = useState(false);
   const [isMobileCarsOpen, setIsMobileCarsOpen] = useState(false);
+  const [isMobileTeamOpen, setIsMobileTeamOpen] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const isMobile = useIsMobile();
 
@@ -65,6 +71,7 @@ export default function Navbar() {
     setIsTop(true);
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
+    setIsMobileTeamOpen(false);
     setHasAnimated(false);
   }, [hash, isMobile]);
 
@@ -91,10 +98,13 @@ export default function Navbar() {
   };
 
   const pickYear = (year: number) => {
+    sessionStorage.setItem('selectedCarYear', String(year));
     window.dispatchEvent(new CustomEvent('changeCarYear', { detail: year }));
     setIsCarsHovered(false);
+    setIsTeamHovered(false);
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
+    setIsMobileTeamOpen(false);
     // 移动端：同一页，直接滚到车型区
     if (isMobile) {
       scrollToSection("specs");
@@ -102,6 +112,29 @@ export default function Navbar() {
       window.location.hash = "#/specs";
       window.setTimeout(() => {
         document.getElementById("specs")?.scrollIntoView({ behavior: "smooth" });
+      }, 80);
+    }
+  };
+
+  const pickTeamOption = (value: string) => {
+    sessionStorage.setItem('selectedTeamView', value);
+    window.dispatchEvent(new CustomEvent('changeTeamView', { detail: value }));
+    setIsCarsHovered(false);
+    setIsTeamHovered(false);
+    setIsMobileMenuOpen(false);
+    setIsMobileCarsOpen(false);
+    setIsMobileTeamOpen(false);
+    // 移动端：同一页，直接滚到对应区域
+    if (isMobile) {
+      // 根据选择的值决定滚动目标
+      const targetSection = value === "alumni" ? "alumni" : "team";
+      scrollToSection(targetSection);
+    } else {
+      window.location.hash = "#/team";
+      window.setTimeout(() => {
+        // 桌面端始终先导航到 team 页面，然后根据值决定滚动目标
+        const targetSection = value === "alumni" ? "alumni" : "team";
+        document.getElementById(targetSection)?.scrollIntoView({ behavior: "smooth" });
       }, 80);
     }
   };
@@ -167,12 +200,12 @@ export default function Navbar() {
               <div
                 key={item.name}
                 className="relative group"
-                onMouseEnter={() => setIsCarsHovered(true)}
-                onMouseLeave={() => setIsCarsHovered(false)}
+                onMouseEnter={() => item.dropdownType === 'cars' ? setIsCarsHovered(true) : setIsTeamHovered(true)}
+                onMouseLeave={() => item.dropdownType === 'cars' ? setIsCarsHovered(false) : setIsTeamHovered(false)}
               >
                 <a
-                  href="#/specs"
-                  onClick={(e) => { e.preventDefault(); handleNavClick("specs"); }}
+                  href={item.target === "specs" ? "#/specs" : "#/team"}
+                  onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }}
                   className="text-sm font-medium tracking-widest text-aurora-white/80 hover:text-aurora-purple transition-colors relative flex items-center gap-1 py-4"
                 >
                   {item.name}
@@ -180,31 +213,50 @@ export default function Navbar() {
                 </a>
                 {/* Dropdown */}
                 <AnimatePresence>
-                  {isCarsHovered && (
+                  {((item.dropdownType === 'cars' && isCarsHovered) || (item.dropdownType === 'team' && isTeamHovered)) && (
                     <motion.div
                       initial={{ opacity: 0, y: -10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      transition={{ duration: 0.12, ease: "easeOut" }}
                       className="absolute top-full left-1/2 -translate-x-1/2 pt-2 origin-top"
                     >
                       <div className="dropdown-glass rounded-xl py-2 flex flex-col min-w-[120px]">
-                        {carYears.map((year, i) => (
-                          <motion.a
-                            key={year}
-                            href="#/specs"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.04, duration: 0.2 }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              pickYear(year);
-                            }}
-                            className="px-4 py-2.5 text-sm font-display text-aurora-white/80 hover:text-aurora-purple hover:bg-aurora-white/10 transition-colors text-center block font-bold drop-shadow-md"
-                          >
-                            {year}
-                          </motion.a>
-                        ))}
+                        {item.dropdownType === 'cars' ? (
+                          carYears.map((year, i) => (
+                            <motion.a
+                              key={year}
+                              href="#/specs"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.015, duration: 0.12 }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                pickYear(year);
+                              }}
+                              className="px-4 py-2.5 text-sm font-display text-aurora-white/80 hover:text-aurora-purple hover:bg-aurora-white/10 transition-all duration-150 text-center block font-bold drop-shadow-md"
+                            >
+                              {year}
+                            </motion.a>
+                          ))
+                        ) : (
+                          teamOptions.map((option, i) => (
+                            <motion.a
+                              key={option.value}
+                              href="#/team"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.015, duration: 0.12 }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                pickTeamOption(option.value);
+                              }}
+                              className="px-4 py-2.5 text-sm font-display text-aurora-white/80 hover:text-aurora-purple hover:bg-aurora-white/10 transition-all duration-150 text-center block font-bold drop-shadow-md"
+                            >
+                              {option.name}
+                            </motion.a>
+                          ))
+                        )}
                       </div>
                     </motion.div>
                   )}
@@ -282,16 +334,33 @@ export default function Navbar() {
                           {item.name}
                         </a>
                         <button
-                          onClick={(e) => { e.preventDefault(); setIsMobileCarsOpen(!isMobileCarsOpen); }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (item.dropdownType === 'cars') {
+                              setIsMobileCarsOpen(!isMobileCarsOpen);
+                              setIsMobileTeamOpen(false);
+                            } else {
+                              setIsMobileTeamOpen(!isMobileTeamOpen);
+                              setIsMobileCarsOpen(false);
+                            }
+                          }}
                           className="p-1.5 text-aurora-white/70 hover:text-aurora-purple outline-none"
-                          aria-label={isMobileCarsOpen ? "Collapse car years" : "Expand car years"}
-                          aria-expanded={isMobileCarsOpen}
+                          aria-label={
+                            item.dropdownType === 'cars'
+                              ? (isMobileCarsOpen ? "Collapse car years" : "Expand car years")
+                              : (isMobileTeamOpen ? "Collapse team options" : "Expand team options")
+                          }
+                          aria-expanded={item.dropdownType === 'cars' ? isMobileCarsOpen : isMobileTeamOpen}
                         >
-                          <ChevronDown size={18} className={`transition-transform duration-300 ${isMobileCarsOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown size={18} className={`transition-transform duration-300 ${
+                            (item.dropdownType === 'cars' && isMobileCarsOpen) || (item.dropdownType === 'team' && isMobileTeamOpen)
+                              ? "rotate-180"
+                              : ""
+                          }`} />
                         </button>
                       </div>
                       <AnimatePresence>
-                        {isMobileCarsOpen && (
+                        {((item.dropdownType === 'cars' && isMobileCarsOpen) || (item.dropdownType === 'team' && isMobileTeamOpen)) && (
                           <motion.div
                             initial={{ maxHeight: 0, opacity: 0 }}
                             animate={{ maxHeight: 400, opacity: 1 }}
@@ -300,19 +369,35 @@ export default function Navbar() {
                             className="overflow-hidden pb-2 pt-1"
                           >
                             <div className="flex flex-col pl-4">
-                              {carYears.map((year, i) => (
-                                <motion.a
-                                  key={year}
-                                  href="#specs"
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: i * 0.04, duration: 0.2 }}
-                                  onClick={(e) => { e.preventDefault(); pickYear(year); }}
-                                  className="py-2 text-base font-display font-bold text-aurora-white/70 hover:text-aurora-purple transition-colors"
-                                >
-                                  {year}
-                                </motion.a>
-                              ))}
+                              {item.dropdownType === 'cars' ? (
+                                carYears.map((year, i) => (
+                                  <motion.a
+                                    key={year}
+                                    href="#specs"
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.04, duration: 0.2 }}
+                                    onClick={(e) => { e.preventDefault(); pickYear(year); }}
+                                    className="py-2 text-base font-display font-bold text-aurora-white/70 hover:text-aurora-purple transition-colors"
+                                  >
+                                    {year}
+                                  </motion.a>
+                                ))
+                              ) : (
+                                teamOptions.map((option, i) => (
+                                  <motion.a
+                                    key={option.value}
+                                    href="#team"
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.04, duration: 0.2 }}
+                                    onClick={(e) => { e.preventDefault(); pickTeamOption(option.value); }}
+                                    className="py-2 text-base font-display font-bold text-aurora-white/70 hover:text-aurora-purple transition-colors"
+                                  >
+                                    {option.name}
+                                  </motion.a>
+                                ))
+                              )}
                             </div>
                           </motion.div>
                         )}

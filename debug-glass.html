@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass Debug</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    .test-box {
+      width: 300px;
+      height: 100px;
+      margin: 20px 0;
+      padding: 20px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
+      backdrop-filter: var(--hyalite, blur(8px));
+      -webkit-backdrop-filter: var(--hyalite, blur(8px));
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .info {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+    }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h1>Liquid Glass Diagnostics</h1>
+
+  <div class="info">
+    <h3>Environment Check:</h3>
+    <div id="checks"></div>
+  </div>
+
+  <div class="info">
+    <h3>Hyalite Engine Status:</h3>
+    <div id="engine-status">Loading...</div>
+  </div>
+
+  <div class="info">
+    <h3>HTML Attributes:</h3>
+    <div id="html-attrs"></div>
+  </div>
+
+  <div class="test-box" id="test-element">
+    Test Element
+  </div>
+
+  <script type="module">
+    const checks = document.getElementById('checks');
+    const engineStatus = document.getElementById('engine-status');
+    const htmlAttrs = document.getElementById('html-attrs');
+
+    // Environment checks
+    const isChrome = /Chrome\/\d+/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor || '');
+    const hasUserAgentData = !!navigator.userAgentData;
+    const isChromiumByUAD = navigator.userAgentData?.brands?.some(b => /Chromium/i.test(b.brand));
+    const supportsBackdropFilter = CSS.supports('backdrop-filter', 'blur(1px)');
+    const viewportWidth = window.innerWidth;
+    const isDesktop = viewportWidth >= 768;
+
+    checks.innerHTML = `
+      <div class="${isChrome || isChromiumByUAD ? 'pass' : 'fail'}">✓ Chromium: ${isChrome || isChromiumByUAD}</div>
+      <div>→ UA Check: ${isChrome}</div>
+      <div>→ UserAgentData: ${hasUserAgentData} ${isChromiumByUAD ? '(Chromium brand found)' : ''}</div>
+      <div class="${supportsBackdropFilter ? 'pass' : 'fail'}">✓ Backdrop Filter Support: ${supportsBackdropFilter}</div>
+      <div class="${isDesktop ? 'pass' : 'fail'}">✓ Desktop Viewport: ${isDesktop} (${viewportWidth}px)</div>
+      <div>→ Prefers Reduced Transparency: ${matchMedia('(prefers-reduced-transparency: reduce)').matches}</div>
+      <div>→ Save Data: ${navigator.connection?.saveData || false}</div>
+    `;
+
+    // Try to load hyalite from dist
+    try {
+      // Check if Hyalite is already loaded
+      if (window.Hyalite) {
+        const supported = window.Hyalite.supported();
+        engineStatus.innerHTML = `
+          <div class="${supported ? 'pass' : 'fail'}">Hyalite.supported(): ${supported}</div>
+          <div>Version: ${window.Hyalite.version}</div>
+        `;
+
+        if (supported) {
+          const testEl = document.getElementById('test-element');
+          window.Hyalite.attach(testEl, {
+            bevel: 28,
+            thickness: 28,
+            blur: 1,
+            dispersion: 0.5,
+            rim: 0.8,
+            light: -40
+          });
+
+          setTimeout(() => {
+            const hyaliteVar = getComputedStyle(testEl).getPropertyValue('--hyalite');
+            engineStatus.innerHTML += `<div>--hyalite value: ${hyaliteVar || '(not set)'}</div>`;
+          }, 500);
+        }
+      } else {
+        engineStatus.innerHTML = '<div class="fail">Hyalite not loaded in window</div>';
+      }
+    } catch (e) {
+      engineStatus.innerHTML = `<div class="fail">Error: ${e.message}</div>`;
+    }
+
+    // Check HTML attributes
+    function updateHTMLAttrs() {
+      const dataGlass = document.documentElement.dataset.glass;
+      const dataHyalite = document.documentElement.dataset.hyalite;
+      htmlAttrs.innerHTML = `
+        <div>data-glass: <strong>${dataGlass || '(not set)'}</strong></div>
+        <div>data-hyalite: <strong>${dataHyalite || '(not set)'}</strong></div>
+      `;
+    }
+    updateHTMLAttrs();
+    setInterval(updateHTMLAttrs, 1000);
+
+    // Try URL override
+    const urlParams = new URLSearchParams(window.location.search);
+    const glassParam = urlParams.get('glass');
+    if (glassParam) {
+      document.getElementById('checks').innerHTML += `<div class="pass">URL Override: ?glass=${glassParam}</div>`;
+    }
+  </script>
+</body>
+</html>
