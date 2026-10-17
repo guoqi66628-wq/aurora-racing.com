@@ -543,8 +543,6 @@ function PerformanceBar({
             label={m.label}
             value={result[m.key] as string}
             rank={result[m.rankKey] as number | undefined}
-            green={m.key !== "endurance"}
-            enduranceColor={m.key === "endurance" ? result.enduranceColor : undefined}
           />
         </div>
       ))}

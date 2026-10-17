@@ -12,4 +12,9 @@ coverage/
 !.env.production
 !.env.development
 dist.zip
+dist.tar.gz
 .glass-shots/
+# 本地性能报告与 Python 缓存；阶段摘要保存在 docs/phase1-evidence/
+/lighthouse-local-*.json
+__pycache__/
+*.py[cod]

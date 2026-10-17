@@ -1,0 +1,108 @@
+﻿{
+    "date":  "2026-10-15",
+    "scope":  "local workspace only",
+    "totalBytes":  364978629,
+    "totalFiles":  90,
+    "entries":  [
+                    {
+                        "path":  "build/lowmem-benchmark-1",
+                        "files":  8,
+                        "bytes":  102423192
+                    },
+                    {
+                        "path":  "build/lowmem-benchmark-557",
+                        "files":  8,
+                        "bytes":  207819336
+                    },
+                    {
+                        "path":  "build/i3pro-lowmem",
+                        "files":  6,
+                        "bytes":  65677
+                    },
+                    {
+                        "path":  "build/i3pro-lowmem-576",
+                        "files":  6,
+                        "bytes":  70540
+                    },
+                    {
+                        "path":  "build/i3pro-retention",
+                        "files":  10,
+                        "bytes":  90051
+                    },
+                    {
+                        "path":  "build/telemetry-login",
+                        "files":  10,
+                        "bytes":  788189
+                    },
+                    {
+                        "path":  "build/telemetry-login (2)",
+                        "files":  10,
+                        "bytes":  788189
+                    },
+                    {
+                        "path":  "build/telemetry-server",
+                        "files":  6,
+                        "bytes":  39293
+                    },
+                    {
+                        "path":  "build/telemetry-share-proxy",
+                        "files":  4,
+                        "bytes":  41959
+                    },
+                    {
+                        "path":  "build/i3pro-csvlog.py",
+                        "files":  1,
+                        "bytes":  36643
+                    },
+                    {
+                        "path":  "build/i3pro-indexpage.py",
+                        "files":  1,
+                        "bytes":  13901
+                    },
+                    {
+                        "path":  "build/i3pro-library.py",
+                        "files":  1,
+                        "bytes":  20894
+                    },
+                    {
+                        "path":  "build/i3pro-server-reference.py",
+                        "files":  1,
+                        "bytes":  12979
+                    },
+                    {
+                        "path":  "build/i3pro-txtlog.py",
+                        "files":  1,
+                        "bytes":  13320
+                    },
+                    {
+                        "path":  "build/i3pro-lowmem.zip",
+                        "files":  1,
+                        "bytes":  25732
+                    },
+                    {
+                        "path":  ".glass-shots",
+                        "files":  12,
+                        "bytes":  3669611
+                    },
+                    {
+                        "path":  "dist.zip",
+                        "files":  1,
+                        "bytes":  12501533
+                    },
+                    {
+                        "path":  "dist.tar.gz",
+                        "files":  1,
+                        "bytes":  34773447
+                    },
+                    {
+                        "path":  "lighthouse-local-3000.json",
+                        "files":  1,
+                        "bytes":  868753
+                    },
+                    {
+                        "path":  "lighthouse-local-3000-desktop.json",
+                        "files":  1,
+                        "bytes":  915390
+                    }
+                ]
+}

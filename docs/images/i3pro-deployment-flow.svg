@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1240" viewBox="0 0 1120 1240" role="img" aria-labelledby="title desc">
+  <title id="title">i3pro 与官网同机部署流程</title>
+  <desc id="desc">先核对环境并备份，准备子域名和 HTTPS，安装并启动 i3pro，添加密码和反向代理，再用小日志验证。验证通过后接入官网入口、建立备份；失败时排查问题并重新验证。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#440381"/></marker>
+    <marker id="retry" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9a4925"/></marker>
+    <style>
+      text { font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif; }
+      .box { fill: #ffffff; stroke: #ddd9e6; stroke-width: 1.5; }
+      .number { fill: #440381; }
+      .number-text { fill: #ffffff; font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .step-title { fill: #21172d; font-size: 25px; font-weight: 700; }
+      .detail { fill: #554d60; font-size: 19px; }
+      .place { fill: #440381; font-size: 17px; font-weight: 600; text-anchor: end; }
+      .link { fill: none; stroke: #440381; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="1240" fill="#f7f6fa"/>
+  <text x="70" y="64" fill="#21172d" font-size="34" font-weight="700">i3pro 部署流程</text>
+  <text x="70" y="104" class="detail">同一台阿里云服务器 · 官网 + 独立分析工作台</text>
+  <text x="750" y="136" class="place">操作位置</text>
+
+  <rect x="70" y="148" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="193" r="23" class="number"/>
+  <text x="115" y="201" class="number-text">1</text>
+  <text x="156" y="184" class="step-title">核对环境并备份官网</text>
+  <text x="156" y="216" class="detail">确认系统、可用内存、磁盘与端口</text>
+  <text x="728" y="184" class="place">宝塔 / 终端</text>
+  <path d="M410 238 V272" class="link"/>
+
+  <rect x="70" y="272" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="317" r="23" class="number"/>
+  <text x="115" y="325" class="number-text">2</text>
+  <text x="156" y="308" class="step-title">准备分析子域名和 HTTPS</text>
+  <text x="156" y="340" class="detail">解析到现有服务器，创建宝塔站点</text>
+  <text x="728" y="308" class="place">DNS / 宝塔</text>
+  <path d="M410 362 V396" class="link"/>
+
+  <rect x="70" y="396" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="441" r="23" class="number"/>
+  <text x="115" y="449" class="number-text">3</text>
+  <text x="156" y="432" class="step-title">安装并启动 i3pro</text>
+  <text x="156" y="464" class="detail">独立目录、Python 环境、自动启动与资源限制</text>
+  <text x="728" y="432" class="place">服务器终端</text>
+  <path d="M410 486 V520" class="link"/>
+
+  <rect x="70" y="520" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="565" r="23" class="number"/>
+  <text x="115" y="573" class="number-text">4</text>
+  <text x="156" y="556" class="step-title">添加访问密码和反向代理</text>
+  <text x="156" y="588" class="detail">让 HTTPS 工作台通过密码验证访问内部服务</text>
+  <text x="728" y="556" class="place">终端 / 宝塔</text>
+  <path d="M410 610 V644" class="link"/>
+
+  <rect x="70" y="644" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="689" r="23" class="number"/>
+  <text x="115" y="697" class="number-text">5</text>
+  <text x="156" y="680" class="step-title">上传一份小日志验证</text>
+  <text x="156" y="712" class="detail">测试导入、分析、保存、导出及官网响应</text>
+  <text x="728" y="680" class="place">工作台 / 监控</text>
+  <path d="M410 734 V766" class="link"/>
+
+  <path d="M410 766 L545 810 L410 854 L275 810 Z" fill="#efe9f8" stroke="#440381" stroke-width="1.5"/>
+  <text x="410" y="817" fill="#440381" font-size="22" font-weight="700" text-anchor="middle">验证通过？</text>
+  <path d="M410 854 V914" class="link"/>
+  <text x="430" y="889" fill="#440381" font-size="18">通过</text>
+
+  <path d="M545 810 H915 V838" fill="none" stroke="#9a4925" stroke-width="2" marker-end="url(#retry)"/>
+  <text x="780" y="793" fill="#9a4925" font-size="18">未通过</text>
+  <rect x="815" y="838" width="200" height="96" rx="12" fill="#fff4ec" stroke="#e7c5b2"/>
+  <text x="915" y="869" fill="#7c391c" font-size="22" font-weight="700" text-anchor="middle">排查问题</text>
+  <text x="915" y="895" fill="#7c391c" font-size="17" text-anchor="middle">配置 / 权限 / 资源</text>
+  <text x="915" y="920" fill="#7c391c" font-size="17" text-anchor="middle">解决后重新验证</text>
+  <path d="M915 934 V955 H1050 V689 H750" fill="none" stroke="#9a4925" stroke-width="2" marker-end="url(#retry)"/>
+
+  <rect x="70" y="914" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="959" r="23" class="number"/>
+  <text x="115" y="967" class="number-text">6</text>
+  <text x="156" y="950" class="step-title">添加官网入口并发布</text>
+  <text x="156" y="982" class="detail">桌面和手机菜单加入 TELEMETRY 链接</text>
+  <text x="728" y="950" class="place">本地电脑 / 宝塔</text>
+  <path d="M410 1004 V1038" class="link"/>
+
+  <rect x="70" y="1038" width="680" height="90" rx="14" class="box"/>
+  <circle cx="115" cy="1083" r="23" class="number"/>
+  <text x="115" y="1091" class="number-text">7</text>
+  <text x="156" y="1074" class="step-title">建立备份，开始小范围使用</text>
+  <text x="156" y="1106" class="detail">备份日志和配置，验证恢复，持续观察资源</text>
+  <text x="728" y="1074" class="place">服务器 / 备份位置</text>
+
+  <text x="70" y="1180" class="detail">全部操作按部署指南逐步进行；流程图不代表已经部署完成。</text>
+  <text x="70" y="1212" class="detail">部署方案：Alibaba Cloud Linux 3 + 宝塔 Nginx；独立安装 Python 3.11。</text>
+</svg>

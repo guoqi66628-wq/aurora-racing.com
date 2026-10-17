@@ -1,0 +1,31 @@
+{
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "win32",
+  "file_bytes": 206848457,
+  "rows": 123300,
+  "columns": 557,
+  "matrix_mib": 524.0,
+  "results": [
+    {
+      "mode": "original",
+      "channels": 556,
+      "duration": 1232.99,
+      "values_sha256": "3c63b4f9c17bc7c4b1ce35bae8756f4a039a9eb55358a88676126dcf778e3f80",
+      "html_sha256": "52898b98c8abb5f9092e1e537f7fa2cdf745b0108c0da7b54c9d718f761108af",
+      "seconds": 6.249,
+      "peak_rss_mib": 1162.2,
+      "peak_private_mib": 1670.2
+    },
+    {
+      "mode": "lowmem",
+      "channels": 556,
+      "duration": 1232.99,
+      "values_sha256": "3c63b4f9c17bc7c4b1ce35bae8756f4a039a9eb55358a88676126dcf778e3f80",
+      "html_sha256": "52898b98c8abb5f9092e1e537f7fa2cdf745b0108c0da7b54c9d718f761108af",
+      "seconds": 5.672,
+      "peak_rss_mib": 621.5,
+      "peak_private_mib": 615.8
+    }
+  ],
+  "note": "Synthetic Windows measurements are not Linux cgroup peak memory guarantees."
+}

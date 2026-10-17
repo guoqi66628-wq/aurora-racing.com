@@ -1,7 +1,7 @@
 import { getAssetUrl } from "../utils/cdn";
 import { useState, useEffect } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
 import AuroraLogo from "./AuroraLogo";
 import { useIsMobile } from "../hooks/useIsMobile";
 
@@ -19,6 +19,8 @@ const teamOptions = [
   { name: "Team 2026", value: "team" },
   { name: "Alumni", value: "alumni" },
 ];
+
+const TELEMETRY_URL = "https://telemetry.aurora-racing.com/login";
 
 export default function Navbar() {
   const { scrollY } = useScroll();
@@ -170,7 +172,7 @@ export default function Navbar() {
           : "nav-glass"
       }`}
     >
-      <div className="w-full px-6 md:px-12 h-20 flex items-center justify-between relative z-50">
+      <div className="w-full px-6 md:px-6 lg:px-12 h-20 flex items-center justify-between relative z-50">
         {/* Logo */}
         <a
           href={isMobile ? "#home" : "#/"}
@@ -181,7 +183,7 @@ export default function Navbar() {
             scrollToSection("home");
           }}
         >
-          <AuroraLogo className="hidden md:block w-36 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
+          <AuroraLogo className="hidden md:block w-28 lg:w-36 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
           <img
             src={getAssetUrl("/images/logos/logo-mobile.webp")}
             alt="Aurora Logo"
@@ -194,7 +196,7 @@ export default function Navbar() {
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-3 lg:gap-6 xl:gap-8">
           {NAV_ITEMS.map((item) => (
             item.dropdown ? (
               <div
@@ -274,6 +276,16 @@ export default function Navbar() {
               </a>
             )
           ))}
+          <a
+            href={TELEMETRY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TELEMETRY 数据分析工作台（在新标签页打开）"
+            className="telemetry-nav-link shrink-0 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-3 lg:px-4 py-2.5 text-xs lg:text-sm font-medium tracking-widest text-aurora-white transition-colors hover:border-purple-400/70 hover:bg-aurora-purple/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-300"
+          >
+            <span>TELEMETRY</span>
+            <ArrowUpRight size={15} aria-hidden="true" />
+          </a>
         </div>
 
         {/* Mobile Nav Toggle */}
@@ -308,7 +320,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute top-full right-6 md:hidden flex flex-col z-50 mt-2 origin-top-right w-[200px]"
+              className="absolute top-full right-6 md:hidden flex flex-col z-50 mt-2 origin-top-right w-[220px] max-h-[calc(100dvh-6rem)] overflow-y-auto!"
               style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 backdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',

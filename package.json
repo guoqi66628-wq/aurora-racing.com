@@ -9,6 +9,7 @@
     "clean": "node scripts/clean.cjs",
     "build": "npm run clean && vite build",
     "lint": "tsc --noEmit",
+    "package:telemetry": "node scripts/package-telemetry.cjs",
     "deploy:assets": "node --env-file-if-exists=.env.deploy scripts/sync-assets.cjs",
     "deploy:assets:dry": "node --env-file-if-exists=.env.deploy scripts/sync-assets.cjs --dry-run",
     "deploy:dist": "node --env-file-if-exists=.env.deploy scripts/sync-dist.cjs",

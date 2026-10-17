@@ -1,0 +1,26 @@
+[Unit]
+Description=Aurora Telemetry login authentication
+After=network.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=aurora-auth
+Group=aurora-auth
+WorkingDirectory=/opt/aurora-telemetry-auth
+ExecStart=/usr/bin/python3.11 /opt/aurora-telemetry-auth/auth_service.py
+Environment=PYTHONDONTWRITEBYTECODE=1
+Restart=on-failure
+RestartSec=5
+MemoryMax=96M
+CPUQuota=25%
+TasksMax=32
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

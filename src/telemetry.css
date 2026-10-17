@@ -1,0 +1,182 @@
+﻿/* Login-only light theme: shared surfaces connect the circuit and the form. */
+/* Official, unmodified Alibaba PuHuiTi 3 webfonts, scoped to the login form. */
+@font-face {
+  font-family: "Alibaba PuHuiTi 3";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/alibaba-puhuiti/AlibabaPuHuiTi-3-55-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Alibaba PuHuiTi 3";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./assets/fonts/alibaba-puhuiti/AlibabaPuHuiTi-3-65-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Alibaba PuHuiTi 3";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./assets/fonts/alibaba-puhuiti/AlibabaPuHuiTi-3-75-SemiBold.woff2") format("woff2");
+}
+html.telemetry-page, .telemetry-page body { background: #f6f7f9; color-scheme: light; }
+.telemetry-login {
+  --telemetry-ink: #202127;
+  --telemetry-muted: #70717d;
+  min-height: 100dvh;
+  overflow-x: clip;
+  color: var(--telemetry-ink);
+  background: #f6f7f9;
+  display: flex;
+  flex-direction: column;
+  padding: 0 clamp(24px, 4.5vw, 80px);
+  padding-bottom: 32px;
+}
+.telemetry-header { width: 100%; max-width: 1320px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.telemetry-header { min-height: 112px; }
+.telemetry-logo-link { display: inline-flex; align-items: center; gap: 22px; }
+.telemetry-brand-logo { width: 140px; height: auto; }
+.telemetry-back { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 17px; border: 1px solid #e1e2e8; border-radius: 999px; font-size: 12px; color: #5d5e69; transition: background .2s, border-color .2s; }
+.telemetry-back:hover { background: #fff; border-color: #c5c6cf; }
+.telemetry-frame {
+  --telemetry-edge-colors: radial-gradient(ellipse at 0 0, #f8943a, transparent 60%),
+    radial-gradient(ellipse at 100% 0, #00a6ff, transparent 60%),
+    radial-gradient(ellipse at 0 100%, #ff0056, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, #6500ff, transparent 60%);
+  width: 100%; max-width: 1320px; margin: auto; position: relative;
+  border-radius: 40px; isolation: isolate;
+}
+/* Separate exterior glow from the clipped, opaque content surface. */
+.telemetry-frame::before, .telemetry-frame::after {
+  content: ""; position: absolute; pointer-events: none; border-radius: inherit;
+  background: var(--telemetry-edge-colors); background-size: 150% 150%;
+  animation: telemetry-edge-shift 5s ease-in-out infinite;
+}
+.telemetry-frame::before {
+  inset: -5px; z-index: -2; opacity: .36; filter: blur(18px);
+  animation: telemetry-edge-shift 5s ease-in-out infinite, telemetry-edge-glow 3s ease-in-out infinite alternate;
+}
+.telemetry-frame::after { inset: -1px; z-index: -1; opacity: .65; }
+.telemetry-layout {
+  width: 100%; display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  min-height: 650px; overflow: hidden; position: relative;
+  border: 1px solid #ffffffa6; border-radius: inherit;
+  background: linear-gradient(110deg, #f0f0f5 0%, #f7f7fa 43%, #fff 76%);
+  box-shadow: 0 24px 70px -38px #29233626, 0 2px 4px #20212703;
+}
+.telemetry-visual { position: relative; padding: 44px 12px 44px; display: flex; flex-direction: column; min-width: 0; }
+.telemetry-access { width: fit-content; display: flex; align-items: center; gap: 8px; border-radius: 999px; }
+.telemetry-circuit { flex: 1; display: flex; align-items: center; width: 100%; min-width: 0; padding-block: 30px; }
+.telemetry-circuit > svg { display: block; width: 100%; height: auto; overflow: visible; }
+.telemetry-chip-body { filter: drop-shadow(0 12px 12px #25213126); stroke: #4a4654; }
+.telemetry-chip-name { fill: #fff; font-family: var(--font-display); font-size: 29px; font-weight: 500; letter-spacing: -.04em; }
+.telemetry-trace-bg { stroke: #333; stroke-width: 1.8; fill: none; }
+/* Match the supplied animation: native path lengths, synchronized 3s cycles. */
+.telemetry-trace-flow { stroke: currentColor; stroke-width: 1.8; fill: none; stroke-dasharray: 40 400; stroke-dashoffset: 438; filter: drop-shadow(0 0 6px currentColor); animation: telemetry-flow 3s cubic-bezier(.5, 0, .9, 1) infinite; }
+.telemetry-trace-purple { color: #9900ff; }
+.telemetry-trace-blue { color: #00ccff; }
+.telemetry-trace-amber { color: #ffea00; }
+.telemetry-trace-green { color: #00ff15; }
+.telemetry-trace-red { color: #ff3300; }
+.telemetry-form-section { min-width: 0; display: flex; align-items: center; justify-content: center; padding: 48px 48px 48px 30px; font-family: "Alibaba PuHuiTi 3", var(--font-sans); font-synthesis: none; }
+.telemetry-form-section input, .telemetry-form-section button { font-family: inherit; }
+.telemetry-form-content { width: 100%; max-width: 364px; }
+.telemetry-access { padding: 7px 11px; background: #efebf4; color: #72578f; font-size: 11px; font-weight: 500; }
+.telemetry-form-content h1 { font-size: clamp(25px, 2.4vw, 32px); font-weight: 600; letter-spacing: -.02em; margin-top: 20px; line-height: 1.4; }
+.telemetry-form-content form { margin-top: 30px; }
+.telemetry-field { margin-bottom: 19px; }
+.telemetry-field label { display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 500; margin: 0 4px 9px; color: #494752; }
+.telemetry-field label span { font-size: 9px; font-weight: 400; letter-spacing: .12em; color: #86828e; }
+.telemetry-input-wrap { display: flex; align-items: center; position: relative; border: 1px solid #e5e2eb; border-radius: 999px; background: #f5f4f8; padding-left: 18px; transition: border-color .35s, background .35s; }
+.telemetry-input-wrap::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; opacity: 0; box-shadow: 0 0 0 3px #a68bc412, 0 5px 20px -5px #9873bd40; transition: opacity .4s; animation: telemetry-input-breathe 2.8s ease-in-out infinite; }
+.telemetry-input-wrap > svg { color: #9790a3; flex-shrink: 0; transition: color .35s; }
+/* Hover owns the breathing glow; pointer focus does not leave a highlight. */
+@media (hover: hover) and (pointer: fine) {
+  .telemetry-input-wrap:has(input:enabled):hover { background: #fbfafc; border-color: #c6b8d8; }
+  .telemetry-input-wrap:has(input:enabled):hover::before { opacity: 1; }
+  .telemetry-input-wrap:has(input:enabled):hover > svg { color: #806597; }
+}
+.telemetry-keyboard-navigation .telemetry-input-wrap:has(input:focus-visible) { outline: 2px solid #987fb5; outline-offset: 3px; }
+.telemetry-input-wrap:has(input[aria-invalid="true"]) { border-color: #bc6868; }
+.telemetry-input-wrap input { width: 100%; min-width: 0; background: transparent; padding: 15px 12px; border-radius: inherit; color: var(--telemetry-ink); outline: none; font-size: 14px; line-height: 22px; }
+.telemetry-input-wrap input::placeholder { color: #8b8595; font-size: 12px; }
+.telemetry-input-wrap input:disabled { opacity: .65; }
+.telemetry-input-wrap input:-webkit-autofill { -webkit-text-fill-color: #202127; box-shadow: 0 0 0 1000px #f5f4f8 inset; }
+/* Edge adds its own reveal button after typing; use our accessible toggle only. */
+#telemetry-password::-ms-reveal { display: none; }
+.telemetry-password-toggle { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; margin-right: 4px; color: #837b90; border-radius: 50%; cursor: pointer; }
+.telemetry-password-toggle:hover { background: #eae6f0; color: #4e405f; }
+.telemetry-capslock { margin: 8px 4px 0; font-size: 12px; color: #88661e; }
+.telemetry-error { padding: 12px 16px; background: #fff1f0; border: 1px solid #eed1cf; color: #973e3e; font-size: 12px; line-height: 1.7; border-radius: 18px; margin-bottom: 18px; }
+.telemetry-submit { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 7px 8px 7px 22px; min-height: 54px; margin-top: 25px; border-radius: 999px; background: #28242f; color: #fff; font-size: 13px; font-weight: 500; letter-spacing: .03em; cursor: pointer; box-shadow: 0 6px 14px -7px #29202e66; transition: background .2s, box-shadow .2s; }
+.telemetry-submit:hover:not(:disabled) { background: #443152; box-shadow: 0 8px 18px -7px #44315266; }
+.telemetry-submit-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #ffffff1c; }
+.telemetry-submit:disabled { cursor: wait; opacity: .65; }
+.telemetry-help { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 16px; font-size: 11px; line-height: 1.9; color: #7c7586; }
+.telemetry-help svg { flex-shrink: 0; }
+.telemetry-local { margin-top: 30px; padding-top: 22px; border-top: 1px solid #ebe8ef; }
+.telemetry-repository { display: flex; align-items: center; gap: 12px; border-radius: 20px; padding: 10px; margin: -10px; transition: background .2s; }
+.telemetry-repository:hover { background: #f0edf5; }
+.telemetry-github-icon { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 15px; color: #57515f; background: #eeecf2; }
+.telemetry-repository-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 5px; }
+.telemetry-repository-copy strong { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 500; }
+.telemetry-repository-copy strong > span { border: 1px solid #dfdbe6; border-radius: 999px; padding: 1px 6px; font-size: 9px; color: #77717f; }
+.telemetry-repository-copy > span { font-size: 11px; line-height: 1.7; color: #7d7686; }
+.telemetry-repository > svg { color: #8a8196; flex-shrink: 0; }
+.telemetry-login a:focus-visible, .telemetry-login button:focus-visible { outline: 2px solid #79559b; outline-offset: 4px; }
+.telemetry-spinner { animation: telemetry-spin 1s linear infinite; }
+@keyframes telemetry-spin { to { transform: rotate(360deg); } }
+@keyframes telemetry-flow { from { stroke-dashoffset: 438; } to { stroke-dashoffset: 0; } }
+@keyframes telemetry-input-breathe {
+  0%, 100% { box-shadow: 0 0 0 2px #a68bc40a, 0 3px 12px -5px #9873bd20; }
+  50% { box-shadow: 0 0 0 5px #a68bc418, 0 6px 24px -4px #9873bd48; }
+}
+@keyframes telemetry-edge-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes telemetry-edge-glow {
+  to { opacity: .5; filter: blur(24px); transform: scale(1.005); }
+}
+@media (min-width: 1600px) { .telemetry-layout { min-height: 710px; } }
+@media (min-width: 768px) and (max-height: 820px) {
+  .telemetry-header { min-height: 82px; }
+  .telemetry-layout { min-height: 580px; }
+  .telemetry-visual { padding-block: 30px; }
+  .telemetry-form-section { padding-block: 32px; }
+  .telemetry-local { margin-top: 24px; padding-top: 18px; }
+}
+@media (max-width: 1023px) {
+  .telemetry-login { padding-inline: 24px; }
+  .telemetry-header { min-height: 90px; }
+  .telemetry-frame { border-radius: 30px; }
+  .telemetry-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 620px; }
+  .telemetry-form-section { padding: 36px 28px 36px 20px; }
+}
+@media (max-width: 767px) {
+  .telemetry-login { padding-inline: 16px; padding-bottom: 24px; }
+  .telemetry-header { min-height: 84px; }
+  .telemetry-brand-logo { width: 114px; }
+  .telemetry-back { padding-inline: 13px; font-size: 11px; }
+  .telemetry-frame { max-width: 480px; margin-block: 0; border-radius: 28px; }
+  .telemetry-frame::before { inset: -2px; filter: blur(12px); animation: telemetry-edge-shift 5s ease-in-out infinite; }
+  .telemetry-layout { display: flex; flex-direction: column; min-height: 0; background: linear-gradient(165deg, #eeeef4, #fff 56%); }
+  .telemetry-visual { padding: 24px 12px 0; }
+  .telemetry-circuit { flex: none; padding-block: 24px 20px; }
+  .telemetry-form-section { padding: 12px 24px 32px; }
+  .telemetry-form-content { max-width: 380px; }
+  .telemetry-access { font-size: 10px; }
+  .telemetry-form-content h1 { font-size: 27px; margin-top: 15px; }
+  .telemetry-form-content form { margin-top: 26px; }
+  .telemetry-input-wrap input { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .telemetry-input-wrap::before { animation: none; }
+  .telemetry-frame::before, .telemetry-frame::after { animation: none; }
+  .telemetry-trace-flow { filter: none; }
+  .telemetry-spinner { animation: none; }
+  .telemetry-login *, .telemetry-login *::before, .telemetry-login *::after { transition: none !important; }
+}

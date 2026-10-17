@@ -70,16 +70,6 @@ function isRefractionAllowed(api: HyaliteAPI): boolean {
   return true;
 }
 
-type IdleWindow = Window & {
-  requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-};
-
-function whenIdle(fn: () => void): void {
-  const ric = (window as IdleWindow).requestIdleCallback;
-  if (typeof ric === "function") ric(fn, { timeout: 2000 });
-  else window.setTimeout(fn, 200);
-}
-
 let enginePromise: Promise<HyaliteAPI | null> | null = null;
 
 /**

@@ -1,0 +1,28 @@
+﻿[
+    {
+        "source":  "lighthouse-local-3000.json",
+        "fetchTime":  "2026-06-16T13:32:58.651Z",
+        "lighthouseVersion":  "13.4.0",
+        "requestedUrl":  "http://127.0.0.1:3000/",
+        "categories":  [
+                           {
+                               "name":  "performance",
+                               "score":  0.47
+                           }
+                       ],
+        "note":  "Historical local measurement; not a current production score."
+    },
+    {
+        "source":  "lighthouse-local-3000-desktop.json",
+        "fetchTime":  "2026-06-16T13:34:30.370Z",
+        "lighthouseVersion":  "13.4.0",
+        "requestedUrl":  "http://127.0.0.1:3000/",
+        "categories":  [
+                           {
+                               "name":  "performance",
+                               "score":  0.64
+                           }
+                       ],
+        "note":  "Historical local measurement; not a current production score."
+    }
+]

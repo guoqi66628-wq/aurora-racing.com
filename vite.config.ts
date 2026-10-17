@@ -19,6 +19,10 @@ export default defineConfig(({ mode }) => {
     build: {
       // 生成带 hash 的文件名，方便长期缓存
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          telemetry: path.resolve(__dirname, 'telemetry-login.html'),
+        },
         output: {
           entryFileNames: 'assets/[name]-[hash].js',
           chunkFileNames: 'assets/[name]-[hash].js',

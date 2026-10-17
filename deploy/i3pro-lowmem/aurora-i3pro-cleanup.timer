@@ -1,0 +1,11 @@
+[Unit]
+Description=Check whether the 15-day i3pro cleanup is due
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 Asia/Shanghai
+Persistent=true
+RandomizedDelaySec=5m
+Unit=aurora-i3pro-cleanup.service
+
+[Install]
+WantedBy=timers.target
