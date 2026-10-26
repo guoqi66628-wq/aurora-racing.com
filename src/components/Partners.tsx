@@ -20,7 +20,10 @@ export default function Partners() {
     {
       name: "紧密合作伙伴",
       color: "text-slate-700",
-      sponsors: Array.from({ length: 12 }, (_, i) => `/images/partners/tier1-${i + 1}.webp`),
+      sponsors: [
+        ...Array.from({ length: 12 }, (_, i) => `/images/partners/tier1-${i + 1}.webp`),
+        getAssetUrl("/images/partners/tier1-13.webp"),
+      ],
       gridClass: "grid-cols-3 sm:grid-cols-3 md:grid-cols-5 px-4 md:px-0",
     },
     {
@@ -195,12 +198,12 @@ export default function Partners() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 + (idx * 0.05), duration: 0.4, ease: "easeOut" }}
                             src={src}
-                            alt={`${tier.name} Sponsor ${idx + 1}`}
+                            alt={tierIdx === 0 && idx === 12 ? "正浩 ECOFLOW" : `${tier.name} Sponsor ${idx + 1}`}
                             width="120"
                             height="56"
                             loading="lazy"
                             decoding="async"
-                            className="w-[60px] sm:w-[120px] h-5 sm:h-12 md:h-14 object-contain hover:scale-110 transition-all duration-300"
+                            className={`${tierIdx === 0 && idx === 12 ? "w-[80px] sm:w-[150px]" : "w-[60px] sm:w-[120px]"} h-5 sm:h-12 md:h-14 object-contain hover:scale-110 transition-all duration-300`}
                             referrerPolicy="no-referrer"
                           />
                         ))}

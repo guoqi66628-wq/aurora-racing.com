@@ -8,6 +8,7 @@ Welcome to the Aurora Racing website! This project is a modern web application b
 - [第二阶段登录页改版（2026-10-16）](docs/PHASE_2_LOGIN_UI.md)：仅桌面展示入口、白色圆角登录页、芯片线路动画与本地运行入口。
 - [第二阶段上线交接（2026-10-17）](docs/PHASE_2_RELEASE.md)：官网与登录页双发布包、宝塔上传顺序、验收和回退。
 - [第二阶段收尾记录（2026-10-17）](docs/PHASE_2_CLOSEOUT.md)：用户确认上线、公开端点只读复核、正式归档与本地清理。
+- [i3pro 后续升级流程](docs/I3PRO_UPGRADE_RUNBOOK.md)：版本兼容预检、隔离准备、服务切换与回退。
 - 工作台后续维护以该记录及其引用的最新专项文档为入口，历史部署指南不应直接覆盖现有线上配置。
 
 ## 🚀 Getting Started

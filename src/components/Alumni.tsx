@@ -55,6 +55,7 @@ export default function Alumni(_props: AlumniProps) {
     { name: "李嘉俊", image: getAssetUrl("/images/Alumni/lijiajun.webp"), year: "2025", role: "电气总监" },
     { name: "黄鸣方", image: getAssetUrl("/images/Alumni/huangmingfang.webp"), year: "2025", role: "机械总监" },
     { name: "卢子洋", image: getAssetUrl("/images/Alumni/luziyang.webp"), year: "2025", role: "空套组" },
+    { name: "谢峰儒", image: getAssetUrl("/images/Alumni/xiefengru.webp"), year: "2025", role: "车手" },
 
     // 24赛季
     { name: "谢梓溥", image: getAssetUrl("/images/Alumni/xiezipu.webp"), year: "2024", role: "车队队长" },
