@@ -20,6 +20,7 @@ const teamOptions = [
   { name: "Alumni", value: "alumni" },
 ];
 
+const PERFORMANCE_LAB_URL = "https://lab.aurora-racing.com/";
 const TELEMETRY_URL = "https://telemetry.aurora-racing.com/login";
 
 export default function Navbar() {
@@ -196,7 +197,7 @@ export default function Navbar() {
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-3 lg:gap-6 xl:gap-8">
+        <div className="hidden lg:flex items-center gap-4 xl:gap-8">
           {NAV_ITEMS.map((item) => (
             item.dropdown ? (
               <div
@@ -277,6 +278,13 @@ export default function Navbar() {
             )
           ))}
           <a
+            href={PERFORMANCE_LAB_URL}
+            className="text-sm font-medium tracking-widest text-aurora-white/80 hover:text-aurora-purple transition-colors relative group py-4"
+          >
+            LAB
+            <span className="absolute bottom-3 left-0 w-0 h-0.5 bg-aurora-purple transition-all group-hover:w-full"></span>
+          </a>
+          <a
             href={TELEMETRY_URL}
             target="_blank"
             rel="noopener noreferrer"
@@ -289,7 +297,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Nav Toggle */}
-        <div className="md:hidden flex items-center">
+        <div className="lg:hidden flex items-center">
           <button
             className="text-aurora-white p-2 hover:text-aurora-purple transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -311,7 +319,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/5 z-40 md:hidden"
+              className="fixed inset-0 bg-black/5 z-40 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             {/* Dropdown Menu - aligned to hamburger button */}
@@ -320,7 +328,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute top-full right-6 md:hidden flex flex-col z-50 mt-2 origin-top-right w-[220px] max-h-[calc(100dvh-6rem)] overflow-y-auto!"
+              className="absolute top-full right-6 lg:hidden flex flex-col z-50 mt-2 origin-top-right w-[220px] max-h-[calc(100dvh-6rem)] overflow-y-auto!"
               style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 backdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',
@@ -429,6 +437,13 @@ export default function Navbar() {
                     </motion.a>
                   )
                 ))}
+                <a
+                  href={PERFORMANCE_LAB_URL}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="py-2.5 text-lg font-medium tracking-widest text-aurora-white/90 hover:text-aurora-purple transition-colors"
+                >
+                  LAB
+                </a>
               </div>
             </motion.div>
           </>
