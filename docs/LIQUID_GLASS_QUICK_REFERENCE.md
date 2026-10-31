@@ -27,7 +27,7 @@ function MyComponent() {
 }
 ```
 
-`preset` 取 `pill`（胶囊 / 条）、`panel`（下拉 / 菜单 / 面板）、`control`（小圆钮）之一，
+`preset` 取 `pill`（参数胶囊）、`panel`（面板）、`control`（小圆钮）、`navigation`（悬浮导航）之一，
 定义在 `src/lib/liquidGlass.ts`。不要在组件里写折射数值。
 
 **新增玻璃类时**，`src/index.css` 里必须带上 `--hyalite: initial` 和完整 fallback：
@@ -35,8 +35,8 @@ function MyComponent() {
 ```css
 .my-glass {
   --hyalite: initial;   /* 必须：阻断祖先继承，否则套上父元素的贴图 */
-  backdrop-filter: var(--hyalite, blur(24px) saturate(180%));
   -webkit-backdrop-filter: var(--hyalite, blur(24px) saturate(180%));
+  backdrop-filter: var(--hyalite, blur(24px) saturate(180%));
 }
 ```
 
@@ -62,16 +62,33 @@ function MyComponent() {
 
 `.dropdown-glass-card` 同期删除（同样无引用）。
 
-### .nav-glass (REVERTED TO SIMPLE)
-**Use for:** Navigation bars, top-level menus  
-**Features:** Simple blur effect (original implementation)  
-**Shape:** Full-width bar
+### `.nav-capsule-glass`（2026-10-30 更新）
+**Use for:** 悬浮胶囊导航的独立背景层
+
+**Features:** 桌面真实折射、弧面边缘高光；手机 / 不支持的环境使用磨砂 fallback
+
+**Shape:** 居中悬浮的完整胶囊，内容与背景为兄弟节点，避免裁切下拉菜单
 
 ```tsx
-<nav className="nav-glass">
-  Navigation items
+const glassRef = useRef<HTMLDivElement>(null);
+useLiquidGlass(glassRef, 'navigation');
+
+<nav className="nav-capsule" data-tone="light">
+  <div ref={glassRef} className="nav-capsule-glass" aria-hidden="true" />
+  <div className="nav-capsule-content">Navigation items</div>
 </nav>
 ```
+
+导航是一个连续折射面，Specs 最多五个折射面，同屏总数不超过六个。
+下拉菜单使用 `.nav-dropdown-glass`，与导航共享底色、透明度、边框和高光变量；
+浅色用深色文字，深色用白色文字；悬停只高亮背景，文字保持原色。背景滤镜使用 CSS 实现，避免新增折射面。
+桌面端点击 CARS / TEAM 旁的箭头展开菜单，文字仍是页面链接；按 Escape、点击外部或移出键盘焦点可关闭菜单。
+
+**构建注意**：`-webkit-backdrop-filter` 必须写在标准 `backdrop-filter` **前面**。
+顺序相反时当前 CSS 优化器会仅保留前缀声明，Chrome 下效果消失。
+Hook 只 attach / detach，CSS 读取实时 `--hyalite`；不要把某一时刻的 filter URL
+固定写入内联样式，否则 materialize 临时滤镜移除或尺寸变化后会引用失效编号。
+从手机宽度切回桌面时，Hook 会重新判断并接入引擎；变窄时会 detach。
 
 ### .dropdown-glass (REVERTED TO SIMPLE)
 **Use for:** Dropdown menus, popovers  

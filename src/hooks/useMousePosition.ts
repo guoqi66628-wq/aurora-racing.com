@@ -36,6 +36,10 @@ export function useMousePositionVar(
         rafId = 0;
         const rect = element.getBoundingClientRect();
         if (!rect.width || !rect.height) return;
+        // Floating dropdowns can extend outside their glass parent. Moving
+        // between their rows should not repaint the parent's refraction layer.
+        if (e.clientX < rect.left || e.clientX > rect.right ||
+            e.clientY < rect.top || e.clientY > rect.bottom) return;
         const x = ((e.clientX - rect.left) / rect.width) * 100;
         const y = ((e.clientY - rect.top) / rect.height) * 100;
  write(Math.max(0, Math.min(100, x)), Math.max(0, Math.min(100, y)));

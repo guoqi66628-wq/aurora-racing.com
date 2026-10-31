@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Alibaba PuHuiTi 3";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./assets/fonts/alibaba-puhuiti/AlibabaPuHuiTi-3-75-SemiBold.woff2") format("woff2");
+}
+
 @theme {
   --color-aurora-black: #000000;
   --color-aurora-white: #FCFCFC;
@@ -77,8 +85,8 @@ html.is-scrolling {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.45) 100%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.15), transparent 70%);
-  backdrop-filter: var(--hyalite, blur(24px) saturate(200%) contrast(1.1) brightness(1.05));
   -webkit-backdrop-filter: var(--hyalite, blur(24px) saturate(200%) contrast(1.1) brightness(1.05));
+  backdrop-filter: var(--hyalite, blur(24px) saturate(200%) contrast(1.1) brightness(1.05));
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.12),
@@ -105,8 +113,8 @@ html.is-scrolling {
       radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12), transparent 50%),
       radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.15), transparent 50%),
       rgba(10, 10, 15, 0.50);
-    backdrop-filter: var(--hyalite, blur(8px) saturate(160%) brightness(1.1) contrast(1.05));
     -webkit-backdrop-filter: var(--hyalite, blur(8px) saturate(160%) brightness(1.1) contrast(1.05));
+    backdrop-filter: var(--hyalite, blur(8px) saturate(160%) brightness(1.1) contrast(1.05));
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow:
       0 12px 60px rgba(0, 0, 0, 0.8),
@@ -140,7 +148,7 @@ html.is-scrolling {
   }
 
   /* 提高特异性：源码后面的 .liquid-glass:hover 桌面规则同特异性会盖回不透明底色 */
-  html[data-glass="on"] .liquid-glass:hover:hover {
+  html[data-glass="on"] .liquid-glass:not(.specs-glass):hover:hover {
     background:
       linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%),
       rgba(20, 20, 28, 0.22);
@@ -204,12 +212,12 @@ html.is-scrolling {
   }
 }
 
-.liquid-glass:hover::after {
+.liquid-glass:not(.specs-glass):hover::after {
   opacity: 1;
 }
 
 /* 交互状态 - 触摸/指针反馈 - 增强液态流动效果 */
-.liquid-glass:hover {
+.liquid-glass:not(.specs-glass):hover {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.2), transparent 70%);
@@ -224,7 +232,7 @@ html.is-scrolling {
 }
 
 @media (min-width: 768px) {
-  .liquid-glass:hover {
+  .liquid-glass:not(.specs-glass):hover {
     box-shadow:
       0 16px 80px rgba(0, 0, 0, 0.9),
       0 8px 32px rgba(0, 0, 0, 0.7),
@@ -237,24 +245,472 @@ html.is-scrolling {
 }
 
 
-/* Liquid Glass Navigation Bar - 简化版：仅保留模糊效果
-   阶段 2 会把内层收成悬浮圆角岛后接入折射；当前直角通栏不 attach。 */
-.nav-glass {
-  --hyalite: initial;
-  background: rgba(0, 0, 0, 0.05);
-  backdrop-filter: var(--hyalite, blur(20px));
-  -webkit-backdrop-filter: var(--hyalite, blur(20px));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+/* Floating navigation. The lens is a sibling of the content so its rounded
+   clipping and SVG backdrop filter cannot clip or filter dropdown menus. */
+.nav-capsule {
+  --nav-ink: #fcfcff;
+  --nav-muted: rgba(252, 252, 255, 0.84);
+  --nav-hover: rgba(255, 255, 255, 0.13);
+  --nav-hover-strong: rgba(255, 255, 255, 0.24);
+  --nav-accent: #d2b2fa;
+  --nav-glass-background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 65%), rgba(21, 20, 31, 0.6);
+  --nav-glass-border: rgba(255, 255, 255, 0.3);
+  --nav-glass-fallback: blur(20px) saturate(155%);
+  top: 18px;
+  left: 0;
+  right: 0;
+  width: calc(100% - clamp(24px, 5vw, 96px));
+  max-width: 1600px;
+  min-height: 0;
+  margin-inline: auto;
+  border-radius: 9999px;
+  color: var(--nav-ink);
 }
 
-/* 导航栏透明状态（顶部）：保留模糊以保证浅色页面可见性 */
-.nav-glass-transparent {
-  background: rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+@media (min-width: 1024px) {
+  .nav-capsule {
+    /* Scale the desktop controls while keeping the capsule sized to the screen. */
+    zoom: 0.8;
+    max-width: none;
+  }
+}
+
+.nav-capsule[data-tone="light"] {
+  --nav-ink: #24212f;
+  --nav-muted: #24212f;
+  --nav-hover: rgba(79, 48, 115, 0.09);
+  --nav-hover-strong: rgba(79, 48, 115, 0.16);
+  --nav-accent: var(--color-aurora-purple);
+  --nav-glass-background: linear-gradient(145deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.14) 65%), rgba(235, 232, 244, 0.3);
+  --nav-glass-border: rgba(255, 255, 255, 0.7);
+}
+
+.nav-capsule-content {
+  height: 68px;
+  gap: 20px;
+  padding-inline: 26px 14px;
+}
+
+.nav-capsule-glass {
+  --hyalite: initial;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--nav-glass-background);
+  /* Standard property must stay last: otherwise production optimization can
+     keep only the WebKit declaration and disable the effect in Chromium. */
+  -webkit-backdrop-filter: var(--hyalite, var(--nav-glass-fallback));
+  backdrop-filter: var(--hyalite, var(--nav-glass-fallback));
+  border: 1px solid var(--nav-glass-border);
+  box-shadow:
+    0 8px 30px -12px rgba(24, 16, 46, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.nav-capsule-glass::before,
+.nav-dropdown-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at var(--mouse-x, 35%) 0%, rgba(255, 255, 255, 0.3), transparent 55%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.15), transparent 30% 75%, rgba(255, 255, 255, 0.1));
+}
+
+.nav-brand {
+  border-radius: 8px;
+}
+
+.hero-bottom-fade {
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(80px, 12vh, 140px);
+  background: linear-gradient(to bottom, transparent 35%, #fff 100%);
+  pointer-events: none;
+}
+
+.story-image-placeholder {
+  overflow: hidden;
+  background: #eeedf2;
+}
+
+.story-image-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.65) 50%, transparent 75%);
+  transform: translateX(-100%);
+  animation: story-image-loading 1.4s ease-in-out infinite;
+}
+
+.story-image-placeholder.is-error::after {
+  display: none;
+}
+
+@keyframes story-image-loading {
+  to { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-image-placeholder::after { animation: none; }
+}
+
+.hero-social-glass {
+  --hyalite: initial;
+  position: relative;
+  isolation: isolate;
+  width: 62.4px;
+  height: 62.4px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.06) 65%), rgba(25, 23, 36, 0.32);
+  -webkit-backdrop-filter: var(--hyalite, blur(16px) saturate(150%) brightness(1.15));
+  backdrop-filter: var(--hyalite, blur(16px) saturate(150%) brightness(1.15));
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 6px 18px rgba(20, 16, 32, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.12);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+html[data-glass="on"] .hero-social-glass {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04) 65%), rgba(25, 23, 36, 0.28);
+}
+
+.hero-social-glass > svg {
+  transform: scale(1.3);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.hero-social-glass:hover {
+  transform: scale(1.06);
+}
+
+.hero-social-glass:focus-visible {
+  outline: 2px solid #9969db;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-social-glass { transition: none; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .hero-social-glass,
+  html[data-glass="on"] .hero-social-glass {
+    background: #292632;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+.nav-desktop {
+  position: relative;
+  gap: clamp(2px, 0.65vw, 10px);
+}
+
+.nav-hover-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: 9999px;
+  background: var(--nav-hover);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 55ms linear, width 75ms ease-out, height 75ms ease-out, opacity 70ms ease-out;
+  will-change: transform, width, opacity;
+}
+
+.nav-desktop > .nav-pill-link,
+.nav-desktop > .nav-dropdown-group {
+  z-index: 1;
+}
+
+.nav-pill-link {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 42px;
+  padding: 10px clamp(9px, 0.85vw, 14px);
+  border-radius: 9999px;
+  color: var(--nav-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  transition: transform 90ms;
+}
+
+.nav-pill-link:focus-visible,
+.nav-dropdown-trigger:has(:focus-visible),
+.nav-dropdown-trigger[data-open="true"] {
+  background-color: var(--nav-hover);
+}
+
+.nav-pill-link[aria-current="page"],
+.nav-dropdown-trigger[data-current="true"] {
+  background-color: var(--nav-hover);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: var(--nav-accent);
+}
+
+.nav-desktop[data-hovering="true"] > .nav-pill-link[aria-current="page"],
+.nav-desktop[data-hovering="true"] .nav-dropdown-trigger[data-current="true"],
+.nav-desktop[data-menu-hovering="true"] > .nav-pill-link[aria-current="page"],
+.nav-desktop[data-menu-hovering="true"] .nav-dropdown-trigger[data-current="true"],
+.nav-desktop[data-hovering="true"] .nav-dropdown-trigger[data-open="true"] {
+  background-color: transparent;
   box-shadow: none;
+}
+
+.nav-desktop[data-hovering="true"] > .nav-pill-link[aria-current="page"],
+.nav-desktop[data-hovering="true"] .nav-dropdown-trigger[data-current="true"],
+.nav-desktop[data-menu-hovering="true"] > .nav-pill-link[aria-current="page"],
+.nav-desktop[data-menu-hovering="true"] .nav-dropdown-trigger[data-current="true"] {
+  color: var(--nav-muted);
+}
+
+.nav-dropdown-trigger {
+  gap: 0;
+  padding: 0 3px 0 clamp(9px, 0.85vw, 14px);
+}
+
+.nav-dropdown-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  color: inherit;
+}
+
+.nav-dropdown-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  color: inherit;
+  cursor: pointer;
+}
+
+.nav-dropdown-toggle svg {
+  transition: transform 120ms ease;
+}
+
+.nav-dropdown-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.nav-pill-link:active,
+.nav-menu-toggle:active {
+  transform: scale(0.96);
+}
+
+.nav-capsule a:focus-visible,
+.nav-capsule button:focus-visible {
+  outline: 2px solid #9969db;
+  outline-offset: 3px;
+}
+
+.nav-menu-toggle {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--nav-ink);
+  background: var(--nav-hover);
+  transition: transform 90ms;
+}
+
+.nav-menu-toggle:hover,
+.nav-menu-toggle:focus-visible {
+  background: var(--nav-hover-strong);
+}
+
+.nav-dropdown-glass {
+  --hyalite: initial;
+  position: relative;
+  overflow: hidden;
+  background: var(--nav-glass-background);
+  -webkit-backdrop-filter: var(--nav-glass-fallback);
+  backdrop-filter: var(--nav-glass-fallback);
+  border: 1px solid var(--nav-glass-border);
+  box-shadow:
+    0 8px 30px -12px rgba(24, 16, 46, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.nav-compact-glass {
+  --hyalite: initial;
+  background:
+    linear-gradient(145deg, rgba(156, 131, 200, 0.12), rgba(70, 42, 145, 0.08) 65%),
+    rgba(24, 21, 34, 0.2);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  box-shadow: 0 16px 40px -16px rgba(20, 12, 35, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 3px rgba(20, 12, 35, 0.55);
+}
+
+.nav-compact-glass {
+  border-radius: 28px;
+  padding: 14px;
+  color: #fcfcff;
+}
+
+.nav-dropdown-link {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: block;
+  padding: 11px 16px;
+  border-radius: 16px;
+  color: var(--nav-ink);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  /* Clear immediately on exit so adjacent rows never leave a trailing highlight. */
+  transition: none;
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link:focus-visible {
+  background: var(--nav-hover);
+}
+
+.nav-compact-link,
+.nav-compact-toggle {
+  position: relative;
+  isolation: isolate;
+  border-radius: 14px;
+}
+
+.nav-compact-link {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 12.6px;
+  padding-inline: 8px;
+  padding-block: 7px;
+}
+
+.nav-compact-sublink {
+  min-height: 36px;
+  font-size: 11.2px;
+}
+
+.nav-compact-link:hover,
+.nav-compact-link:focus-visible,
+.nav-compact-toggle:hover,
+.nav-compact-toggle:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* The base highlight is instant; this brief sheen adds a softer arrival
+   without postponing feedback or leaving a fade on the previous item. */
+:is(.nav-menu-toggle, .nav-dropdown-link, .nav-compact-link, .nav-compact-toggle, .nav-compact-telemetry):is(:hover, :focus-visible, :has(:focus-visible), [aria-expanded="true"], [data-open="true"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 0.25;
+  animation: nav-highlight-sheen 70ms ease-out;
+}
+
+@keyframes nav-highlight-sheen {
+  from { opacity: 0; }
+  to { opacity: 0.25; }
+}
+
+@media (min-width: 768px) {
+  html[data-glass="on"] .nav-capsule {
+    --nav-glass-background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), transparent 65%), rgba(21, 20, 31, 0.28);
+    --nav-glass-fallback: blur(2px);
+  }
+
+  html[data-glass="on"] .nav-capsule[data-tone="light"] {
+    /* A light veil keeps dark labels legible when a purple image stripe
+       passes behind the lens, while retaining the refracted background. */
+    --nav-glass-background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent 65%), rgba(255, 255, 255, 0.5);
+  }
+
+  html[data-glass="on"] .nav-capsule-glass::before,
+  html[data-glass="on"] .nav-dropdown-glass::before {
+    opacity: 0.4;
+  }
+}
+
+@media (min-width: 1280px) {
+  .nav-pill-link {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .nav-capsule {
+    top: 12px;
+  }
+
+  .nav-capsule-content {
+    height: 60px;
+    padding-inline: 20px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specs-top-cards .specs-glass,
+  .nav-hover-slider,
+  .nav-pill-link,
+  .nav-menu-toggle,
+  .nav-dropdown-link,
+  .nav-compact-link,
+  .nav-compact-toggle,
+  .nav-compact-telemetry,
+  .nav-dropdown-toggle svg,
+  :is(.nav-pill-link, .nav-menu-toggle, .nav-dropdown-link, .nav-compact-link, .nav-compact-toggle, .nav-compact-telemetry):is(:hover, :focus-visible, :focus-within, [aria-expanded="true"], [data-open="true"]) {
+    transition: none;
+  }
+
+  :is(.nav-pill-link, .nav-menu-toggle, .nav-dropdown-link, .nav-compact-link, .nav-compact-toggle, .nav-compact-telemetry):is(:hover, :focus-visible, :focus-within, [aria-expanded="true"], [data-open="true"])::after {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav-compact-glass {
+    background: #373146;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .nav-capsule,
+  html[data-glass="on"] .nav-capsule {
+    --nav-glass-background: #292632;
+    --nav-glass-fallback: none;
+  }
+
+  .nav-capsule[data-tone="light"],
+  html[data-glass="on"] .nav-capsule[data-tone="light"] {
+    --nav-glass-background: #efedf3;
+  }
+
+  .nav-capsule .nav-capsule-glass,
+  html[data-glass="on"] .nav-capsule .nav-capsule-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 /* 导航下拉菜单玻璃效果 */
@@ -263,8 +719,8 @@ html.is-scrolling {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.07) 100%),
     rgba(10, 10, 15, 0.42);
-  backdrop-filter: var(--hyalite, blur(36px) saturate(180%));
   -webkit-backdrop-filter: var(--hyalite, blur(36px) saturate(180%));
+  backdrop-filter: var(--hyalite, blur(36px) saturate(180%));
   border: 0.5px solid rgba(255, 255, 255, 0.22);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.32),
@@ -299,8 +755,8 @@ right: 0;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%),
     rgba(10, 10, 15, 0.95);
-  backdrop-filter: var(--hyalite, blur(40px) saturate(180%));
   -webkit-backdrop-filter: var(--hyalite, blur(40px) saturate(180%));
+  backdrop-filter: var(--hyalite, blur(40px) saturate(180%));
   border: 0.5px solid rgba(255, 255, 255, 0.15);
   box-shadow:
     0 12px 48px rgba(0, 0, 0, 0.8),
@@ -329,6 +785,45 @@ right: 0;
 }
 
 /* Animated Vertical Timeline Node */
+@media (min-width: 768px) {
+  .specs-timeline,
+  .specs-top-cards,
+  .specs-performance,
+  .specs-arrow {
+    zoom: 0.8;
+  }
+
+  .specs-arrow-prev {
+    left: 128px;
+    padding-left: 19.2px;
+  }
+
+  .specs-arrow-next {
+    padding-right: 19.2px;
+  }
+}
+
+@media (min-width: 768px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .specs-top-cards .specs-glass {
+    transition-duration: 0.22s;
+  }
+
+  .specs-top-cards .specs-glass:hover {
+    transition-duration: 0.88s;
+  }
+}
+
+@media (min-width: 768px) and (hover: hover) {
+  .specs-top-cards .specs-glass:hover {
+    transform: scale(1.01);
+  }
+}
+
+.specs-value {
+  font-family: "Alibaba PuHuiTi 3", var(--font-sans);
+  font-weight: 600;
+}
+
 .iso-pro {
   transition: 0.5s;
 }
@@ -404,6 +899,174 @@ nav {
   /* Prevent black flash on scroll */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+}
+
+@media (max-width: 767px) {
+  .hero-bottom-fade {
+    height: clamp(100px, 18svh, 160px);
+    background: linear-gradient(to bottom, transparent 45%, rgba(255, 255, 255, 0.55) 78%, #fff 100%);
+  }
+
+  .nav-capsule {
+    width: 90%;
+  }
+
+  .hero-section {
+    min-height: 100svh;
+    padding-top: clamp(88px, 11svh, 112px);
+  }
+
+  .hero-content {
+    width: 100%;
+    margin-top: 0;
+    padding-inline: 4vw;
+    zoom: 0.75;
+  }
+
+  .hero-mobile-title {
+    font-size: clamp(40px, 13.5vw, 64px);
+  }
+
+  .hero-mobile-subtitle {
+    max-width: 72vw;
+    margin-bottom: 0.25rem;
+  }
+
+  .hero-content .cd-mob {
+    zoom: 0.48;
+  }
+}
+
+@media (max-width: 440px) {
+  .hero-section {
+    padding-top: 88px;
+  }
+
+  .hero-content {
+    padding-inline: 12.8px;
+    zoom: 1.1;
+  }
+
+  .hero-mobile-school {
+    font-size: 9.775px;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .hero-mobile-heading {
+    margin-bottom: 0.35rem;
+  }
+
+  .hero-mobile-title {
+    font-size: 47.84px;
+  }
+
+  .hero-mobile-stripes {
+    margin-top: 0.35rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .hero-mobile-subtitle {
+    max-width: 208px;
+    margin-bottom: 0.75rem;
+    font-size: 9.2px;
+    letter-spacing: 0.04em;
+    white-space: normal;
+  }
+
+  .hero-mobile-countdown-wrap {
+    margin-top: 0.35rem;
+    left: -6.36px;
+    top: -9.09px;
+  }
+
+  .hero-content .cd-mob {
+    zoom: 0.53105;
+    margin-left: 0.5rem;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 440px) {
+  .hero-mobile-school {
+    font-size: 10.7525px;
+  }
+
+  .hero-mobile-title {
+    font-size: 52.624px;
+  }
+
+  .hero-mobile-subtitle {
+    font-size: 10.12px;
+  }
+
+  .hero-content .cd-mob {
+    zoom: 0.584155;
+  }
+}
+
+/* Scale the desktop composition with the viewport, while giving the title
+   and race panels enough presence in the open space to the left of the car. */
+@media (min-width: 768px) {
+  .hero-section {
+    --hero-scale: 0.5;
+    min-height: 100svh;
+    padding-block: max(64px, calc(96px * var(--hero-scale)));
+  }
+
+  .hero-content {
+    max-width: none;
+    margin-top: -64px;
+    padding-inline: 48px;
+    zoom: calc(var(--hero-scale) * 1.55);
+  }
+
+  .hero-countdown {
+    zoom: 0.65;
+  }
+
+  .hero-socials {
+    zoom: var(--hero-scale);
+  }
+}
+
+/* Step sizes also provide a fallback for browsers without CSS unit division. */
+@media (min-width: 1024px) {
+  .hero-section {
+    --hero-scale: 0.625;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-section {
+    --hero-scale: 0.75;
+  }
+}
+
+@media (min-width: 1680px) {
+  .hero-section {
+    --hero-scale: 0.875;
+  }
+}
+
+@media (min-width: 1920px) {
+  .hero-section {
+    --hero-scale: 1;
+  }
+}
+
+@media (min-width: 2400px) {
+  .hero-section {
+    --hero-scale: 1.25;
+  }
+}
+
+@supports (zoom: calc(100vw / 1920px)) {
+  @media (min-width: 768px) {
+    .hero-section {
+      --hero-scale: clamp(0.4, min(calc(100vw / 1920px), calc(100svh / 1080px)), 1.25);
+    }
+  }
 }
 
 /* 锚点跳转滚到章节时预留固定导航栏高度，避免被遮挡 */

@@ -2,7 +2,6 @@ import { getAssetUrl } from "../utils/cdn";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { useMousePositionVar } from "../hooks/useMousePosition";
 import { useLiquidGlass } from "../hooks/useLiquidGlass";
 import { useIsMobile } from "../hooks/useIsMobile";
 
@@ -197,7 +196,7 @@ export default function Specs() {
       </div>
 
       {/* Timeline - Desktop (Left) */}
-      <div className="hidden md:flex absolute items-center w-40 z-40 bg-transparent pointer-events-none left-0 top-0 bottom-0 flex-col justify-center py-20">
+      <div className="specs-timeline hidden md:flex absolute items-center w-40 z-40 bg-transparent pointer-events-none left-0 top-0 bottom-0 flex-col justify-center py-20">
         <div className="absolute left-1/2 top-32 bottom-32 w-px bg-white/20 -translate-x-1/2"></div>
         {carData.map((car) => (
           <div key={car.year} className="relative flex-1 flex items-center justify-center w-full group pointer-events-auto">
@@ -227,20 +226,20 @@ export default function Specs() {
       </div>
 
       {/* Navigation Arrows (Desktop) */}
-      <div className="absolute inset-y-0 right-0 w-24 z-30 hidden md:flex items-center justify-end pr-6 pointer-events-none">
+      <div className="specs-arrow-next absolute inset-y-0 right-0 w-24 z-30 hidden md:flex items-center justify-end pr-6 pointer-events-none">
         <button 
           onClick={handleNext}
-          className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#7928CA]/80 hover:border-[#7928CA] transition-all duration-300 pointer-events-auto shadow-lg opacity-0 group-hover/section:opacity-100 translate-x-4 group-hover/section:translate-x-0"
+          className="specs-arrow w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#7928CA]/80 hover:border-[#7928CA] transition-all duration-300 pointer-events-auto shadow-lg opacity-0 group-hover/section:opacity-100 translate-x-4 group-hover/section:translate-x-0"
           aria-label="Next Car"
         >
           <ChevronRight size={32} />
         </button>
       </div>
       
-      <div className="absolute inset-y-0 left-40 w-24 z-30 hidden md:flex items-center justify-start pl-6 pointer-events-none">
+      <div className="specs-arrow-prev absolute inset-y-0 left-40 w-24 z-30 hidden md:flex items-center justify-start pl-6 pointer-events-none">
         <button 
           onClick={handlePrev}
-          className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#7928CA]/80 hover:border-[#7928CA] transition-all duration-300 pointer-events-auto shadow-lg opacity-0 group-hover/section:opacity-100 -translate-x-4 group-hover/section:translate-x-0"
+          className="specs-arrow w-14 h-14 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-[#7928CA]/80 hover:border-[#7928CA] transition-all duration-300 pointer-events-auto shadow-lg opacity-0 group-hover/section:opacity-100 -translate-x-4 group-hover/section:translate-x-0"
           aria-label="Previous Car"
         >
           <ChevronLeft size={32} />
@@ -414,7 +413,7 @@ export default function Specs() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.15 }}
-                className="grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col gap-3 md:gap-4 w-full md:w-auto md:absolute md:top-24 md:right-16 md:grid-cols-none md:items-end"
+                className="specs-top-cards grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-col gap-3 md:gap-4 w-full md:w-auto md:absolute md:top-24 md:right-16 md:grid-cols-none md:items-end"
               >
                 {activeCar.specs && (
                   <>
@@ -424,7 +423,7 @@ export default function Specs() {
                     )}
                     <LiquidSpec label="Wheelbase" value={activeCar.specs.wheelbase} />
                     {(activeCar.specs.monocoque || activeCar.specs.chassis) && (
-                      <LiquidSpec label={activeCar.specs.monocoque ? "Monocoque" : "Chassis"} value={activeCar.specs.monocoque || activeCar.specs.chassis || ""} purple />
+                      <LiquidSpec label={activeCar.specs.monocoque ? "Monocoque" : "Chassis"} value={activeCar.specs.monocoque || activeCar.specs.chassis || ""} />
                     )}
                   </>
                 )}
@@ -463,7 +462,7 @@ function PerformanceStack({ results }: { results: EventResult[] }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.15, delay: 0.05 }}
-      className="relative w-full md:w-auto flex justify-center items-start"
+      className="specs-performance relative w-full md:w-auto flex justify-center items-start"
       // 给后面露出的边缘留出高度，容器本身高度由最前面那张（relative）决定
       style={{ paddingBottom: total > 1 ? (total - 1) * 14 : 0 }}
     >
@@ -502,7 +501,6 @@ function PerformanceBar({
   onSelect?: () => void;
 }) {
   const perfRef = useRef<HTMLDivElement>(null);
-  useMousePositionVar(perfRef);
   // 宽度随内容变，单独一张贴图（不与固定宽的 LiquidSpec 共享）
   useLiquidGlass(perfRef, "pill");
 
@@ -526,7 +524,7 @@ function PerformanceBar({
             { zIndex: 10 - depth, position: "absolute", top: 0, left: "50%" }
           : { zIndex: 10 - depth, position: "relative" }
       }
-      className={`liquid-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0 ${
+      className={`liquid-glass specs-glass w-full md:w-auto px-4 sm:px-8 md:px-10 py-4 sm:py-5 flex flex-wrap sm:flex-nowrap md:flex-row items-center justify-between sm:justify-center md:justify-center gap-y-2 sm:gap-6 rounded-2xl md:rounded-full md:mx-0 ${
         onSelect ? "cursor-pointer" : ""
       } ${stacked && depth !== 0 ? "pointer-events-none" : ""}`}
     >
@@ -580,20 +578,22 @@ function BottomSpecItem({ label, value, rank }: { label: string, value: string, 
   );
 }
 
-function LiquidSpec({ label, value, purple }: { label: string, value: string, purple?: boolean }) {
+function LiquidSpec({ label, value }: { label: string, value: string }) {
   const specRef = useRef<HTMLDivElement>(null);
-  useMousePositionVar(specRef);
   // 桌面端固定 md:w-[320px] 且圆角一致 -> 命中尺寸分桶，四个胶囊共享同一张贴图
   useLiquidGlass(specRef, "pill");
+  const unit = value.endsWith("mm") ? "mm" : value.endsWith("kg") ? "kg" : "";
 
   return (
     <div
       ref={specRef}
-      className="liquid-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full"
+      className="liquid-glass specs-glass px-3 py-3 md:px-6 md:py-3 flex flex-col md:grid md:grid-cols-[1fr_auto_1fr] items-center justify-center gap-1 md:gap-0 w-full md:w-[320px] rounded-2xl md:rounded-full"
     >
-      <span className="text-slate-500 md:text-white/90 text-[10px] sm:text-xs md:text-xl font-medium uppercase md:normal-case tracking-wider md:tracking-normal md:text-right md:pr-1">{label}</span>
-      <span className="hidden md:inline text-white/90 text-xl font-medium">:</span>
-      <span className={`text-sm sm:text-lg md:text-2xl font-bold md:col-start-3 md:text-left md:pl-2 ${purple ? "text-purple-600 md:text-[#ce93d8]" : "text-emerald-600 md:text-[#a5d6a7]"}`}>{value}</span>
+      <span className="text-white/80 text-[10px] sm:text-xs md:text-base font-medium uppercase md:normal-case tracking-wider md:tracking-normal md:text-right md:pr-1">{label}</span>
+      <span className="hidden md:inline text-white/80 text-base font-medium">:</span>
+      <span className="specs-value text-white text-sm sm:text-lg md:text-2xl md:col-start-3 md:text-left md:pl-2">
+        {unit ? <>{value.slice(0, -unit.length)}<span className="text-xs sm:text-sm md:text-base">{unit}</span></> : value}
+      </span>
     </div>
   );
 }

@@ -11,7 +11,7 @@
 
 import { useEffect } from "react";
 import type { RefObject } from "react";
-import { ensureHyalite, GLASS_PRESETS, type GlassPreset } from "../lib/liquidGlass";
+import { ensureHyalite, GLASS_PRESETS, GLASS_DESKTOP_BREAKPOINT, type GlassPreset } from "../lib/liquidGlass";
 
 export function useLiquidGlass(
   ref: RefObject<HTMLElement | null>,
@@ -22,41 +22,38 @@ export function useLiquidGlass(
     if (!enabled) return;
 
     let cancelled = false;
-    // 记住实际 attach 的元素与引擎：cleanup 时 ref.current 可能已被 React 置空
     let cleanup: (() => void) | null = null;
+    let generation = 0;
+    const desktop = window.matchMedia(`(min-width: ${GLASS_DESKTOP_BREAKPOINT}px)`);
+    const reducedTransparency = window.matchMedia("(prefers-reduced-transparency: reduce)");
 
-    void ensureHyalite().then((api) => {
-      // 引擎加载期间组件可能已卸载
-      if (cancelled || !api) {
-        if (!api) console.log('[useLiquidGlass] Engine not available, using CSS fallback');
-        return;
-      }
-      const el = ref.current;
-      if (!el) return;
+    const sync = () => {
+      const currentGeneration = ++generation;
+      cleanup?.();
+      cleanup = null;
+      if (!desktop.matches || reducedTransparency.matches) return;
 
-      console.log('[useLiquidGlass] Attaching to element with preset:', preset, GLASS_PRESETS[preset]);
-      api.attach(el, GLASS_PRESETS[preset]);
+      void ensureHyalite().then((api) => {
+        if (cancelled || currentGeneration !== generation || !api) return;
+        const el = ref.current;
+        if (!el) return;
 
-      // 🔧 修复：Tailwind v4 会重置 backdrop-filter，CSS 变量无法正常展开
-      // 需要直接设置 backdrop-filter 属性而不是依赖 var(--hyalite)
-      setTimeout(() => {
-        const hyaliteVar = el.style.getPropertyValue('--hyalite');
-        console.log('[useLiquidGlass] --hyalite value:', hyaliteVar || '(not set)');
+        api.attach(el, GLASS_PRESETS[preset]);
+        // CSS consumes the live --hyalite variable. Materialize and resize may
+        // replace its URL, so never pin backdrop-filter to a one-time snapshot.
+        cleanup = () => api.detach(el);
+      });
+    };
 
-        if (hyaliteVar && hyaliteVar.startsWith('url(')) {
-          // 直接将 filter URL 应用到 backdrop-filter
-          el.style.setProperty('backdrop-filter', hyaliteVar, 'important');
-          el.style.setProperty('-webkit-backdrop-filter', hyaliteVar, 'important');
-          console.log('[useLiquidGlass] Applied backdrop-filter directly:', hyaliteVar);
-        }
-      }, 100);
-
-      // detach 会移除 --hyalite 内联值并释放贴图缓存引用
-      cleanup = () => api.detach(el);
-    });
+    sync();
+    desktop.addEventListener("change", sync);
+    reducedTransparency.addEventListener("change", sync);
 
     return () => {
-  cancelled = true;
+      cancelled = true;
+      generation++;
+      desktop.removeEventListener("change", sync);
+      reducedTransparency.removeEventListener("change", sync);
       cleanup?.();
       cleanup = null;
     };

@@ -1,7 +1,7 @@
-import { getAssetUrl } from "../utils/cdn";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { MousePointerClick } from "lucide-react";
+import { getStoryImageUrl, storyCoverUrl } from "../utils/heritageImages";
 
 type CardData = {
   id: number;
@@ -9,7 +9,32 @@ type CardData = {
   isAnimatingOut?: boolean;
 };
 
-function StackedImageGallery({ images, stackDirection = "right" }: { images: string[], stackDirection?: "left" | "right" }) {
+function StoryImage({ src, priority, eager }: { src: string; priority: boolean; eager: boolean }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <>
+      {!loaded && <div className={`story-image-placeholder absolute inset-0 ${failed ? "is-error" : ""}`} aria-hidden="true" />}
+      <img
+        src={src}
+        alt=""
+        width="1200"
+        height="900"
+        className={`relative w-full h-full object-cover transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"}`}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "low"}
+        decoding="async"
+        referrerPolicy="no-referrer"
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+      />
+      {failed && <span className="absolute inset-0 flex items-center justify-center text-sm font-medium text-slate-600">图片暂时无法加载</span>}
+    </>
+  );
+}
+
+function StackedImageGallery({ images, stackDirection = "right", priority = false }: { images: string[], stackDirection?: "left" | "right", priority?: boolean }) {
   const [cards, setCards] = useState<CardData[]>(() => images.map((img, i) => ({ id: i, src: img })));
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -78,14 +103,7 @@ function StackedImageGallery({ images, stackDirection = "right" }: { images: str
             }}
             style={{ transformOrigin: stackDirection === "left" ? "bottom left" : "bottom right" }}
           >
-            <img
-              src={card.src}
-              alt=""
-              width="1200"
-              height="900"
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
+            <StoryImage src={card.src} priority={priority && card.id === 0} eager={priority} />
             
             {/* Dark overlay for back cards to give depth */}
             {!out && index > 0 && (
@@ -123,9 +141,9 @@ export default function Heritage() {
       description:
         "一切始于一个炽热的梦想。当我们的第一辆方程式赛车在工作室发出第一声轰鸣，名为“AURORA”的追风故事就此开篇。我们用汗水与热爱，在从零到一的土地上埋下了第一颗种子。",
       images: [
-        getAssetUrl("/images/heritage/2021-1.webp"),
-        getAssetUrl("/images/heritage/2021-2.webp"),
-        getAssetUrl("/images/heritage/2021-3.webp"),
+        storyCoverUrl,
+        getStoryImageUrl("2021-2.webp"),
+        getStoryImageUrl("2021-3.webp"),
       ],
     },
     {
@@ -134,9 +152,9 @@ export default function Heritage() {
       description:
         "毅然选择了最具挑战的四电机技术路径。零经验、疫情、设计失误如同淬火的熔炉。经历了通宵排障的焦灼，虽然止步于高压检测门前，但正是这次“失败”，淬炼了我们不屈的筋骨。",
       images: [
-        getAssetUrl("/images/heritage/2022-1.webp"),
-        getAssetUrl("/images/heritage/2022-2.webp"),
-        getAssetUrl("/images/heritage/2022-3.webp"),
+        getStoryImageUrl("2022-1.webp"),
+        getStoryImageUrl("2022-2.webp"),
+        getStoryImageUrl("2022-3.webp"),
       ],
     },
     {
@@ -145,9 +163,9 @@ export default function Heritage() {
       description:
         "坚守，终将迎来破晓。带着全新的E07，我们再次站上赛场，并历史性地通过了车检！耐久赛冲过终点线的那一刻只剩泪水与欢呼——我们不仅完赛，更一举斩获全国季军，首度登上了全国赛的领奖台！",
       images: [
-        getAssetUrl("/images/heritage/2023-1.webp"),
-        getAssetUrl("/images/heritage/2023-2.webp"),
-        getAssetUrl("/images/heritage/2023-3.webp"),
+        getStoryImageUrl("2023-1.webp"),
+        getStoryImageUrl("2023-2.webp"),
+        getStoryImageUrl("2023-3.webp"),
       ],
     },
     {
@@ -156,9 +174,9 @@ export default function Heritage() {
       description:
         "荣耀是对深耕最好的加冕。团队在技术与管理上持续沉淀，最终在全国最高舞台上，一举斩获中国大学生电动方程式大赛全国亚军，攀上了队史的新高峰。",
       images: [
-        getAssetUrl("/images/heritage/2024-1.webp"),
-        getAssetUrl("/images/heritage/2024-2.webp"),
-        getAssetUrl("/images/heritage/2024-3.webp"),
+        getStoryImageUrl("2024-1.webp"),
+        getStoryImageUrl("2024-2.webp"),
+        getStoryImageUrl("2024-3.webp"),
       ],
     },
     {
@@ -167,9 +185,9 @@ export default function Heritage() {
       description:
         "打造首台单体壳赛车，踏上“一车二赛”征程。我们不仅将“最佳涂装奖”从海外带回，更在国内车检、设计答辩与商业报告中实现重大突破。然而距最高荣誉仅一步之遥时，由于一根线束的隐患，我们遗憾止步于耐久赛，未能实现最终的目标。这份落差让我们更加清醒：要成为真正的强队，技术、协作与细节仍需千锤百炼。",
       images: [
-        getAssetUrl("/images/heritage/2025-1.webp"),
-        getAssetUrl("/images/heritage/2025-2.webp"),
-        getAssetUrl("/images/heritage/2025-3.webp"),
+        getStoryImageUrl("2025-1.webp"),
+        getStoryImageUrl("2025-2.webp"),
+        getStoryImageUrl("2025-3.webp"),
       ],
     },
     {
@@ -178,9 +196,9 @@ export default function Heritage() {
       description:
         "二度出征西班牙，极光车队斩获电车组第十名，顺利完赛，实现海外赛事的历史性突破。历经海外赛道的实战检验，车队在单体壳轻量化、电控稳定性、底盘调校完成迭代优化。满载海外赛场的收获与成长，我们重整行装，向着合肥赛场进发，以成熟姿态迎接新的挑战，奔赴属于我们的星海。",
       images: [
-        getAssetUrl("/images/heritage/2026-1.webp"),
-        getAssetUrl("/images/heritage/2026-2.webp"),
-        getAssetUrl("/images/heritage/2026-3.webp"),
+        getStoryImageUrl("2026-1.webp"),
+        getStoryImageUrl("2026-2.webp"),
+        getStoryImageUrl("2026-3.webp"),
       ],
     },
   ];
@@ -192,10 +210,10 @@ export default function Heritage() {
     >
       <div className="max-w-[1600px] mx-auto px-6">
         <div className="text-center mb-10 md:mb-20">
-          <h2 className="font-display text-4xl md:text-5xl font-black text-aurora-black uppercase tracking-tighter">
-            Team <span className="text-aurora-purple">Story</span>
+          <h2 className="font-display text-4xl md:text-5xl font-black text-[#6722C1] uppercase tracking-tighter">
+            Team Story
           </h2>
-          <div className="w-24 h-1 bg-aurora-purple mx-auto mt-4"></div>
+          <div className="w-24 h-1 bg-[#6722C1] mx-auto mt-4"></div>
           <p className="mt-6 text-aurora-black/60 max-w-2xl mx-auto font-medium">
             记录 AURORA Racing 从无到有、从起步到腾飞的每一个精彩瞬间。
           </p>
@@ -217,7 +235,7 @@ export default function Heritage() {
               >
                 {/* Image */}
                 <div className="w-full md:w-1/2 overflow-visible relative">
-                  <StackedImageGallery images={item.images} stackDirection={isEven ? "left" : "right"} />
+                  <StackedImageGallery images={item.images} stackDirection={isEven ? "left" : "right"} priority={idx === 0} />
                 </div>
 
                 {/* Text */}

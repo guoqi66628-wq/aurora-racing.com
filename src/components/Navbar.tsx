@@ -1,9 +1,11 @@
 import { getAssetUrl } from "../utils/cdn";
-import { useState, useEffect } from "react";
-import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
-import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
-import AuroraLogo from "./AuroraLogo";
+import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useMotionValueEvent, AnimatePresence, useReducedMotion } from "motion/react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { useIsMobile } from "../hooks/useIsMobile";
+import { useLiquidGlass } from "../hooks/useLiquidGlass";
+import { useMousePositionVar } from "../hooks/useMousePosition";
+import { preloadStoryCover } from "../utils/heritageImages";
 
 const NAV_ITEMS: { name: string; target: string; dropdown?: boolean; dropdownType?: 'cars' | 'team' }[] = [
   { name: "HOME", target: "home" },
@@ -28,12 +30,20 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [isTop, setIsTop] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCarsHovered, setIsCarsHovered] = useState(false);
-  const [isTeamHovered, setIsTeamHovered] = useState(false);
+  const [isCarsOpen, setIsCarsOpen] = useState(false);
+  const [isTeamOpen, setIsTeamOpen] = useState(false);
   const [isMobileCarsOpen, setIsMobileCarsOpen] = useState(false);
   const [isMobileTeamOpen, setIsMobileTeamOpen] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
   const isMobile = useIsMobile();
+  const isCompact = useIsMobile(1024);
+  const reduceMotion = useReducedMotion();
+  const navRef = useRef<HTMLElement>(null);
+  const glassRef = useRef<HTMLDivElement>(null);
+  const hoverSliderRef = useRef<HTMLDivElement>(null);
+  const sliderReturnRef = useRef<Animation | null>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  useLiquidGlass(glassRef, "navigation");
+  useMousePositionVar(navRef, !isMobile);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -55,7 +65,7 @@ export default function Navbar() {
         setHidden(false);
       }
       // 向下滚动且滚动位置超过100px：隐藏导航栏
-      else if (isScrollingDown && latest > 100 && !isMobileMenuOpen) {
+      else if (isScrollingDown && latest > 100 && !isMobileMenuOpen && !isCarsOpen && !isTeamOpen) {
         setHidden(true);
       }
     }
@@ -63,11 +73,38 @@ export default function Navbar() {
 
   // 桌面路由变化后复位导航状态（移动端锚点跳转不触发路由切换）
   const [hash, setHash] = useState(window.location.hash);
+  const [homeSection, setHomeSection] = useState<"home" | "partners">("home");
+  const activeTarget = hash.startsWith("#/specs") ? "specs"
+    : hash.startsWith("#/story") ? "heritage"
+    : hash.startsWith("#/team") ? "team" : homeSection;
+  const isLight = activeTarget !== "specs";
+  useEffect(() => {
+    return () => {
+      sliderReturnRef.current?.cancel();
+      sliderReturnRef.current = null;
+      const desktopNav = navRef.current?.querySelector<HTMLElement>(".nav-desktop");
+      if (desktopNav) delete desktopNav.dataset.hovering;
+      if (hoverSliderRef.current) hoverSliderRef.current.style.opacity = "0";
+    };
+  }, [activeTarget]);
   useEffect(() => {
     const onChange = () => setHash(window.location.hash);
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
+  useEffect(() => {
+    const updateHomeSection = () => {
+      const partners = document.getElementById("partners");
+      setHomeSection(partners && partners.getBoundingClientRect().top <= window.innerHeight / 2 ? "partners" : "home");
+    };
+    updateHomeSection();
+    window.addEventListener("scroll", updateHomeSection, { passive: true });
+    window.addEventListener("resize", updateHomeSection);
+    return () => {
+      window.removeEventListener("scroll", updateHomeSection);
+      window.removeEventListener("resize", updateHomeSection);
+    };
+  }, [hash, isMobile]);
   useEffect(() => {
     if (isMobile) return;
     setHidden(false);
@@ -75,8 +112,50 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
     setIsMobileTeamOpen(false);
-    setHasAnimated(false);
+    setIsCarsOpen(false);
+    setIsTeamOpen(false);
   }, [hash, isMobile]);
+
+  useEffect(() => {
+    if (!isCompact) setIsMobileMenuOpen(false);
+  }, [isCompact]);
+
+  useEffect(() => {
+    if (isCarsOpen || isTeamOpen) return;
+    const desktopNav = navRef.current?.querySelector<HTMLElement>(".nav-desktop");
+    if (desktopNav) delete desktopNav.dataset.menuHovering;
+  }, [isCarsOpen, isTeamOpen]);
+
+  useEffect(() => {
+    const closeMenus = () => {
+      setIsMobileMenuOpen(false);
+      setIsMobileCarsOpen(false);
+      setIsMobileTeamOpen(false);
+      setIsCarsOpen(false);
+      setIsTeamOpen(false);
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!(event.target instanceof Node)) return;
+      if (!navRef.current?.contains(event.target)) {
+        closeMenus();
+      } else if (event.target instanceof Element && !event.target.closest('.nav-dropdown-group[data-open="true"]')) {
+        setIsCarsOpen(false);
+        setIsTeamOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (isMobileMenuOpen) toggleRef.current?.focus();
+      else navRef.current?.querySelector<HTMLButtonElement>('.nav-desktop button[aria-expanded="true"]')?.focus();
+      closeMenus();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMobileMenuOpen]);
 
   const scrollToSection = (target: string) => {
     // 等菜单退出动画结束再滚动，避免被折叠动画干扰
@@ -88,6 +167,9 @@ export default function Navbar() {
   const handleNavClick = (target: string) => {
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
+    setIsMobileTeamOpen(false);
+    setIsCarsOpen(false);
+    setIsTeamOpen(false);
     if (isMobile) {
       scrollToSection(target);
     } else {
@@ -103,8 +185,8 @@ export default function Navbar() {
   const pickYear = (year: number) => {
     sessionStorage.setItem('selectedCarYear', String(year));
     window.dispatchEvent(new CustomEvent('changeCarYear', { detail: year }));
-    setIsCarsHovered(false);
-    setIsTeamHovered(false);
+    setIsCarsOpen(false);
+    setIsTeamOpen(false);
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
     setIsMobileTeamOpen(false);
@@ -122,8 +204,8 @@ export default function Navbar() {
   const pickTeamOption = (value: string) => {
     sessionStorage.setItem('selectedTeamView', value);
     window.dispatchEvent(new CustomEvent('changeTeamView', { detail: value }));
-    setIsCarsHovered(false);
-    setIsTeamHovered(false);
+    setIsCarsOpen(false);
+    setIsTeamOpen(false);
     setIsMobileMenuOpen(false);
     setIsMobileCarsOpen(false);
     setIsMobileTeamOpen(false);
@@ -142,102 +224,229 @@ export default function Navbar() {
     }
   };
 
+  const returnSlider = (desktopNav: HTMLDivElement) => {
+    const slider = hoverSliderRef.current;
+    if (!slider || desktopNav.dataset.hovering !== "true" || sliderReturnRef.current) return;
+
+    const current = desktopNav.querySelector<HTMLElement>(
+      '.nav-dropdown-trigger[data-current="true"], :scope > .nav-pill-link[aria-current="page"]',
+    );
+    const finish = () => {
+      slider.style.transition = "none";
+      slider.style.opacity = "0";
+      delete desktopNav.dataset.hovering;
+      sliderReturnRef.current?.cancel();
+      sliderReturnRef.current = null;
+      slider.getBoundingClientRect();
+      slider.style.removeProperty("transition");
+    };
+    if (!current || reduceMotion) {
+      finish();
+      return;
+    }
+
+    const navRect = desktopNav.getBoundingClientRect();
+    const currentRect = current.getBoundingClientRect();
+    const scale = navRect.width / desktopNav.offsetWidth;
+    const computed = getComputedStyle(slider);
+    const startX = new DOMMatrixReadOnly(computed.transform).m41;
+    const endX = (currentRect.left - navRect.left) / scale;
+    const endWidth = currentRect.width / scale;
+    const endHeight = currentRect.height / scale;
+    const endTop = (currentRect.top - navRect.top) / scale;
+    const animation = slider.animate([
+      { transform: `translate3d(${startX}px, 0, 0)`, width: computed.width, height: computed.height, top: computed.top, offset: 0, easing: "cubic-bezier(0.32, 0.12, 0.5, 1)" },
+      { transform: `translate3d(${endX + (endX - startX) * 0.08}px, 0, 0)`, width: `${endWidth}px`, height: `${endHeight}px`, top: `${endTop}px`, offset: 0.74, easing: "ease-in-out" },
+      { transform: `translate3d(${endX - (endX - startX) * 0.02}px, 0, 0)`, width: `${endWidth}px`, height: `${endHeight}px`, top: `${endTop}px`, offset: 0.9, easing: "ease-out" },
+      { transform: `translate3d(${endX}px, 0, 0)`, width: `${endWidth}px`, height: `${endHeight}px`, top: `${endTop}px`, offset: 1 },
+    ], { duration: 1000, easing: "linear", fill: "forwards" });
+    sliderReturnRef.current = animation;
+    animation.onfinish = finish;
+  };
+
   return (
     <motion.nav
+      ref={navRef}
+      aria-label="Primary navigation"
+      onFocusCapture={() => setHidden(false)}
+      data-tone={isLight ? "light" : "dark"}
+      data-scrolled={!isTop}
       variants={{
         initial: { y: -100 },
         visible: { y: 0 },
-        hidden: { y: "-100%" },
+        hidden: { y: "calc(-100% - 32px)" },
       }}
-      initial="initial"
-      animate={hasAnimated ? (hidden ? "hidden" : "visible") : "visible"}
-      transition={{
+      initial={reduceMotion ? false : "initial"}
+      animate={hidden ? "hidden" : "visible"}
+      transition={reduceMotion ? { duration: 0 } : {
         type: "spring",
-        stiffness: hasAnimated ? 500 : 260,
-        damping: hasAnimated ? 25 : 20,
-        mass: hasAnimated ? 0.5 : 0.8,
-      }}
-      onAnimationComplete={(definition) => {
-        if (definition === "visible" && !hasAnimated) {
-          setHasAnimated(true);
-        }
+        stiffness: 400,
+        damping: 28,
+        mass: 0.6,
       }}
       style={{
         willChange: "transform",
         backfaceVisibility: "hidden",
         WebkitBackfaceVisibility: "hidden",
       }}
-      className={`fixed top-0 left-0 right-0 z-50 ${
-        isTop && !isMobileMenuOpen
-          ? "nav-glass-transparent"
-          : "nav-glass"
-      }`}
+      className="nav-capsule fixed z-50"
     >
-      <div className="w-full px-6 md:px-6 lg:px-12 h-20 flex items-center justify-between relative z-50">
+      <div ref={glassRef} className="nav-capsule-glass" aria-hidden="true" />
+      <div className="nav-capsule-content flex items-center justify-between relative z-10">
         {/* Logo */}
         <a
           href={isMobile ? "#home" : "#/"}
-          className="flex items-center group -ml-2 sm:-ml-4"
+          className="nav-brand flex items-center shrink-0"
+          aria-label="Aurora Racing home"
           onClick={(e) => {
             e.preventDefault();
-            setIsMobileMenuOpen(false);
-            scrollToSection("home");
+            handleNavClick("home");
           }}
         >
-          <AuroraLogo className="hidden md:block w-28 lg:w-36 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
           <img
-            src={getAssetUrl("/images/logos/logo-mobile.webp")}
-            alt="Aurora Logo"
+            src={getAssetUrl(isLight ? "/images/logos/logo-mobile.webp" : "/images/logos/logo-desktop.webp")}
+            alt="AURORA Racing Logo"
             width="1620"
-            height="587"
-            className="md:hidden w-28 h-auto group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]"
+            height={isLight ? 587 : 529}
+            className="nav-logo w-24 md:w-28 h-auto"
             decoding="async"
             referrerPolicy="no-referrer"
           />
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-4 xl:gap-8">
+        <div
+          className="nav-desktop hidden lg:flex items-center"
+          onPointerMove={(event) => {
+            if (event.pointerType !== "mouse") return;
+            const slider = hoverSliderRef.current;
+            if (!slider) return;
+            const containerRect = event.currentTarget.getBoundingClientRect();
+            if (event.clientY < containerRect.top || event.clientY > containerRect.bottom) {
+              returnSlider(event.currentTarget);
+              return;
+            }
+            if (sliderReturnRef.current) {
+              const computed = getComputedStyle(slider);
+              const transform = computed.transform;
+              const width = computed.width;
+              const height = computed.height;
+              const top = computed.top;
+              slider.style.transition = "none";
+              sliderReturnRef.current.cancel();
+              sliderReturnRef.current = null;
+              Object.assign(slider.style, { transform, width, height, top });
+              slider.getBoundingClientRect();
+              slider.style.removeProperty("transition");
+            }
+            const target = event.target instanceof Element ? event.target.closest<HTMLElement>(".nav-pill-link") : null;
+            const scale = containerRect.width / event.currentTarget.offsetWidth;
+            if (target && event.currentTarget.contains(target)) {
+              const targetRect = target.getBoundingClientRect();
+              slider.style.width = `${targetRect.width / scale}px`;
+              slider.style.height = `${targetRect.height / scale}px`;
+              slider.style.top = `${(targetRect.top - containerRect.top) / scale}px`;
+            }
+            const width = parseFloat(slider.style.width);
+            if (!width) return;
+            event.currentTarget.dataset.hovering = "true";
+            const x = Math.max(0, Math.min((event.clientX - containerRect.left) / scale - width / 2, event.currentTarget.offsetWidth - width));
+            const isEntering = slider.style.opacity !== "1";
+            if (isEntering) slider.style.transition = "none";
+            slider.style.transform = `translate3d(${x}px, 0, 0)`;
+            if (isEntering) {
+              slider.getBoundingClientRect();
+              slider.style.removeProperty("transition");
+            }
+            slider.style.opacity = "1";
+          }}
+          onPointerLeave={(event) => {
+            returnSlider(event.currentTarget);
+          }}
+        >
+          <div
+            ref={hoverSliderRef}
+            className="nav-hover-slider"
+            aria-hidden="true"
+          />
           {NAV_ITEMS.map((item) => (
             item.dropdown ? (
               <div
                 key={item.name}
-                className="relative group"
-                onMouseEnter={() => item.dropdownType === 'cars' ? setIsCarsHovered(true) : setIsTeamHovered(true)}
-                onMouseLeave={() => item.dropdownType === 'cars' ? setIsCarsHovered(false) : setIsTeamHovered(false)}
+                className="nav-dropdown-group relative group"
+                data-open={item.dropdownType === 'cars' ? isCarsOpen : isTeamOpen}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setIsCarsOpen(false);
+                    setIsTeamOpen(false);
+                  }
+                }}
               >
-                <a
-                  href={item.target === "specs" ? "#/specs" : "#/team"}
-                  onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }}
-                  className="text-sm font-medium tracking-widest text-aurora-white/80 hover:text-aurora-purple transition-colors relative flex items-center gap-1 py-4"
+                <div
+                  className="nav-pill-link nav-dropdown-trigger"
+                  data-current={activeTarget === item.target}
+                  data-open={item.dropdownType === 'cars' ? isCarsOpen : isTeamOpen}
                 >
-                  {item.name}
-                  <span className="absolute bottom-3 left-0 w-0 h-0.5 bg-aurora-purple transition-all group-hover:w-full"></span>
-                </a>
+                  <a
+                    href={item.target === "specs" ? "#/specs" : "#/team"}
+                    onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }}
+                    className="nav-dropdown-label"
+                    aria-current={activeTarget === item.target ? "page" : undefined}
+                  >
+                    {item.name}
+                  </a>
+                  <button
+                    type="button"
+                    className="nav-dropdown-toggle"
+                    data-menu-toggle={item.dropdownType}
+                    aria-label={`${(item.dropdownType === 'cars' ? isCarsOpen : isTeamOpen) ? 'Close' : 'Open'} ${item.name} menu`}
+                    aria-expanded={item.dropdownType === 'cars' ? isCarsOpen : isTeamOpen}
+                    aria-controls={`nav-${item.dropdownType}-options`}
+                    onClick={() => {
+                      if (item.dropdownType === 'cars') {
+                        setIsCarsOpen((open) => !open);
+                        setIsTeamOpen(false);
+                      } else {
+                        setIsTeamOpen((open) => !open);
+                        setIsCarsOpen(false);
+                      }
+                    }}
+                  >
+                    <ChevronDown size={14} aria-hidden="true" />
+                  </button>
+                </div>
                 {/* Dropdown */}
                 <AnimatePresence>
-                  {((item.dropdownType === 'cars' && isCarsHovered) || (item.dropdownType === 'team' && isTeamHovered)) && (
+                  {((item.dropdownType === 'cars' && isCarsOpen) || (item.dropdownType === 'team' && isTeamOpen)) && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      onPointerEnter={(event) => {
+                        const desktopNav = event.currentTarget.closest<HTMLElement>(".nav-desktop");
+                        if (desktopNav && event.pointerType === "mouse") desktopNav.dataset.menuHovering = "true";
+                      }}
+                      onPointerLeave={(event) => {
+                        const desktopNav = event.currentTarget.closest<HTMLElement>(".nav-desktop");
+                        if (desktopNav) delete desktopNav.dataset.menuHovering;
+                      }}
+                      initial={reduceMotion ? false : { opacity: 0, y: -10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      transition={{ duration: 0.12, ease: "easeOut" }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 origin-top"
+                      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: reduceMotion ? 0 : 0.12, ease: "easeOut" }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-3 origin-top"
                     >
-                      <div className="dropdown-glass rounded-xl py-2 flex flex-col min-w-[120px]">
+                      <div id={`nav-${item.dropdownType}-options`} className="nav-dropdown-glass rounded-3xl p-2 flex flex-col min-w-[148px]">
                         {item.dropdownType === 'cars' ? (
                           carYears.map((year, i) => (
                             <motion.a
                               key={year}
                               href="#/specs"
-                              initial={{ opacity: 0, x: -10 }}
+                              initial={reduceMotion ? false : { opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: i * 0.015, duration: 0.12 }}
+                              transition={{ delay: reduceMotion ? 0 : i * 0.015, duration: reduceMotion ? 0 : 0.12 }}
                               onClick={(e) => {
                                 e.preventDefault();
                                 pickYear(year);
                               }}
-                              className="px-4 py-2.5 text-sm font-display text-aurora-white/80 hover:text-aurora-purple hover:bg-aurora-white/10 transition-all duration-150 text-center block font-bold drop-shadow-md"
+                              className="nav-dropdown-link"
                             >
                               {year}
                             </motion.a>
@@ -247,14 +456,14 @@ export default function Navbar() {
                             <motion.a
                               key={option.value}
                               href="#/team"
-                              initial={{ opacity: 0, x: -10 }}
+                              initial={reduceMotion ? false : { opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: i * 0.015, duration: 0.12 }}
+                              transition={{ delay: reduceMotion ? 0 : i * 0.015, duration: reduceMotion ? 0 : 0.12 }}
                               onClick={(e) => {
                                 e.preventDefault();
                                 pickTeamOption(option.value);
                               }}
-                              className="px-4 py-2.5 text-sm font-display text-aurora-white/80 hover:text-aurora-purple hover:bg-aurora-white/10 transition-all duration-150 text-center block font-bold drop-shadow-md"
+                              className="nav-dropdown-link"
                             >
                               {option.name}
                             </motion.a>
@@ -269,40 +478,42 @@ export default function Navbar() {
               <a
                 key={item.name}
                 href={isMobile ? `#${item.target}` : item.target === "heritage" ? "#/story" : item.target === "team" ? "#/team" : item.target === "specs" ? "#/specs" : "#/"}
+                onPointerEnter={item.target === "heritage" ? preloadStoryCover : undefined}
+                onFocus={item.target === "heritage" ? preloadStoryCover : undefined}
                 onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }}
-                className="text-sm font-medium tracking-widest text-aurora-white/80 hover:text-aurora-purple transition-colors relative group py-4"
+                className="nav-pill-link"
+                aria-current={activeTarget === item.target ? "page" : undefined}
               >
                 {item.name}
-                <span className="absolute bottom-3 left-0 w-0 h-0.5 bg-aurora-purple transition-all group-hover:w-full"></span>
               </a>
             )
           ))}
           <a
             href={PERFORMANCE_LAB_URL}
-            className="text-sm font-medium tracking-widest text-aurora-white/80 hover:text-aurora-purple transition-colors relative group py-4"
+            className="nav-pill-link"
           >
             LAB
-            <span className="absolute bottom-3 left-0 w-0 h-0.5 bg-aurora-purple transition-all group-hover:w-full"></span>
           </a>
           <a
             href={TELEMETRY_URL}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="TELEMETRY 数据分析工作台（在新标签页打开）"
-            className="telemetry-nav-link shrink-0 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-3 lg:px-4 py-2.5 text-xs lg:text-sm font-medium tracking-widest text-aurora-white transition-colors hover:border-purple-400/70 hover:bg-aurora-purple/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-300"
+            className="nav-pill-link telemetry-nav-link"
           >
-            <span>TELEMETRY</span>
-            <ArrowUpRight size={15} aria-hidden="true" />
+            TELEMETRY
           </a>
         </div>
 
         {/* Mobile Nav Toggle */}
         <div className="lg:hidden flex items-center">
           <button
-            className="text-aurora-white p-2 hover:text-aurora-purple transition-colors"
+            ref={toggleRef}
+            className="nav-menu-toggle"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isMobileMenuOpen}
+            aria-controls="nav-compact-menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -313,31 +524,14 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Simple backdrop without blur */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/5 z-40 lg:hidden"
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
             {/* Dropdown Menu - aligned to hamburger button */}
             <motion.div
+              id="nav-compact-menu"
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute top-full right-6 lg:hidden flex flex-col z-50 mt-2 origin-top-right w-[220px] max-h-[calc(100dvh-6rem)] overflow-y-auto!"
-              style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                backdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',
-                WebkitBackdropFilter: 'blur(40px) saturate(180%) brightness(1.1)',
-                borderRadius: '24px',
-                padding: '1.25rem 1.5rem',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.1) inset',
-              }}
+              className="nav-compact-glass absolute top-full right-0 lg:hidden flex flex-col z-50 mt-3 origin-top-right w-[clamp(150px,42vw,230px)] max-w-full max-h-[calc(100dvh-7rem)] overflow-y-auto!"
             >
               <div className="flex flex-col">
                 {NAV_ITEMS.map((item, idx) => (
@@ -350,7 +544,7 @@ export default function Navbar() {
                       className="flex flex-col"
                     >
                       <div className="flex items-center justify-between">
-                        <a href={`#${item.target}`} onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }} className="py-2.5 text-lg font-medium tracking-widest text-aurora-white/90 hover:text-aurora-purple transition-colors flex-1">
+                        <a href={`#${item.target}`} onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }} className="nav-compact-link py-2.5 text-lg font-medium tracking-widest text-aurora-white/90 flex-1">
                           {item.name}
                         </a>
                         <button
@@ -364,7 +558,7 @@ export default function Navbar() {
                               setIsMobileCarsOpen(false);
                             }
                           }}
-                          className="p-1.5 text-aurora-white/70 hover:text-aurora-purple outline-none"
+                          className="nav-compact-toggle w-11 h-11 flex items-center justify-center rounded-full text-aurora-white/70 outline-none"
                           aria-label={
                             item.dropdownType === 'cars'
                               ? (isMobileCarsOpen ? "Collapse car years" : "Expand car years")
@@ -398,7 +592,7 @@ export default function Navbar() {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.04, duration: 0.2 }}
                                     onClick={(e) => { e.preventDefault(); pickYear(year); }}
-                                    className="py-2 text-base font-display font-bold text-aurora-white/70 hover:text-aurora-purple transition-colors"
+                                    className="nav-compact-link nav-compact-sublink py-2 text-base font-display font-bold text-aurora-white/70"
                                   >
                                     {year}
                                   </motion.a>
@@ -412,7 +606,7 @@ export default function Navbar() {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.04, duration: 0.2 }}
                                     onClick={(e) => { e.preventDefault(); pickTeamOption(option.value); }}
-                                    className="py-2 text-base font-display font-bold text-aurora-white/70 hover:text-aurora-purple transition-colors"
+                                    className="nav-compact-link nav-compact-sublink py-2 text-base font-display font-bold text-aurora-white/70"
                                   >
                                     {option.name}
                                   </motion.a>
@@ -431,7 +625,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.04, duration: 0.2 }}
                       onClick={(e) => { e.preventDefault(); handleNavClick(item.target); }}
-                      className="py-2.5 text-lg font-medium tracking-widest text-aurora-white/90 hover:text-aurora-purple transition-colors"
+                      className="nav-compact-link py-2.5 text-lg font-medium tracking-widest text-aurora-white/90"
                     >
                       {item.name}
                     </motion.a>
@@ -440,9 +634,18 @@ export default function Navbar() {
                 <a
                   href={PERFORMANCE_LAB_URL}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-2.5 text-lg font-medium tracking-widest text-aurora-white/90 hover:text-aurora-purple transition-colors"
+                  className="nav-compact-link py-2.5 text-lg font-medium tracking-widest text-aurora-white/90"
                 >
                   LAB
+                </a>
+                <a
+                  href={TELEMETRY_URL}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="nav-compact-link py-2.5 text-lg font-medium tracking-widest text-aurora-white/90"
+                >
+                  TELEMETRY
                 </a>
               </div>
             </motion.div>

@@ -82,10 +82,10 @@ export default function Alumni(_props: AlumniProps) {
       <div className="relative z-10 max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="text-center mb-10 md:mb-32">
-          <h2 className="font-display text-4xl md:text-5xl font-black text-gray-900 uppercase tracking-tighter break-words">
-            <span className="text-[#7928CA]">ALUMNI</span> <span className="text-gray-400 text-2xl md:text-3xl">PARTIAL</span>
+          <h2 className="font-display text-4xl md:text-5xl font-black text-[#6722C1] uppercase tracking-tighter break-words">
+            ALUMNI <span className="text-2xl md:text-3xl">PARTIAL</span>
           </h2>
-          <div className="w-24 h-1 bg-[#7928CA] mx-auto mt-4"></div>
+          <div className="w-24 h-1 bg-[#6722C1] mx-auto mt-4"></div>
         </div>
 
         {/* Alumni Grid - No grouping, just all members in one grid */}

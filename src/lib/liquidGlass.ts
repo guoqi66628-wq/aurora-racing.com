@@ -14,7 +14,7 @@ import type { HyaliteAPI, HyaliteOptions } from "../vendor/hyalite";
 /** 与 useIsMobile 的默认断点、Tailwind md 保持一致 */
 export const GLASS_DESKTOP_BREAKPOINT = 768;
 
-export type GlassPreset = "pill" | "panel" | "control";
+export type GlassPreset = "pill" | "panel" | "control" | "navigation";
 
 /**
  * light: -40 而非上游默认的 -145。现有 CSS 皮肤的高光在顶部/左上
@@ -26,15 +26,15 @@ export const GLASS_PRESETS: Record<GlassPreset, HyaliteOptions> = {
   /**
    * Specs 参数胶囊与性能条：压在赛车大图上。
    * blur 必须小 —— 折射与色散的前提都是"看得见背后"，重磨砂会把两者一起糊掉。
-   * dispersion 拉到上限 0.5：色散强度取决于背景明暗结构，深色影棚背景本身可拆的
-   * 边缘不多，只在绿色光带、白色车身这类高对比处显现（实测见 docs 对比图）。
-   * dispersion > 0 即为每通道一遍（3 遍），从 0.07 提到 0.5 不增加 pass 数。
+   * 适度保留色散，让深色背景上的彩色边缘更柔和，同时保留折射与高光。
    */
-  pill: { ...COMMON, bevel: 28, thickness: 28, blur: 1, dispersion: 0.5, rim: 0.8, materialize: 0 },
+  pill: { ...COMMON, bevel: 28, thickness: 28, blur: 1, dispersion: 0.15, rim: 0.8, materialize: 0 },
   /** 导航岛 / 下拉 / 移动菜单：凭空出现的面，用 materialize 让折射涨起来 */
   panel: { ...COMMON, bevel: 24, thickness: 20, blur: 3, dispersion: 0.4, rim: 0.7, materialize: 200 },
   /** 48px 圆形控件：尺寸小，bevel 会被圆角 clamp，靠 thickness 撑位移 */
-  control: { ...COMMON, bevel: 14, thickness: 16, blur: 1, dispersion: 0.35, rim: 0.8, materialize: 0 },
+  control: { ...COMMON, bevel: 18, thickness: 28, blur: 1, dispersion: 0.35, rim: 0.8, materialize: 0 },
+  /** 悬浮导航：单个连续弧面，轻磨砂与克制的色散，保证文字清晰。 */
+  navigation: { ...COMMON, bevel: 26, thickness: 22, blur: 2, dispersion: 0.12, rim: 0.65, materialize: 180 },
 };
 
 /**
@@ -77,27 +77,21 @@ let enginePromise: Promise<HyaliteAPI | null> | null = null;
  * 单例：多个组件并发调用只会加载一次。
  */
 export function ensureHyalite(): Promise<HyaliteAPI | null> {
-  if (enginePromise) return enginePromise;
+  if (typeof window === "undefined") return Promise.resolve(null);
 
-  enginePromise = new Promise<HyaliteAPI | null>((resolve) => {
-    if (typeof window === "undefined") return resolve(null);
+  applyUrlOverride();
+  const override = document.documentElement.dataset.hyalite;
+  // 移动端先不加载，也不缓存 null；窗口变宽后仍可重新请求引擎。
+  if (override === "off" || !isDesktopViewport()) return Promise.resolve(null);
 
-    applyUrlOverride();
-    const override = document.documentElement.dataset.hyalite;
-
-    // 提前挡掉必然不支持的环境，连 chunk 请求都省掉
-    if (override !== "force" && (override === "off" || !isDesktopViewport())) {
-      return resolve(null);
-    }
-
+  enginePromise ??= new Promise<HyaliteAPI | null>((resolve) => {
     // 🔧 修复：立即加载而不是等待 idle，确保 Specs 挂载时引擎已就绪
     void import("../vendor/hyalite.js")
       .then(() => {
         const api = window.Hyalite;
-        if (!api || !isRefractionAllowed(api)) return resolve(null);
+        if (!api || !api.supported()) return resolve(null);
         // 皮肤据此降低高光与底色不透明度，让折射透出来
         document.documentElement.dataset.glass = "on";
-        console.log('[Hyalite] Engine loaded, supported:', api.supported());
         resolve(api);
       })
       .catch((err) => {
@@ -106,5 +100,7 @@ export function ensureHyalite(): Promise<HyaliteAPI | null> {
       });
   });
 
-  return enginePromise;
+  return enginePromise.then((api) =>
+    api && isRefractionAllowed(api) ? api : null
+  );
 }

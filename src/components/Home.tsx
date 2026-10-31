@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Instagram, ShoppingCart } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useLiquidGlass } from "../hooks/useLiquidGlass";
 import { getAssetUrl } from "../utils/cdn";
 
 export default function Home() {
@@ -41,26 +42,21 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const [showStoreQR, setShowStoreQR] = useState(false);
-  const qrRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    function handleDoc(e: MouseEvent) {
-      if (!qrRef.current) return;
-      if (showStoreQR && !qrRef.current.contains(e.target as Node)) {
-        setShowStoreQR(false);
-      }
-    }
-    document.addEventListener("click", handleDoc);
-    return () => document.removeEventListener("click", handleDoc);
-  }, [showStoreQR]);
+  const instagramRef = useRef<HTMLAnchorElement>(null);
+  const douyinRef = useRef<HTMLAnchorElement>(null);
+  const wechatRef = useRef<HTMLAnchorElement>(null);
+  const storeRef = useRef<HTMLAnchorElement>(null);
+  useLiquidGlass(instagramRef, "control");
+  useLiquidGlass(douyinRef, "control");
+  useLiquidGlass(wechatRef, "control");
+  useLiquidGlass(storeRef, "control");
 
   const formatNumber = (num: number) => num.toString().padStart(2, "0");
 
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen flex md:items-center items-start pt-20 md:pt-24 pb-24 md:py-24 overflow-hidden bg-aurora-black"
+      className="hero-section relative w-full min-h-screen flex md:items-center items-start pt-20 md:pt-24 pb-24 md:py-24 overflow-hidden bg-aurora-black"
     >
       {/* Background Image with Lightened Overlay */}
       <div className="absolute inset-0 z-0">
@@ -77,51 +73,24 @@ export default function Home() {
         />
         {/* Mobile Image */}
         <img
-          src={getAssetUrl("/images/hero/hero-mobile.webp")}
+          src={getAssetUrl("/images/hero/hero-mobile-20261031.webp")}
           alt="AURORA Racing Car (Mobile)"
-          width="1080"
-          height="1920"
+          width="941"
+          height="1672"
           fetchPriority="high"
           decoding="async"
           className="block md:hidden w-full h-full object-cover object-center opacity-100"
           referrerPolicy="no-referrer"
         />
 
-        {/* Dynamic Speed and Engine Animations */}
+        {/* Speed streaks */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Engine/Headlight Pulsing Glow */}
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute top-[40%] right-[30%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#a5d6a7]/10 rounded-full blur-[80px] md:blur-[120px] mix-blend-screen"
-          />
-          <motion.div
-            animate={{
-              opacity: [0.1, 0.4, 0.1],
-              scale: [0.9, 1.2, 0.9],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.5,
-            }}
-            className="absolute top-[45%] right-[20%] w-[200px] h-[200px] md:w-[400px] md:h-[400px] bg-aurora-purple/20 rounded-full blur-[60px] md:blur-[100px] mix-blend-screen"
-          />
-
           {/* Speed Streaks (Moving lines to convey motion) */}
           {[...Array(6)].map((_, i) => (
             <motion.div
               key={`streak-${i}`}
-              initial={{ x: "100vw", opacity: 0 }}
-              animate={{ x: "-100vw", opacity: [0, 1, 0] }}
+              initial={{ x: "-100vw", opacity: 0 }}
+              animate={{ x: "100vw", opacity: [0, 1, 0] }}
               transition={{
                 duration: 1.5 + (i % 3) * 0.5,
                 repeat: Infinity,
@@ -136,36 +105,18 @@ export default function Home() {
             />
           ))}
 
-          {/* Abstract Spinning Element (HUD like, simulating wheel/engine tech) */}
-          <div className="absolute top-[55%] right-[25%] -translate-y-1/2 -translate-x-1/2 opacity-20 md:opacity-30 mix-blend-screen">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              className="w-48 h-48 md:w-80 md:h-80 border-[1px] border-[#a5d6a7]/40 rounded-full border-dashed"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 md:w-56 md:h-56 border-[2px] border-white/20 rounded-full border-dotted"
-            />
-            <motion.div
-              animate={{ scale: [0.9, 1.1, 0.9], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-24 md:h-24 border-[1px] border-[#a5d6a7]/60 rounded-full"
-              style={{ boxShadow: "0 0 20px rgba(165,214,167,0.4) inset" }}
-            />
-          </div>
         </div>
+        <div className="hero-bottom-fade" aria-hidden="true" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 md:px-8 lg:px-10 xl:px-12 flex flex-col items-start mt-2 md:mt-8">
+      <div className="hero-content relative z-10 w-full max-w-[1800px] mx-auto px-4 md:px-12 flex flex-col items-start mt-2 md:mt-8">
         {/* Mobile: School Name (Above title) */}
         <motion.p
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
-          className="md:hidden text-[13px] text-[#4a4a4a] tracking-[0.15em] font-sans font-medium uppercase mb-2 italic px-1"
+          className="hero-mobile-school md:hidden text-[13px] text-[#4a4a4a] tracking-[0.15em] font-sans font-medium uppercase mb-2 italic px-1"
         >
           Shenzhen Technology University
         </motion.p>
@@ -174,7 +125,7 @@ export default function Home() {
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.08 }}
-          className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[100px] leading-[0.9] font-black uppercase mb-3 md:mb-4 flex flex-col italic md:px-0 px-1"
+          className="hero-mobile-heading font-display text-4xl sm:text-5xl md:text-[100px] leading-[0.9] font-black uppercase mb-3 md:mb-4 flex flex-col italic md:px-0 px-1"
         >
           {/* Desktop Title Structure */}
           <div className="hidden md:flex items-end gap-6 text-[100%]">
@@ -192,13 +143,13 @@ export default function Home() {
 
           {/* Mobile Title Structure */}
           <div className="md:hidden flex flex-col gap-0 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1E096A] via-[#3C1088] to-[#6722C1] text-[64px] leading-[0.95]">
+            <span className="hero-mobile-title bg-clip-text text-transparent bg-gradient-to-r from-[#1E096A] via-[#3C1088] to-[#6722C1] text-[64px] leading-[0.95]">
               AURORA
             </span>
-            <span className="text-[#151515] text-[64px] leading-[0.9] -mt-1">
+            <span className="hero-mobile-title text-[#151515] text-[64px] leading-[0.9] -mt-1">
               RACING
             </span>
-            <span className="flex gap-2 mt-3 mb-2">
+            <span className="hero-mobile-stripes flex gap-2 mt-3 mb-2">
               <span className="w-10 h-2 bg-[#1E096A] skew-x-[-20deg]"></span>
               <span className="w-4 h-2 bg-[#6722C1] skew-x-[-20deg]"></span>
               <span className="w-4 h-2 bg-[#177A45] skew-x-[-20deg]"></span>
@@ -226,7 +177,7 @@ export default function Home() {
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
-          className="md:hidden text-[10px] font-medium text-[#4a4a4a] tracking-[0.08em] uppercase mb-4 italic leading-snug whitespace-nowrap px-1"
+          className="hero-mobile-subtitle md:hidden text-[10px] font-medium text-[#4a4a4a] tracking-[0.08em] uppercase mb-4 italic leading-snug px-1"
         >
           Pushing the limits of electric performance
         </motion.p>
@@ -235,11 +186,11 @@ export default function Home() {
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
-          className="relative -mt-0.5"
+          className="hero-mobile-countdown-wrap relative -mt-0.5"
         >
-          <div className="relative z-10 w-fit -ml-8 -mt-2 hidden md:block">
+          <div className="relative z-10 w-fit -ml-4 -mt-2 hidden md:block">
             {/* Cyberpunk Style Countdown Panels */}
-            <div className="flex flex-col gap-2 origin-left scale-[0.6] lg:scale-[0.65] xl:scale-[0.7] 2xl:scale-[0.75]">
+            <div className="hero-countdown flex flex-col gap-2">
               
               {/* Top Banner (Dark) */}
               <div className="relative flex h-14 md:h-[60px] w-fit">
@@ -483,25 +434,27 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.35 }}
-        className="absolute bottom-0 left-0 w-full px-6 md:px-12 lg:px-24 pb-6 md:pb-8 flex items-end justify-end z-30 pointer-events-none"
+        className="hero-socials absolute bottom-0 left-0 w-full px-6 md:px-24 pb-6 md:pb-8 flex items-end justify-end z-30 pointer-events-none"
       >
         {/* Social Links */}
         <div className="hidden md:flex items-center gap-3 md:gap-4 ml-4 pointer-events-auto">
           <a
+            ref={instagramRef}
             href="https://www.instagram.com/_auroraracing?igsh=YW5pNW9ham85bDho&utm_source=qr"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Visit Aurora Racing on Instagram"
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 transition-all duration-100 shadow-lg border border-white/5"
+            className="hero-social-glass w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-aurora-white"
           >
             <Instagram size={18} className="md:w-5 md:h-5" />
           </a>
           <a
+            ref={douyinRef}
             href="https://v.douyin.com/oEkcT_36nZI/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Visit Aurora Racing on Douyin"
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 transition-all duration-100 shadow-lg border border-white/5"
+            className="hero-social-glass w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-aurora-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -519,11 +472,12 @@ export default function Home() {
             </svg>
           </a>
           <a 
-            href="https://mp.weixin.qq.com/s/1R4bB9u1_6IFkO6a6LQT0w"
+            ref={wechatRef}
+            href="https://mp.weixin.qq.com/s/8kjwtOT2J_G8X5M89j0Bbw"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Read Aurora Racing on WeChat"
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 transition-all duration-100 shadow-lg border border-white/5 outline-none"
+            className="hero-social-glass w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-aurora-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -537,26 +491,14 @@ export default function Home() {
             </svg>
           </a>
 
-          <div className="relative group" ref={qrRef}>
-            <button
-              onClick={() => setShowStoreQR((s) => !s)}
-              aria-label="Toggle purchase QR code"
-              aria-expanded={showStoreQR}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#1f1f2e]/80 backdrop-blur-md flex items-center justify-center text-aurora-white hover:bg-[#7928ca] hover:scale-110 focus:scale-110 transition-all duration-100 shadow-lg border border-white/5 outline-none"
-            >
-              <ShoppingCart size={18} className="md:w-5 md:h-5" />
-            </button>
-            {/* Store QR Code Tooltip - click toggles on mobile; hover still works on desktop */}
-            <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-4 transition-all duration-100 z-50 ${showStoreQR ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'} md:group-hover:opacity-100 md:group-hover:visible md:group-hover:pointer-events-auto`}>
-              <div className="bg-[#1f1f2e]/90 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-xl flex flex-col items-center">
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden relative">
-                  <span className="text-xs text-white/50 absolute text-center px-2">请上传二维码至<br />public/images/store/qrcode.webp</span>
-                  <img src={getAssetUrl("/images/store/qrcode.webp")} alt="Purchase QR Code" width="331" height="331" loading="lazy" decoding="async" className="w-full h-full object-cover relative z-10" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                </div>
-                <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-[#1f1f2e] rotate-45 border-r border-b border-white/10"></div>
-              </div>
-            </div>
-          </div>
+          <a
+            ref={storeRef}
+            href="https://lab.aurora-racing.com/"
+            aria-label="Visit Aurora Racing Lab"
+            className="hero-social-glass w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-aurora-white"
+          >
+            <ShoppingCart size={18} className="md:w-5 md:h-5" />
+          </a>
         </div>
       </motion.div>
     </section>

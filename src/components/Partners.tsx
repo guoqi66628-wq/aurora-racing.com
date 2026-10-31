@@ -37,13 +37,15 @@ export default function Partners() {
   return (
     <section
       id="partners"
-      className="w-full bg-aurora-white py-12 md:py-24 overflow-hidden relative"
+      className="w-full bg-white pt-5 pb-12 md:py-24 overflow-hidden relative"
     >
-      <div className="max-w-[1600px] mx-auto px-6 mb-12 text-center relative z-10">
-        <h2 className="font-display text-4xl md:text-5xl font-black text-aurora-black uppercase tracking-tighter">
-          Our <span className="text-aurora-purple">Sponsors</span>
+      <div
+        className="max-w-[1600px] mx-auto px-6 mb-12 text-center relative z-10"
+      >
+        <h2 className="font-display text-4xl md:text-5xl font-black text-[#6722C1] uppercase tracking-tighter">
+          Our Sponsors
         </h2>
-        <div className="w-24 h-1 bg-aurora-purple mx-auto mt-4"></div>
+        <div className="w-24 h-1 bg-[#6722C1] mx-auto mt-4"></div>
       </div>
 
       <div className="max-w-[1600px] mx-auto px-6 relative z-10">
