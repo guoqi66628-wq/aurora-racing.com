@@ -47,7 +47,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-aurora-black text-aurora-white font-sans selection:bg-aurora-purple selection:text-aurora-white">
       <Navbar />
-      <main>
+      <main className="bg-white md:bg-transparent">
         {isMobile ? (
           <>
             <Home />

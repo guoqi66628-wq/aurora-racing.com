@@ -2,6 +2,7 @@ import { getAssetUrl } from "../utils/cdn";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import SponsorshipBrochure from "./SponsorshipBrochure";
 
 export default function Partners() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,7 +38,7 @@ export default function Partners() {
   return (
     <section
       id="partners"
-      className="w-full bg-white pt-5 pb-12 md:py-24 overflow-hidden relative"
+      className="w-full bg-white pt-5 md:pt-24 overflow-clip relative"
     >
       <div
         className="max-w-[1600px] mx-auto px-6 mb-12 text-center relative z-10"
@@ -60,6 +61,7 @@ export default function Partners() {
               key={`special-sponsor-${idx}`}
               initial={{ y: 20 }}
               whileInView={{ y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: idx * 0.06 }}
               src={src}
               alt={`Special Strategic Sponsor ${idx + 1}`}
@@ -85,6 +87,7 @@ export default function Partners() {
                 key={`mobile-strategic-sponsor-${idx}`}
                 initial={{ y: 20 }}
                 whileInView={{ y: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: idx * 0.06 + 0.2 }}
                 src={src}
                 alt={`Strategic Sponsor ${idx + 1}`}
@@ -105,6 +108,7 @@ export default function Partners() {
                 key={`top-sponsor-${idx}`}
                 initial={{ y: 20 }}
                 whileInView={{ y: 0 }}
+                viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 + 0.2 }}
                 src={src}
                 alt={`Top Sponsor ${idx + 1}`}
@@ -239,6 +243,7 @@ export default function Partners() {
           </button>
         </div>
       </div>
+      <SponsorshipBrochure />
     </section>
   );
 }

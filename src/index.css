@@ -38,6 +38,14 @@ body {
   color: var(--color-aurora-white);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  overflow-x: clip;
+}
+
+@media (max-width: 767px) {
+  .story-final-stage::after { content: ""; display: block; height: 60vh; height: 60svh; }
+  @supports (overflow: clip) {
+    .story-final-stage > div { position: sticky; }
+  }
 }
 
 /* Custom Scrollbar Variables */

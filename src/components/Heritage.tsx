@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MousePointerClick } from "lucide-react";
 import { getStoryImageUrl, storyCoverUrl } from "../utils/heritageImages";
 
@@ -134,6 +134,61 @@ function StackedImageGallery({ images, stackDirection = "right", priority = fals
 }
 
 export default function Heritage() {
+  const headingRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let frame = 0;
+    const nativeSticky = CSS.supports("overflow", "clip");
+    const update = () => {
+      frame = 0;
+      const wrapper = headingRef.current;
+      const heading = wrapper?.firstElementChild as HTMLElement | null;
+      if (!wrapper || !heading) return;
+      if (window.innerWidth >= 768) {
+        heading.style.opacity = "";
+        heading.style.transform = "";
+        wrapper.closest("section")?.querySelectorAll<HTMLElement>("[data-story-reveal]").forEach((section) => {
+          const content = section.firstElementChild as HTMLElement | null;
+          if (!content) return;
+          content.style.opacity = "";
+          content.style.transform = "";
+          content.style.pointerEvents = "";
+          content.style.top = "";
+        });
+        return;
+      }
+      const top = wrapper.getBoundingClientRect().top;
+      const progress = Math.max(0, Math.min(1, (window.innerHeight * .95 - top) / (window.innerHeight * .45)));
+      heading.style.opacity = String(progress);
+      heading.style.transform = `scale(${.8 + progress * .2})`;
+      wrapper.closest("section")?.querySelectorAll<HTMLElement>("[data-story-reveal]").forEach((section) => {
+        const content = section.firstElementChild as HTMLElement | null;
+        if (!content) return;
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionProgress = Math.max(0, Math.min(1, (window.innerHeight * .95 - sectionTop) / (window.innerHeight * .8)));
+        let offset = 0;
+        let fade = 0;
+        if (section.hasAttribute("data-story-last") && window.matchMedia("(max-width: 767px)").matches) {
+          const travel = Math.max(1, section.offsetHeight - content.offsetHeight);
+          const stopAt = Math.min(96, window.innerHeight * .8 - content.offsetHeight);
+          const distance = Math.max(0, stopAt - sectionTop);
+          if (nativeSticky && content.style.top !== `${stopAt}px`) content.style.top = `${stopAt}px`;
+          offset = nativeSticky ? 0 : Math.min(travel, distance);
+          const nextHeading = document.querySelector<HTMLElement>("#team h2");
+          const fadeStart = travel * .4;
+          const fadeEnd = nextHeading ? distance + nextHeading.getBoundingClientRect().top - window.innerHeight * .8 : travel * 1.2;
+          fade = Math.max(0, Math.min(1, (distance - fadeStart) / Math.max(1, fadeEnd - fadeStart)));
+        }
+        content.style.opacity = String(sectionProgress * (1 - fade));
+        content.style.transform = `translate3d(0, ${Math.round(offset * 2) / 2}px, 0) scale(${(.85 + sectionProgress * .15) * (1 - fade * .1)})`;
+        content.style.pointerEvents = fade > .98 ? "none" : "";
+      });
+    };
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => { window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); if (frame) window.cancelAnimationFrame(frame); };
+  }, []);
   const history = [
     {
       year: "2021",
@@ -206,10 +261,11 @@ export default function Heritage() {
   return (
     <section
       id="heritage"
-      className="w-full bg-aurora-white pt-8 pb-12 md:py-24 overflow-hidden"
+      className="w-full bg-white pt-28 pb-12 md:py-24 overflow-clip"
     >
       <div className="max-w-[1600px] mx-auto px-6">
-        <div className="text-center mb-10 md:mb-20">
+        <div ref={headingRef} className="mb-10 md:mb-20">
+        <div className="text-center">
           <h2 className="font-display text-4xl md:text-5xl font-black text-[#6722C1] uppercase tracking-tighter">
             Team Story
           </h2>
@@ -218,20 +274,17 @@ export default function Heritage() {
             记录 AURORA Racing 从无到有、从起步到腾飞的每一个精彩瞬间。
           </p>
         </div>
+        </div>
 
         <div className="flex flex-col gap-16 md:gap-24">
           {history.map((item, idx) => {
             const isEven = idx % 2 === 0;
             return (
-              <motion.div
-                key={item.year}
-                initial={{ y: 50 }}
-                whileInView={{ y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+              <div key={item.year} data-story-reveal data-story-last={idx === history.length - 1 ? "" : undefined} className={`mt-8 md:mt-0 ${idx === history.length - 1 ? "story-final-stage" : ""}`}>
+              <div
                 className={`flex flex-col-reverse ${
                   isEven ? "md:flex-row" : "md:flex-row-reverse"
-                } items-center gap-8 md:gap-16 mt-8 md:mt-0`}
+                } items-center gap-8 md:gap-16`}
               >
                 {/* Image */}
                 <div className="w-full md:w-1/2 overflow-visible relative">
@@ -253,7 +306,8 @@ export default function Heritage() {
                     {item.description}
                   </p>
                 </div>
-              </motion.div>
+              </div>
+              </div>
             );
           })}
         </div>

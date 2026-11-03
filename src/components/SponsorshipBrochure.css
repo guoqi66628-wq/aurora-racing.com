@@ -1,0 +1,43 @@
+.brochure { background: #fff; color: #17151c; margin-top: 2rem; padding: 2rem 0 3rem; }
+.brochure-heading { max-width: 1040px; width: 82%; margin: 0 auto 3rem; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.brochure-heading h2 { color: #6722c1; font-size: clamp(2rem, 4vw, 4rem); line-height: 1.15; letter-spacing: -.04em; font-weight: 800; text-transform: uppercase; margin: 0; }
+.brochure-heading-underline { width: 6rem; height: 4px; background: #6722c1; }
+.brochure-link { align-self: flex-end; color: #17151c; font-size: .9rem; font-weight: 700; display: inline-flex; align-items: center; gap: .35rem; }
+.brochure-link:hover { color: #6722c1; }
+.brochure-viewport { --card-width: min(54vw, 720px); --card-half-width: min(27vw, 360px); --card-gap: 20px; max-width: 1040px; width: 82%; margin: 0 auto; overflow: hidden; touch-action: pan-y; mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent); }
+.brochure-track { display: flex; gap: var(--card-gap); padding: 24px 0 48px; transition: transform .65s cubic-bezier(.22, 1, .36, 1); }
+.brochure-track.is-dragging, .brochure-pagination button.is-dragging { transition: none; }
+.brochure-card { flex: 0 0 var(--card-width); position: relative; overflow: hidden; border-radius: 18px; border: 1px solid #ece9ef; background: #fff; aspect-ratio: 16 / 9; box-shadow: 0 12px 24px rgba(35, 20, 50, .12), 0 3px 10px rgba(35, 20, 50, .06); }
+.brochure-card img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.brochure-card-select { position: absolute; inset: 0; width: 100%; cursor: pointer; background: transparent; }
+.brochure-controls { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 0; }
+.brochure-pagination { display: flex; align-items: center; gap: 9px; padding: 0 18px; height: 48px; border-radius: 50px; background: #f1eff3; }
+.brochure-pagination button { position: relative; flex: 0 0 auto; overflow: hidden; width: 8px; height: 8px; border-radius: 99px; background: #b9b4bf; transition: width .65s cubic-bezier(.22, 1, .36, 1), height .65s cubic-bezier(.22, 1, .36, 1), background-color .35s ease; }
+.brochure-pagination button.active { width: 48px; height: 10px; background: #6722c1; }
+.brochure-pagination button.active.is-playing { background: #96949a; }
+.brochure-progress { display: block; position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: inherit; background: #fff; animation: brochure-progress 5s linear forwards; }
+@keyframes brochure-progress { from { width: 0; } to { width: 100%; } }
+.brochure-play { display: grid; place-items: center; border-radius: 50%; width: 48px; height: 48px; background: #f1eff3; color: #3d3545; }
+.brochure-play:hover { color: #6722c1; }
+.brochure button:focus-visible, .brochure-link:focus-visible { outline: 2px solid #c39af8; outline-offset: 4px; }
+@media (max-width: 640px) {
+  .brochure { margin-top: 1.5rem; padding: 1.5rem 0 2.5rem; }
+  .brochure-heading { width: 88%; margin-bottom: .25rem; gap: 1rem; }
+  .brochure-link { font-size: .75rem; text-align: right; }
+  .brochure-viewport { --card-width: 72vw; --card-half-width: 36vw; --card-gap: 12px; }
+  .brochure-track { padding-top: 12px; }
+  .brochure-card { border-radius: 12px; }
+  .brochure-controls { gap: 5px; margin-top: 0; }
+  .brochure-pagination { gap: 8px; padding: 0 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .brochure-track, .brochure-pagination button { transition: none; } }
+@media (max-width: 767px) {
+  .brochure-viewport { width: 100%; mask-image: none; -webkit-mask-image: none; }
+  .brochure-stage::after { content: ""; display: block; height: 60vh; height: 60svh; }
+  .brochure-sticky { will-change: transform, opacity; }
+}
+@supports (overflow: clip) {
+  @media (max-width: 767px) {
+    .brochure-sticky { position: sticky; top: min(96px, 12svh); }
+  }
+}

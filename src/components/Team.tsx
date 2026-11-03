@@ -138,6 +138,22 @@ export default function Team() {
   ];
 
   // If showing Alumni, render the Alumni component instead
+  useEffect(() => {
+    if (showAlumni) return;
+    const cards = document.querySelectorAll<HTMLElement>("#team [data-team-reveal]");
+    if (!("IntersectionObserver" in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const card = entry.target as HTMLElement;
+        observer.unobserve(card);
+        card.animate([{ opacity: 0, transform: "translateY(48px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 850, easing: "cubic-bezier(.22, 1, .36, 1)", fill: "both" });
+      });
+    }, { threshold: 0, rootMargin: "0px 0px -5% 0px" });
+    cards.forEach((card) => { card.style.opacity = "0"; observer.observe(card); });
+    return () => observer.disconnect();
+  }, [showAlumni]);
+
   if (showAlumni) {
     return <Alumni onBack={() => setShowAlumni(false)} />;
   }
@@ -184,6 +200,7 @@ export default function Team() {
                   return (
                     <div
                       key={memberId}
+                      data-team-reveal
                       className="relative group w-full aspect-[3/4] cursor-pointer"
                       onClick={() => {
                         if (!isMobile) return;
